@@ -1,0 +1,11 @@
+<resources>
+    <color name="light_blue_600">#FF039BE5</color>
+    <color name="light_blue_900">#FF01579B</color>
+    <color name="light_blue_A200">#FF40C4FF</color>
+    <color name="light_blue_A400">#FF00B0FF</color>
+    <color name="black_overlay">#66000000</color>
+    <color name="base_color">#82D0E7</color>
+    <color name="base_center_color">#ffe9e9e9</color>
+
+    <color name="colorprt_app_color_gray_low">#FFE9E9E9</color>
+</resources>

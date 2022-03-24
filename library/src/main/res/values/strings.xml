@@ -1,0 +1,23 @@
+<resources>
+    <string name="title_activity_photo_edit">PhotoEditActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="text_complete">完成</string>
+    <string name="text_print_preview">打印预览</string>
+    <string name="text_back">返回</string>
+    <string name="text_adjust">调整</string>
+    <string name="text_fillter">滤镜</string>
+    <string name="text_crop">裁剪</string>
+    <string name="text_frame">相框</string>
+    <string name="text_sticker">贴纸</string>
+    <string name="text_text">文字</string>
+    <string name="text_brightness">亮度</string>
+    <string name="text_contrast">对比度</string>
+    <string name="text_ratio">饱和度</string>
+    <string name="text_sharp">锐化</string>
+    <string name="text_exposure">曝光</string>
+    <string name="text_shadown">阴影</string>
+    <string name="text_color_temperature">色温</string>
+    <string name="text_dark_angle">暗角</string>
+
+</resources>
