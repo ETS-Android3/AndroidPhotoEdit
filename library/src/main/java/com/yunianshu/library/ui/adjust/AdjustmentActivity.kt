@@ -209,7 +209,7 @@ class AdjustmentActivity : BaseActivity() {
         fun complete() {
             gpuImage.saveToPictures(
                 Utils.getApp().getExternalFilesDir("tmp")!!.absolutePath,
-                "adjust_" + System.currentTimeMillis() + "jpeg"
+                "adjust_" + System.currentTimeMillis() + ".jpg"
             ) {
                 setResult(Contant.ADJUST, intent.setData(it))
                 finish()

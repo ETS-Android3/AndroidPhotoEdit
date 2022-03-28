@@ -1,6 +1,6 @@
 package com.yunianshu.library.ui.crop
 
-import android.graphics.BitmapFactory
+import android.graphics.*
 import android.net.Uri
 import android.widget.Toast
 import com.blankj.utilcode.util.FileUtils
@@ -16,13 +16,13 @@ import com.yunianshu.library.BaseActivity
 import com.yunianshu.library.Contant
 import com.yunianshu.library.R
 import com.yunianshu.library.bean.CropViewBase
-import com.yunianshu.library.ui.adjust.AdjustmentActivity
 import java.io.File
+
 
 /**
  * 3.裁剪界面
  */
-class CropActivity : BaseActivity() {
+class CropActivity : BaseActivity(), CropImageView.OnCropImageCompleteListener {
 
     private lateinit var viewModel: CropViewModel
     private var width: Int = 0
@@ -57,7 +57,24 @@ class CropActivity : BaseActivity() {
     }
 
     private fun initCropView() {
+        findViewById<CropImageView>(R.id.cropImageView).setOnCropImageCompleteListener(this)
         viewModel.cropViewBase.postValue(CropViewBase(width, height, Uri.parse(url)))
+    }
+
+    private fun convertBitmap(srcBitmap: Bitmap): Bitmap? {
+        val width = srcBitmap.width
+        val height = srcBitmap.height
+        val newBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas()
+        val matrix = Matrix()
+        matrix.postScale(-1f, 1f)
+        val newBitmap2 = Bitmap.createBitmap(srcBitmap, 0, 0, width, height, matrix, true)
+        canvas.drawBitmap(
+            newBitmap2,
+            Rect(0, 0, width, height),
+            Rect(0, 0, width, height), null
+        )
+        return newBitmap2
     }
 
     inner class CropClickProxy {
@@ -81,24 +98,29 @@ class CropActivity : BaseActivity() {
                     )
                 )
             )
-            setResult(Contant.CROP, intent.setData(Uri.fromFile(File(path))))
         }
+
         /**
          * 镜像
          */
-        fun image(){
-
+        fun image() {
+            val bitmap = findViewById<CropImageView>(R.id.cropImageView).croppedImage
+            findViewById<CropImageView>(R.id.cropImageView).setAspectRatio(bitmap.width,bitmap.height)
+            findViewById<CropImageView>(R.id.cropImageView).setFixedAspectRatio(true)
+            findViewById<CropImageView>(R.id.cropImageView).setImageBitmap(convertBitmap(bitmap))
         }
 
-        fun rotate90(){
-
+        fun rotate90() {
+            var degrees = findViewById<CropImageView>(R.id.cropImageView).rotatedDegrees
+            findViewById<CropImageView>(R.id.cropImageView).rotatedDegrees = degrees + 90
         }
     }
 
     inner class CropSeekBarListener : OnSeekChangeListener {
 
         override fun onSeeking(seekParams: SeekParams) {
-
+            findViewById<CropImageView>(R.id.cropImageView).rotatedDegrees =
+                180 + seekParams.progress
         }
 
         override fun onStartTrackingTouch(seekBar: IndicatorSeekBar) {
@@ -108,5 +130,12 @@ class CropActivity : BaseActivity() {
 
         }
 
+    }
+
+    override fun onCropImageComplete(view: CropImageView?, result: CropImageView.CropResult?) {
+        result?.let {
+            setResult(Contant.CROP, intent.setData(result.uri))
+            finish()
+        }
     }
 }

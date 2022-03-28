@@ -62,15 +62,14 @@ class PhotoEditActivity : BaseActivity() {
         loadPhotoEditItems()
         val activityResultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
-                if (activityResult.resultCode == Activity.RESULT_OK) {//返回
-                    val uri = activityResult.data
-                    uri?.let {
-                        findViewById<ImageView>(R.id.imageView).setImageBitmap(
-                            BitmapFactory.decodeFile(
-                                UriUtils.uri2File(uri.data).toString()
-                            )
+                val uri = activityResult.data
+                uri?.let {
+                    findViewById<ImageView>(R.id.imageView).setImageBitmap(
+                        BitmapFactory.decodeFile(
+                            UriUtils.uri2File(uri.data).toString()
                         )
-                    }
+                    )
+                    filePath = UriUtils.uri2File(uri.data).absolutePath
                 }
             }
         adapter.setOnItemClickListener { _, _, position ->
@@ -111,11 +110,13 @@ class PhotoEditActivity : BaseActivity() {
                 bitmap.height.toFloat()
             )
             var path = Utils.getApp()
-                .getExternalFilesDir("tmp")!!.absolutePath + File.separator + "rotate_" + com.yunianshu.library.util.ImageUtils.hashCode(filePath)+".jpg"
+                .getExternalFilesDir("tmp")!!.absolutePath + File.separator + "rotate_" + com.yunianshu.library.util.ImageUtils.hashCode(
+                filePath
+            ) + ".jpg"
             val save = ImageUtils.save(bitmap, path, Bitmap.CompressFormat.JPEG)
-            if(!save){
-                Log.e(this.localClassName,"保存失败")
-            }else{
+            if (!save) {
+                Log.e(this.localClassName, "保存失败")
+            } else {
                 filePath = path
             }
         }

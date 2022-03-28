@@ -1,8 +1,11 @@
 package com.yunianshu.library.ext
 
+import android.graphics.BitmapFactory
+import android.net.Uri
 import androidx.databinding.BindingAdapter
 import com.theartofdev.edmodo.cropper.CropImageView
 import com.yunianshu.library.bean.CropViewBase
+import java.io.File
 
 /**
  * Create by WingGL
@@ -10,11 +13,14 @@ import com.yunianshu.library.bean.CropViewBase
  */
 
 @BindingAdapter("setConfig")
-fun CropImageView.setConfig(base: CropViewBase) {
-    this.isAutoZoomEnabled = base.isAutoZoomEnabled
-    this.isShowProgressBar = base.isShowProgressBar
-    this.cropShape = base.cropShape
-    this.scaleType = base.scaleType
-    this.setAspectRatio(base.width,base.height)
-    this.setImageUriAsync(base.uri)
+fun CropImageView.setConfig(base: CropViewBase?) {
+    base?.let {
+        this.isAutoZoomEnabled = it.isAutoZoomEnabled
+        this.isShowProgressBar = it.isShowProgressBar
+        this.cropShape = it.cropShape
+        this.scaleType = it.scaleType
+        if(it.width > 0 && it.height > 0)
+        this.setAspectRatio(it.width,it.height)
+        this.setImageBitmap(BitmapFactory.decodeFile(it.uri.encodedPath))
+    }
 }

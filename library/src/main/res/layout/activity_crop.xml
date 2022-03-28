@@ -22,6 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/design_default_color_on_primary"
+        android:fitsSystemWindows="true"
         tools:context=".ui.crop.CropActivity">
 
         <ImageView
@@ -75,8 +76,8 @@
                 app:isb_indicator_text_color="@color/base_color"
                 app:isb_indicator_text_size="12sp"
                 app:isb_progress="50"
-                max="@{-180f}"
-                min="@{180f}"
+                max="@{180f}"
+                min="@{-180f}"
                 progress="@{0f}"
                 app:isb_thumb_color="@color/base_color"
                 app:isb_track_progress_color="@color/base_color"

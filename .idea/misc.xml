@@ -20,10 +20,12 @@
         <entry key="..\:/android/PhotoEdit/library/src/main/res/layout/activity_sticker.xml" value="0.8161209068010076" />
         <entry key="..\:/android/PhotoEdit/library/src/main/res/layout/activity_words.xml" value="0.8161209068010076" />
         <entry key="..\:/android/PhotoEdit/library/src/main/res/layout/item_photo_edit.xml" value="0.9" />
+        <entry key="..\:/androidProject/AndroidPhotoEdit/library/src/main/res/layout/activity_adjustment.xml" value="0.2328125" />
+        <entry key="..\:/androidProject/AndroidPhotoEdit/library/src/main/res/layout/activity_crop.xml" value="0.2328125" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

@@ -555,7 +555,7 @@ object GPUImageFilterTools {
         private inner class WhiteBalanceAdjuster(filter: GPUImageWhiteBalanceFilter) :
             Adjuster<GPUImageWhiteBalanceFilter>(filter) {
             override fun adjust(percentage: Int) {
-                filter.setTemperature(range(percentage, 2000.0f, 8000.0f))
+                filter.setTemperature(range(percentage, 500.0f, 12500.0f))
             }
         }
 

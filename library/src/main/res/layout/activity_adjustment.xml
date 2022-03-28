@@ -108,6 +108,7 @@
                 app:layout_constraintStart_toStartOf="parent">
 
                 <ImageView
+                    android:onClick="@{()->click.cancel()}"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginStart="20dp"
