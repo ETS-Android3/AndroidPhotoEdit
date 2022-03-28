@@ -1,12 +1,9 @@
 package com.yunianshu.photoedit
 
-import android.app.Instrumentation
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import coil.load
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.entity.LocalMedia
@@ -48,6 +45,9 @@ class MainActivity : AppCompatActivity() {
     fun startActivity(localMedia: LocalMedia){
         val intent = Intent(this@MainActivity, PhotoEditActivity::class.java)
         intent.putExtra("url",localMedia.availablePath)
+        if(localMedia.width>localMedia.height){
+            intent.putExtra("rotate",true)
+        }
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
             val stringExtra = it.data?.getStringExtra("url")
             when(it.resultCode == RESULT_OK && stringExtra != null){

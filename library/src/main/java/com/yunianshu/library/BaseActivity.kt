@@ -10,7 +10,7 @@ import com.kunminx.architecture.ui.page.DataBindingActivity
  * Create by WingGL
  * createTime: 2022/3/21
  */
-abstract class BaseActivity:DataBindingActivity() {
+abstract class BaseActivity():DataBindingActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,6 +20,7 @@ abstract class BaseActivity:DataBindingActivity() {
     }
 
     abstract fun loadView()
+
 
 
     protected open fun <T : ViewModel> getActivityScopeViewModel(modelClass: Class<T>): T {

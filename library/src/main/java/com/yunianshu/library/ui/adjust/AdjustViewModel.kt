@@ -15,8 +15,8 @@ class AdjustViewModel : ViewModel() {
     var url = UnPeekLiveData<String>()
     var curBaseInfo = UnPeekLiveData<AdjustBaseInfo>()
     var curAdjustText = UnPeekLiveData<String>()
-    private var baseInfos = UnPeekLiveData<List<AdjustBaseInfo>>()//每个设置的参数
-    private val list = UnPeekLiveData<List<PhotoEditItem>>()
+    private var baseInfos = UnPeekLiveData<List<AdjustBaseInfo>>()//每个设置进度条的参数
+    private val list = UnPeekLiveData<List<PhotoEditItem>>()//设置项列表
     val originBitmap = UnPeekLiveData<Bitmap>()
     val currentBitmap = UnPeekLiveData<Bitmap>()
 
@@ -33,7 +33,7 @@ class AdjustViewModel : ViewModel() {
     }
 
     fun select(pos: Int) {
-        curBaseInfo.postValue(baseInfos.value?.get(pos) ?: AdjustBaseInfo())
+        curBaseInfo.postValue(baseInfos.value?.get(pos) ?: curBaseInfo.value)
     }
 
     fun setProgressChanged(progress:Int){

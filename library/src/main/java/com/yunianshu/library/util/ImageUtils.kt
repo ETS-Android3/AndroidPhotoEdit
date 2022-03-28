@@ -1,6 +1,7 @@
 package com.yunianshu.library.util
 
 import android.graphics.Bitmap
+import com.blankj.utilcode.util.FileUtils
 
 object ImageUtils {
     /**
@@ -52,5 +53,14 @@ object ImageUtils {
             }
         }
         return nv21
+    }
+
+    fun hashCode(path: String): Int {
+        var result = FileUtils.getFileName(path).hashCode()
+        result = 31 * result + path.hashCode()
+        result = 31 * result + FileUtils.getFileExtension(path).hashCode()
+        result = 31 * result + FileUtils.getSize(path).hashCode()
+        result = 31 * result + FileUtils.getFileLastModified(path).hashCode()
+        return result
     }
 }

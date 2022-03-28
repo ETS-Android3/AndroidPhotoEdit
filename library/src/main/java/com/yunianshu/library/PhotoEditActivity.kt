@@ -2,16 +2,19 @@ package com.yunianshu.library
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
-import coil.load
+import com.blankj.utilcode.util.ImageUtils
+import com.blankj.utilcode.util.UriUtils
+import com.blankj.utilcode.util.Utils
 import com.kunminx.architecture.ui.page.DataBindingConfig
 import com.yunianshu.library.bean.PhotoEditItem
 import com.yunianshu.library.ui.adjust.AdjustmentActivity
 import com.yunianshu.library.ui.crop.CropActivity
-import com.yunianshu.library.ui.fillter.FillterActivity
+import com.yunianshu.library.ui.fillter.FilterActivity
 import com.yunianshu.library.ui.frame.FrameActivity
 import com.yunianshu.library.ui.sticker.StickerActivity
 import com.yunianshu.library.ui.words.WordsActivity
@@ -25,7 +28,10 @@ class PhotoEditActivity : BaseActivity() {
 
     private lateinit var viewModel: PhotoShareViewModel
     private lateinit var adapter: PhotoEditAdapter
-    private lateinit var url: String
+    private lateinit var filePath: String
+    private var rotate: Boolean = false
+    private var width: Int = 0
+    private var height: Int = 0
 
     /**
      * 1.先初始化ViewModel
@@ -48,44 +54,72 @@ class PhotoEditActivity : BaseActivity() {
      * 3.填充数据
      */
     override fun loadView() {
-        url = intent.getStringExtra("url").toString()
-        val parse = Uri.fromFile(File(url))
-        findViewById<ImageView>(R.id.imageView).load(parse){
-            placeholder(R.drawable.ic_load_default)
-        }
+        filePath = intent.getStringExtra("url").toString()
+        rotate = intent.getBooleanExtra("rotate", false)
+        width = intent.getIntExtra("width", 0)
+        height = intent.getIntExtra("height", 0)
+        loadImage()
         loadPhotoEditItems()
         val activityResultLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
-                if (activityResult.resultCode == Activity.RESULT_OK) {
-                    val result = activityResult.data?.getStringExtra("title")
-                    result?.let { Log.e("yhj", it) }
+                if (activityResult.resultCode == Activity.RESULT_OK) {//返回
+                    val uri = activityResult.data
+                    uri?.let {
+                        findViewById<ImageView>(R.id.imageView).setImageBitmap(
+                            BitmapFactory.decodeFile(
+                                UriUtils.uri2File(uri.data).toString()
+                            )
+                        )
+                    }
                 }
             }
         adapter.setOnItemClickListener { _, _, position ->
             var intent: Intent? = null
             when (position) {
-                0 -> {
-                    intent = Intent(this,AdjustmentActivity::class.java)
+                Contant.ADJUST -> {
+                    intent = Intent(this, AdjustmentActivity::class.java)
                 }
-                1 -> {
-                    intent =Intent(this,FillterActivity::class.java)
+                Contant.FILTER -> {
+                    intent = Intent(this, FilterActivity::class.java)
                 }
-                2 -> {
-                    intent = Intent(this,CropActivity::class.java)
+                Contant.CROP -> {
+                    intent = Intent(this, CropActivity::class.java)
                 }
-                3 -> {
-                    intent = Intent(this,FrameActivity::class.java)
+                Contant.FRAME -> {
+                    intent = Intent(this, FrameActivity::class.java)
                 }
-                4 -> {
-                    intent = Intent(this,StickerActivity::class.java)
+                Contant.STICKER -> {
+                    intent = Intent(this, StickerActivity::class.java)
                 }
-                5 -> {
+                Contant.WORDS -> {
                     intent = Intent(this, WordsActivity::class.java)
                 }
             }
-            intent?.putExtra("url",url)
+            intent?.putExtra("url", filePath)
+            intent?.putExtra("rotate", rotate)
             activityResultLauncher.launch(intent)
         }
+    }
+
+    private fun loadImage() {
+        var bitmap = BitmapFactory.decodeFile(filePath)
+        if (rotate) {//是否需要旋转
+            bitmap = ImageUtils.rotate(
+                bitmap,
+                90,
+                bitmap.width.toFloat(),
+                bitmap.height.toFloat()
+            )
+            var path = Utils.getApp()
+                .getExternalFilesDir("tmp")!!.absolutePath + File.separator + "rotate_" + com.yunianshu.library.util.ImageUtils.hashCode(filePath)+".jpg"
+            val save = ImageUtils.save(bitmap, path, Bitmap.CompressFormat.JPEG)
+            if(!save){
+                Log.e(this.localClassName,"保存失败")
+            }else{
+                filePath = path
+            }
+        }
+        findViewById<ImageView>(R.id.imageView).setImageBitmap(bitmap)
     }
 
     private fun loadPhotoEditItems() {
@@ -99,7 +133,16 @@ class PhotoEditActivity : BaseActivity() {
         viewModel.setList(list)
     }
 
-    inner class PhotoEditClickProxy() {
+    /**
+     * 横向图片旋转为纵向
+     * @param srcPath
+     */
+    private fun rotatePic(srcPath: String) {
+
+    }
+
+
+    inner class PhotoEditClickProxy {
 
         fun back() {
             finish()
@@ -107,6 +150,10 @@ class PhotoEditActivity : BaseActivity() {
 
         fun complete() {
 
+        }
+
+        fun cancel() {
+            finish()
         }
     }
 

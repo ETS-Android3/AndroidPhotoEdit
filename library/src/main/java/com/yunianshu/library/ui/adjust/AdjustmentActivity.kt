@@ -1,22 +1,23 @@
 package com.yunianshu.library.ui.adjust
 
 import android.graphics.*
-import android.util.Log
+import androidx.constraintlayout.widget.ConstraintLayout
+import com.blankj.utilcode.util.ImageUtils
+import com.blankj.utilcode.util.Utils
 import com.gyf.immersionbar.ktx.immersionBar
 import com.kunminx.architecture.ui.page.DataBindingConfig
-import com.yunianshu.gpuapplication.ImageFilterEngine
 import com.yunianshu.indicatorseekbar.widget.IndicatorSeekBar
 import com.yunianshu.indicatorseekbar.widget.OnSeekChangeListener
 import com.yunianshu.indicatorseekbar.widget.SeekParams
-import com.yunianshu.library.BR
-import com.yunianshu.library.BaseActivity
-import com.yunianshu.library.PhotoEditAdapter
-import com.yunianshu.library.R
+import com.yunianshu.library.*
 import com.yunianshu.library.bean.AdjustBaseInfo
 import com.yunianshu.library.bean.PhotoEditItem
-import com.yunianshu.library.util.ImageUtils
-import java.io.ByteArrayOutputStream
-import java.io.FileInputStream
+import com.yunianshu.library.util.GPUImageFilterTools
+import jp.co.cyberagent.android.gpuimage.GLTextureView
+import jp.co.cyberagent.android.gpuimage.GPUImage
+import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilter
+import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilterGroup
+import kotlin.concurrent.thread
 
 /**
  * 1.调整处理界面
@@ -26,23 +27,29 @@ class AdjustmentActivity : BaseActivity() {
     private var infos = mutableListOf<AdjustBaseInfo>()
 
     init {
-        infos.add(AdjustBaseInfo(pos = 0,  max=200f, currentProgress = 0f))//亮度
-        infos.add(AdjustBaseInfo(pos = 1, currentProgress = 10f))//对比度
-        infos.add(AdjustBaseInfo(pos = 2,  max=200f,currentProgress = 20f))//饱和度
-        infos.add(AdjustBaseInfo(pos = 3, currentProgress = 30f))//锐化
-        infos.add(AdjustBaseInfo(pos = 4, currentProgress = 40f))//曝光
-        infos.add(AdjustBaseInfo(pos = 5, currentProgress = 50f))//阴影
-        infos.add(AdjustBaseInfo(pos = 6, currentProgress = 60f))//色温
-        infos.add(AdjustBaseInfo(pos = 7, currentProgress = 70f))//暗角
+        //初始化调节参数
+        infos.add(AdjustBaseInfo(0, 0f, 100f, 50f))//亮度
+        infos.add(AdjustBaseInfo(1, 0f, 100f, 25f))//对比度
+        infos.add(AdjustBaseInfo(2, 0f, 100f, 50f))//饱和度
+        infos.add(AdjustBaseInfo(3, 0f, 100f, 50f))//锐化
+        infos.add(AdjustBaseInfo(4, 0f, 100f, 50f))//曝光
+        infos.add(AdjustBaseInfo(5, 0f, 100f))//阴影
+        infos.add(AdjustBaseInfo(6, 0f, 100f, 50f))//色温
+        infos.add(AdjustBaseInfo(7, 0f, 100f))//暗角
+        initGPUImageFilterGroup()
     }
 
     private lateinit var viewModel: AdjustViewModel
     private lateinit var url: String
+    private var rotate: Boolean = false
     private lateinit var adapter: PhotoEditAdapter
     private var mBmpW: Int = 0
     private var mBmpH: Int = 0
-    private lateinit var mNV21Buf: ByteArray
-    private lateinit var mPreviewNV21Buf: ByteArray
+
+    private val surfaceView: GLTextureView by lazy { findViewById(R.id.imageView) }
+    private lateinit var gpuImage: GPUImage
+    private var filterAdjuster: GPUImageFilterTools.FilterAdjuster? = null
+    private lateinit var group: GPUImageFilterGroup
 
 
     override fun initViewModel() {
@@ -65,46 +72,75 @@ class AdjustmentActivity : BaseActivity() {
             statusBarDarkFont(true)
         }
         url = intent.getStringExtra("url").toString()
+        rotate = intent.getBooleanExtra("rotate", false)
+        var bitmap = BitmapFactory.decodeFile(url)
+        mBmpW = bitmap.width
+        mBmpH = bitmap.height
+        val layoutParams = surfaceView.layoutParams as ConstraintLayout.LayoutParams
+        layoutParams.dimensionRatio = "$mBmpW:$mBmpH"
+        gpuImage = GPUImage(this)
+        gpuImage.setBackgroundColor(255f, 255f, 255f)
+        gpuImage.setGLTextureView(surfaceView)
+        thread {
+            gpuImage.setImage(
+                if (rotate)
+                    ImageUtils.rotate(bitmap, 90, bitmap.width.toFloat(), bitmap.height.toFloat())
+                else
+                    bitmap
+            )
+        }
         loadPhotoEditItems()
-        load()
         viewModel.url.postValue(url)
+        viewModel.setInfo(infos)
+        viewModel.curBaseInfo.postValue(infos[0])
+        viewModel.selectAdjust(getString(R.string.text_brightness))
+        viewModel.select(0)
+        switchFilterTo(group.filters[0])
         adapter.setOnItemClickListener { _, item, position ->
             viewModel.selectAdjust(item.text)
             viewModel.select(position)
-        }
-        viewModel.setInfo(infos)
-        viewModel.selectAdjust(getString(R.string.text_brightness))
-        viewModel.select(0)
-    }
-
-    private fun load() {
-        try {
-            val op = BitmapFactory.Options()
-            op.inPreferredConfig = Bitmap.Config.ARGB_8888
-            val bitmap = BitmapFactory.decodeFile(url, op)
-            if (bitmap != null) {
-                viewModel.originBitmap.postValue(bitmap)
-                viewModel.currentBitmap.postValue(bitmap)
-            }
-            mBmpW = bitmap.width
-            mBmpH = bitmap.height
-            Log.i("test", " load() image size:" + mBmpW + "x" + mBmpH)
-            val nv21Len: Int = mBmpW * mBmpH * 3 shr 1
-            mNV21Buf = ImageUtils.bitmapToNv21(bitmap,mBmpW,mBmpH)!!
-//            val nvIs = applicationContext.assets.open("testNV21.nv21")
-//            val nvLen = nvIs.available()
-//            Log.i("test", " load() nv21Len:$nv21Len nvLen:$nvLen")
-//            val read = nvIs.read(mNV21Buf)
-//            nvIs.close()
-//            Log.i("test", " load() nv21 read byte:$read")
-            mPreviewNV21Buf = ByteArray(nv21Len)
-        } catch (e: Exception) {
-            e.printStackTrace()
+            switchFilterTo(group.filters[position])
         }
     }
 
-
-
+    private fun initGPUImageFilterGroup() {
+        group = GPUImageFilterGroup(
+            listOf(
+                GPUImageFilterTools.createFilterForType(
+                    this,
+                    GPUImageFilterTools.FilterType.BRIGHTNESS
+                ),/*亮度*/
+                GPUImageFilterTools.createFilterForType(
+                    this,
+                    GPUImageFilterTools.FilterType.CONTRAST
+                ),/*对比度*/
+                GPUImageFilterTools.createFilterForType(
+                    this,
+                    GPUImageFilterTools.FilterType.SATURATION
+                ),/*饱和度*/
+                GPUImageFilterTools.createFilterForType(
+                    this,
+                    GPUImageFilterTools.FilterType.SHARPEN
+                ),/*锐化*/
+                GPUImageFilterTools.createFilterForType(
+                    this,
+                    GPUImageFilterTools.FilterType.EXPOSURE
+                ),/*曝光*/
+                GPUImageFilterTools.createFilterForType(
+                    this,
+                    GPUImageFilterTools.FilterType.HIGHLIGHT_SHADOW
+                ),/*阴影*/
+                GPUImageFilterTools.createFilterForType(
+                    this,
+                    GPUImageFilterTools.FilterType.WHITE_BALANCE
+                ),/*色温*/
+                GPUImageFilterTools.createFilterForType(
+                    this,
+                    GPUImageFilterTools.FilterType.VIGNETTE
+                )/*暗角*/
+            )
+        )
+    }
 
     private fun loadPhotoEditItems() {
         val list = mutableListOf<PhotoEditItem>()
@@ -114,11 +150,36 @@ class AdjustmentActivity : BaseActivity() {
                 getString(R.string.text_brightness)
             )
         )
-        list.add(PhotoEditItem(R.mipmap.photoedit_icon_contrast, getString(R.string.text_contrast)))
-        list.add(PhotoEditItem(R.mipmap.photoedit_icon_ratio, getString(R.string.text_ratio)))
-        list.add(PhotoEditItem(R.mipmap.photoedit_icon_sharp, getString(R.string.text_sharp)))
-        list.add(PhotoEditItem(R.mipmap.photoedit_icon_exposure, getString(R.string.text_exposure)))
-        list.add(PhotoEditItem(R.mipmap.photoedit_icon_shadown, getString(R.string.text_shadown)))
+        list.add(
+            PhotoEditItem(
+                R.mipmap.photoedit_icon_contrast,
+                getString(R.string.text_contrast)
+            )
+        )
+        list.add(
+            PhotoEditItem(
+                R.mipmap.photoedit_icon_ratio,
+                getString(R.string.text_ratio)
+            )
+        )
+        list.add(
+            PhotoEditItem(
+                R.mipmap.photoedit_icon_sharp,
+                getString(R.string.text_sharp)
+            )
+        )
+        list.add(
+            PhotoEditItem(
+                R.mipmap.photoedit_icon_exposure,
+                getString(R.string.text_exposure)
+            )
+        )
+        list.add(
+            PhotoEditItem(
+                R.mipmap.photoedit_icon_shadown,
+                getString(R.string.text_shadown)
+            )
+        )
         list.add(
             PhotoEditItem(
                 R.mipmap.photoedit_icon_color_temperature,
@@ -140,96 +201,41 @@ class AdjustmentActivity : BaseActivity() {
         fun back() {
             finish()
         }
+
+        fun cancel() {
+            finish()
+        }
+
+        fun complete() {
+            gpuImage.saveToPictures(
+                Utils.getApp().getExternalFilesDir("tmp")!!.absolutePath,
+                "adjust_" + System.currentTimeMillis() + "jpeg"
+            ) {
+                setResult(Contant.ADJUST, intent.setData(it))
+                finish()
+            }
+        }
     }
 
     inner class SeekBarListener : OnSeekChangeListener {
 
         override fun onSeeking(seekParams: SeekParams) {
-            changeBitmapShow(seekParams.progress)
+            filterAdjuster?.adjust(seekParams.progress)
+            gpuImage.setFilter(group)
         }
 
         override fun onStartTrackingTouch(seekBar: IndicatorSeekBar) {
         }
 
         override fun onStopTrackingTouch(seekBar: IndicatorSeekBar) {
+            //记录调节类型的位置
             viewModel.setProgressChanged(seekBar.progress)
         }
 
     }
 
-    fun changeBitmapShow(progress: Int) {
-        Log.i("test", "onProgressChanged brightProgress=$progress")
-        var dstBmp:Bitmap = BitmapFactory.decodeResource(resources,R.drawable.ic_load_default)
-        viewModel.curBaseInfo.value?.pos.let {
-            when (it) {
-                0 -> {//亮度
-                    System.arraycopy(mNV21Buf, 0, mPreviewNV21Buf, 0, mNV21Buf.size)
-                    ImageFilterEngine.processBrightness(
-                        mPreviewNV21Buf,
-                        mBmpW,
-                        mBmpH,
-                        progress
-                    )
-                    val bao = ByteArrayOutputStream()
-                    val yuvImage = YuvImage(mPreviewNV21Buf, ImageFormat.NV21, mBmpW, mBmpH, null)
-                    yuvImage.compressToJpeg(Rect(0, 0, mBmpW, mBmpH), 100, bao)
-                    val buf = bao.toByteArray()
-                    dstBmp = BitmapFactory.decodeByteArray(buf, 0, buf.size)
-                }
-                1 -> {//对比度
-                    System.arraycopy(mNV21Buf, 0, mPreviewNV21Buf, 0, mNV21Buf.size)
-                    ImageFilterEngine.processContrast(
-                        mPreviewNV21Buf,
-                        mBmpW,
-                        mBmpH,
-                        progress
-                    )
-
-                    val bao = ByteArrayOutputStream()
-                    val yuvImage = YuvImage(mPreviewNV21Buf, ImageFormat.NV21, mBmpW, mBmpH, null)
-                    yuvImage.compressToJpeg(Rect(0, 0, mBmpW, mBmpH), 100, bao)
-                    val buf = bao.toByteArray()
-                    dstBmp = BitmapFactory.decodeByteArray(buf, 0, buf.size)
-
-                }
-                2 -> {//饱和度
-                    System.arraycopy(mNV21Buf, 0, mPreviewNV21Buf, 0, mNV21Buf.size)
-                    ImageFilterEngine.processSaturation(mPreviewNV21Buf, mBmpW, mBmpH, progress)
-                    val bao = ByteArrayOutputStream()
-                    val yuvImage = YuvImage(mPreviewNV21Buf, ImageFormat.NV21, mBmpW, mBmpH, null)
-                    yuvImage.compressToJpeg(Rect(0, 0, mBmpW, mBmpH), 100, bao)
-                    val buf = bao.toByteArray()
-                    dstBmp = BitmapFactory.decodeByteArray(buf, 0, buf.size)
-                }
-                3 -> {//锐化
-
-                }
-                4 -> {//曝光
-
-                }
-                5 -> {//阴影
-
-                }
-                6 -> {//色温
-                    System.arraycopy(mNV21Buf, 0, mPreviewNV21Buf, 0, mNV21Buf.size)
-                    ImageFilterEngine.processColorTemperature(
-                        mPreviewNV21Buf,
-                        mBmpW,
-                        mBmpH,
-                        progress
-                    )
-                    val bao = ByteArrayOutputStream()
-                    val yuvImage = YuvImage(mPreviewNV21Buf, ImageFormat.NV21, mBmpW, mBmpH, null)
-                    yuvImage.compressToJpeg(Rect(0, 0, mBmpW, mBmpH), 100, bao)
-                    val buf = bao.toByteArray()
-                    dstBmp = BitmapFactory.decodeByteArray(buf, 0, buf.size)
-                }
-                7 -> {//暗角
-
-                }
-
-            }
-            viewModel.currentBitmap.postValue(dstBmp)
-        }
+    private fun switchFilterTo(filter: GPUImageFilter) {
+        filterAdjuster = GPUImageFilterTools.FilterAdjuster(filter)
     }
+
 }

@@ -19,5 +19,6 @@
     <string name="text_shadown">阴影</string>
     <string name="text_color_temperature">色温</string>
     <string name="text_dark_angle">暗角</string>
+    <string name="text_image_no_find">图片无法找到</string>
 
 </resources>
