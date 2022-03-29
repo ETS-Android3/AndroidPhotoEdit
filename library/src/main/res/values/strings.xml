@@ -1,12 +1,9 @@
 <resources>
-    <string name="title_activity_photo_edit">PhotoEditActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="text_complete">完成</string>
     <string name="text_print_preview">打印预览</string>
     <string name="text_back">返回</string>
     <string name="text_adjust">调整</string>
-    <string name="text_fillter">滤镜</string>
+    <string name="text_filter">滤镜</string>
     <string name="text_crop">裁剪</string>
     <string name="text_frame">相框</string>
     <string name="text_sticker">贴纸</string>
@@ -20,5 +17,21 @@
     <string name="text_color_temperature">色温</string>
     <string name="text_dark_angle">暗角</string>
     <string name="text_image_no_find">图片无法找到</string>
+
+    <string-array name="filters">
+        <item>原始</item>
+        <item>软化</item>
+        <item>黑白</item>
+        <item>经典</item>
+        <item>华丽</item>
+        <item>复古</item>
+        <item>优雅</item>
+        <item>电影</item>
+        <item>回忆</item>
+        <item>优格</item>
+        <item>流年</item>
+        <item>发光</item>
+        <item>马赛克</item>
+    </string-array>
 
 </resources>

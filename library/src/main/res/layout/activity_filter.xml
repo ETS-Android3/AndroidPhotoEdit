@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="vm"
+            type="com.yunianshu.library.ui.fillter.FilterViewModel" />
+        <variable
+            name="click"
+            type="com.yunianshu.library.ui.fillter.FilterActivity.FilterClickProxy" />
+
+        <variable
+            name="adapter"
+            type="com.yunianshu.library.adapter.FilterAdapter" />
+
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/design_default_color_on_primary"
+        android:fitsSystemWindows="true"
+        tools:context=".ui.crop.FilterActivity">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="wrap_content"
+            android:layout_height="?android:attr/actionBarSize"
+            android:clickable="true"
+            android:contentDescription="@string/text_back"
+            android:focusable="true"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:onClick="@{()->click.back()}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_btn_back_dark" />
+
+        <ImageView
+            android:id="@+id/filterImageView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="20dp"
+            loadBitmap="@{vm.currentItem.bitmap}"
+            app:layout_constraintBottom_toTopOf="@+id/recyclerView2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivBack" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView2"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:orientation="horizontal"
+            submitList="@{vm.list}"
+            adapter="@{adapter}"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:onClick="@{()->click.cancel()}"
+                android:layout_marginStart="20dp"
+                android:background="@drawable/ic_close"
+                android:padding="20dp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/text_filter"
+                android:textColor="#999999"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:onClick="@{()->click.complete()}"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/ic_yes" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

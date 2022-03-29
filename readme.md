@@ -21,3 +21,9 @@ settings.gradle需要添加镜像
 
 maven { url 'https://maven.aliyun.com/repository/jcenter' }
 
+4.jni异常 Implicit declaration of function 'njInit' is invalid in C99
+
+解决方法:build-->refresh Linked C++ Projects
+
+5.PhotoProcessing需要优化
+

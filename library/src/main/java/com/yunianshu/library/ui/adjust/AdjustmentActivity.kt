@@ -10,6 +10,8 @@ import com.yunianshu.indicatorseekbar.widget.IndicatorSeekBar
 import com.yunianshu.indicatorseekbar.widget.OnSeekChangeListener
 import com.yunianshu.indicatorseekbar.widget.SeekParams
 import com.yunianshu.library.*
+import com.yunianshu.library.Contant.KEY_ROTATE
+import com.yunianshu.library.Contant.KEY_URL
 import com.yunianshu.library.bean.AdjustBaseInfo
 import com.yunianshu.library.bean.PhotoEditItem
 import com.yunianshu.library.util.GPUImageFilterTools
@@ -71,8 +73,8 @@ class AdjustmentActivity : BaseActivity() {
         immersionBar {
             statusBarDarkFont(true)
         }
-        url = intent.getStringExtra("url").toString()
-        rotate = intent.getBooleanExtra("rotate", false)
+        url = intent.getStringExtra(KEY_URL).toString()
+        rotate = intent.getBooleanExtra(KEY_ROTATE, false)
         var bitmap = BitmapFactory.decodeFile(url)
         mBmpW = bitmap.width
         mBmpH = bitmap.height

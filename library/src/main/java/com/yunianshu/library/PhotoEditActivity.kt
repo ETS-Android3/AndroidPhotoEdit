@@ -126,7 +126,7 @@ class PhotoEditActivity : BaseActivity() {
     private fun loadPhotoEditItems() {
         val list = mutableListOf<PhotoEditItem>()
         list.add(PhotoEditItem(R.mipmap.photoedit_icon_adjust, getString(R.string.text_adjust)))
-        list.add(PhotoEditItem(R.mipmap.photoedit_icon_fillter, getString(R.string.text_fillter)))
+        list.add(PhotoEditItem(R.mipmap.photoedit_icon_fillter, getString(R.string.text_filter)))
         list.add(PhotoEditItem(R.mipmap.photoedit_icon_crop, getString(R.string.text_crop)))
         list.add(PhotoEditItem(R.mipmap.photoedit_icon_frame, getString(R.string.text_frame)))
         list.add(PhotoEditItem(R.mipmap.photoedit_icon_sticker, getString(R.string.text_sticker)))

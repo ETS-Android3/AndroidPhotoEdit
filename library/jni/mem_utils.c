@@ -16,7 +16,6 @@
 
 #include <stdlib.h>
 #include <mem_utils.h>
-#include <string.h>
 
 int newIntArray(unsigned int size, int** arrayPointer) {
 	unsigned int numBytes = size * sizeof(int);
