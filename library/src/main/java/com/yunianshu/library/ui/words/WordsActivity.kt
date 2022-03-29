@@ -17,12 +17,31 @@ class WordsActivity : BaseActivity() {
     }
 
     override fun getDataBindingConfig(): DataBindingConfig {
-        return DataBindingConfig(R.layout.activity_words,BR.vm,viewModel)
+        return DataBindingConfig(
+            R.layout.activity_words,
+            BR.vm,
+            viewModel
+        ).addBindingParam(BR.click, WordsClickProxy())
     }
 
     override fun loadView() {
         immersionBar {
             statusBarDarkFont(true)
+        }
+    }
+
+    inner class WordsClickProxy {
+
+        fun back() {
+            finish()
+        }
+
+        fun cancel() {
+            finish()
+        }
+
+        fun complete() {
+
         }
     }
 }

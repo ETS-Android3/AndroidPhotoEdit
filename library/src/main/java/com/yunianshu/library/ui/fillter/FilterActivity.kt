@@ -1,5 +1,6 @@
 package com.yunianshu.library.ui.fillter
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
@@ -34,6 +35,7 @@ class FilterActivity : BaseActivity() {
 
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun loadView() {
         immersionBar {
             statusBarDarkFont(true)
@@ -47,8 +49,8 @@ class FilterActivity : BaseActivity() {
                 toPosition(pos,13)
             }
         }
-        var url = intent.getStringExtra(Contant.KEY_URL)
-        var filterList = mutableListOf<FilterItem>()
+        val url = intent.getStringExtra(Contant.KEY_URL)
+        val filterList = mutableListOf<FilterItem>()
         val bitmap = BitmapFactory.decodeFile(url)
         val beginTime = System.currentTimeMillis()
         val layoutParams = imageView.layoutParams as ConstraintLayout.LayoutParams
@@ -68,24 +70,23 @@ class FilterActivity : BaseActivity() {
         viewModel.list.postValue(filterList)
     }
 
-    var mFirstVisiblePosition:Int = 0; //上次点击的位置
+    private var mFirstVisiblePosition:Int = 0 //上次点击的位置
     private fun toPosition(i:Int, size:Int) { // i 当前点击的条目，size数据总长度
-        var ScrollToPosition = mFirstVisiblePosition; //要滑动的位置
-        if (i - mFirstVisiblePosition > 0) { //右边
+        val scrollToPosition: Int = if (i - mFirstVisiblePosition > 0) { //右边
             if (i + 2 < size) { //保证在数据长度内
-                ScrollToPosition = i + 2;
+                i + 2
             } else {
-                ScrollToPosition = size;
+                size
             }
         } else { //左边
             if (i - 2 > 0) { //保证不会越界
-                ScrollToPosition = i - 2;
+                i - 2
             } else {
-                ScrollToPosition = 0;
+                0
             }
-        }
-        findViewById<RecyclerView>(R.id.recyclerView2).smoothScrollToPosition(ScrollToPosition); //滑动方法
-        mFirstVisiblePosition = i; //重新赋值
+        } //要滑动的位置
+        findViewById<RecyclerView>(R.id.recyclerView2).smoothScrollToPosition(scrollToPosition) //滑动方法
+        mFirstVisiblePosition = i //重新赋值
     }
 
     inner class FilterClickProxy{

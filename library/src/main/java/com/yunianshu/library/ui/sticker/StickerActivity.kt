@@ -1,7 +1,5 @@
 package com.yunianshu.library.ui.sticker
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import com.gyf.immersionbar.ktx.immersionBar
 import com.kunminx.architecture.ui.page.DataBindingConfig
 import com.yunianshu.library.BR
@@ -29,5 +27,20 @@ class StickerActivity : BaseActivity() {
         }
     }
 
+
+    inner class StickerClickProxy{
+
+        fun back() {
+            finish()
+        }
+
+        fun cancel() {
+            finish()
+        }
+
+        fun complete() {
+
+        }
+    }
 
 }
