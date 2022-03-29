@@ -10,11 +10,11 @@ import com.yunianshu.library.R
  * 2.滤镜处理界面
  */
 class FilterActivity : BaseActivity() {
-    private lateinit var viewModel: FillterViewModel
+    private lateinit var viewModel: FilterViewModel
 
 
     override fun initViewModel() {
-        viewModel = getActivityScopeViewModel(FillterViewModel::class.java)
+        viewModel = getActivityScopeViewModel(FilterViewModel::class.java)
     }
 
     override fun getDataBindingConfig(): DataBindingConfig {

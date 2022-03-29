@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/android/AndroidPhotoEdit/app/src/main/res/layout/activity_main.xml" value="0.7875" />
         <entry key="..\:/android/PhotoEdit/app/src/main/res/layout/activity_main.xml" value="0.328125" />
         <entry key="..\:/android/PhotoEdit/library/src/main/res/drawable/base_radius.xml" value="0.1995" />
         <entry key="..\:/android/PhotoEdit/library/src/main/res/drawable/bg_seekbar_border.xml" value="0.2075" />
@@ -25,7 +26,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

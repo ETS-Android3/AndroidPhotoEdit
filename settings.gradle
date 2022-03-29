@@ -3,7 +3,6 @@ pluginManagement {
         gradlePluginPortal()
         google()
         mavenCentral()
-        maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url 'https://maven.aliyun.com/repository/jcenter' }
     }
 }
@@ -15,10 +14,9 @@ dependencyResolutionManagement {
         maven {
             url "https://jitpack.io"
         }
-        maven { url 'https://maven.aliyun.com/repository/google' }
         maven { url 'https://maven.aliyun.com/repository/jcenter' }
     }
 }
-rootProject.name = "PhotoEdit"
+rootProject.name = "AndroidPhotoEdit"
 include ':app'
 include ':library'
