@@ -12,7 +12,7 @@
 
         <variable
             name="adapter"
-            type="com.yunianshu.library.adapter.FilterAdapter" />
+            type="com.yunianshu.library.adapter.TextStickerAdapter" />
 
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -36,26 +36,28 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_btn_back_dark" />
 
-        <ImageView
-            android:id="@+id/filterImageView"
+        <com.yunianshu.library.view.imagezoom.ImageViewTouch
+            android:id="@+id/wordsImage"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_margin="20dp"
-            app:layout_constraintBottom_toTopOf="@+id/recyclerView2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ivBack" />
 
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView2"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        <com.yunianshu.library.view.TextStickerView
+            android:id="@+id/wordsView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="20dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivBack" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linearLayout"

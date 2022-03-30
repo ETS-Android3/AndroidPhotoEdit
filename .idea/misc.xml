@@ -3,17 +3,6 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/drawable/base_radius.xml" value="0.2195" />
-        <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/drawable/bg_seekbar_border.xml" value="0.2195" />
-        <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/drawable/ic_btn_back.xml" value="0.2195" />
-        <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/drawable/ic_btn_back_dark.xml" value="0.2195" />
-        <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/drawable/ic_close.xml" value="0.2195" />
-        <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/drawable/ripple_bg.xml" value="0.2195" />
-        <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/drawable/seekbar_circle.xml" value="0.2195" />
-        <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/layout/activity_adjustment.xml" value="0.4975" />
-        <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/layout/activity_filter.xml" value="0.665" />
-        <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/layout/activity_sticker.xml" value="0.5499207606973059" />
-        <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/layout/item_photo_sticker.xml" value="0.65125" />
         <entry key="..\:/android/PhotoEdit/app/src/main/res/layout/activity_main.xml" value="0.328125" />
         <entry key="..\:/android/PhotoEdit/library/src/main/res/drawable/base_radius.xml" value="0.1995" />
         <entry key="..\:/android/PhotoEdit/library/src/main/res/drawable/bg_seekbar_border.xml" value="0.2075" />
@@ -37,10 +26,11 @@
         <entry key="..\:/androidProject/AndroidPhotoEdit/library/src/main/res/layout/activity_frame.xml" value="0.3489583333333333" />
         <entry key="..\:/androidProject/AndroidPhotoEdit/library/src/main/res/layout/activity_sticker.xml" value="0.3489583333333333" />
         <entry key="..\:/androidProject/AndroidPhotoEdit/library/src/main/res/layout/activity_words.xml" value="0.3489583333333333" />
+        <entry key="..\:/androidProject/AndroidPhotoEdit/library/src/main/res/layout/item_photo_edit.xml" value="0.259375" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

@@ -17,4 +17,6 @@ object Contant {
     const val KEY_WIDTH:String = "width"
     const val KEY_HEIGHT:String = "height"
     const val KEY_ROTATE:String = "rotate"
+
+    const val STICKER_BTN_HALF_SIZE:Int = 30
 }

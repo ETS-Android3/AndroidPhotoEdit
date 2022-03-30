@@ -7,12 +7,13 @@ import com.kunminx.binding_recyclerview.adapter.SimpleDataBindingAdapter
 import com.yunianshu.library.R
 import com.yunianshu.library.bean.StickerInfo
 import com.yunianshu.library.databinding.ItemPhotoStickerBinding
+import com.yunianshu.library.util.load
 
 /**
  * Create by WingGL
  * createTime: 2022/3/30
  */
-class StickerAdapter(context: Context) :
+open class StickerAdapter(context: Context) :
     SimpleDataBindingAdapter<StickerInfo, ItemPhotoStickerBinding>(
         context,
         R.layout.item_photo_sticker, StickerCallBack()
@@ -34,6 +35,6 @@ class StickerAdapter(context: Context) :
         holder: RecyclerView.ViewHolder
     ) {
         binding.item = item
-        binding.ivImage.setImageBitmap(item.bitmap)
+        binding.ivImage.load(item.bitmap)
     }
 }
