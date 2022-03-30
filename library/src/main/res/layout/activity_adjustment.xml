@@ -23,10 +23,10 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/design_default_color_on_primary"
+        android:background="@color/white"
         android:fitsSystemWindows="true">
 
-        <com.google.android.material.appbar.CollapsingToolbarLayout
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize">
 
@@ -43,13 +43,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:srcCompat="@drawable/ic_btn_back_dark" />
 
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="?android:attr/actionBarSize"
-            android:background="@color/design_default_color_on_primary">
+            android:background="@color/white">
 
                 <jp.co.cyberagent.android.gpuimage.GLTextureView
                     android:id="@+id/imageView"
@@ -90,7 +90,7 @@
                 progress="@{vm.curBaseInfo.currentProgress}"
                 app:isb_track_progress_color="@color/base_color"
                 app:isb_thumb_color="@color/base_color"
-                app:isb_indicator_color="@color/design_default_color_on_primary"
+                app:isb_indicator_color="@color/white"
                 app:isb_indicator_text_color="@color/base_color"
                 app:layout_constraintBottom_toTopOf="@+id/linearLayout"
                 app:layout_constraintEnd_toEndOf="parent"

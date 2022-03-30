@@ -89,7 +89,7 @@ class CropActivity : BaseActivity(), CropImageView.OnCropImageCompleteListener {
 
         fun complete() {
             var path = Utils.getApp()
-                .getExternalFilesDir("tmp")!!.absolutePath + File.separator + "crop_" + System.currentTimeMillis() + ".jpg"
+                .getExternalFilesDir("edit")!!.absolutePath + File.separator + "crop_" + System.currentTimeMillis() + ".jpg"
             FileUtils.createOrExistsFile(path)
             findViewById<CropImageView>(R.id.cropImageView).saveCroppedImageAsync(
                 Uri.fromFile(

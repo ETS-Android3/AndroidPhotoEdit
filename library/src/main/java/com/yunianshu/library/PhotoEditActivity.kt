@@ -95,7 +95,6 @@ class PhotoEditActivity : BaseActivity() {
                 }
             }
             intent?.putExtra("url", filePath)
-            intent?.putExtra("rotate", rotate)
             activityResultLauncher.launch(intent)
         }
     }

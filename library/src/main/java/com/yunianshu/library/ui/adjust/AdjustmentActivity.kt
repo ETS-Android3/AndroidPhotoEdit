@@ -1,7 +1,9 @@
 package com.yunianshu.library.ui.adjust
 
 import android.graphics.*
+import android.net.Uri
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.ImageUtils
 import com.blankj.utilcode.util.Utils
 import com.gyf.immersionbar.ktx.immersionBar
@@ -19,6 +21,7 @@ import jp.co.cyberagent.android.gpuimage.GLTextureView
 import jp.co.cyberagent.android.gpuimage.GPUImage
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilter
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilterGroup
+import java.io.File
 import kotlin.concurrent.thread
 
 /**
@@ -209,13 +212,13 @@ class AdjustmentActivity : BaseActivity() {
         }
 
         fun complete() {
-            gpuImage.saveToPictures(
-                Utils.getApp().getExternalFilesDir("tmp")!!.absolutePath,
-                "adjust_" + System.currentTimeMillis() + ".jpg"
-            ) {
-                setResult(Contant.ADJUST, intent.setData(it))
-                finish()
-            }
+            val bitmap = gpuImage.bitmapWithFilterApplied
+            var path = Utils.getApp()
+                .getExternalFilesDir("edit")!!.absolutePath + File.separator + "adjust_" + System.currentTimeMillis() + ".jpg"
+            FileUtils.createOrExistsFile(path)
+            ImageUtils.save(bitmap,path,Bitmap.CompressFormat.JPEG)
+            setResult(Contant.ADJUST, intent.setData(Uri.fromFile(File(path))))
+            finish()
         }
     }
 
@@ -224,6 +227,7 @@ class AdjustmentActivity : BaseActivity() {
         override fun onSeeking(seekParams: SeekParams) {
             filterAdjuster?.adjust(seekParams.progress)
             gpuImage.setFilter(group)
+            gpuImage.requestRender()
         }
 
         override fun onStartTrackingTouch(seekBar: IndicatorSeekBar) {

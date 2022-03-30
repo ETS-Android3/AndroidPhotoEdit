@@ -1,4 +1,4 @@
-package com.yunianshu.library.ui.sticker;
+package com.yunianshu.library.view;
 
 
 import android.content.Context;
