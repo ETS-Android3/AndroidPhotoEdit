@@ -65,4 +65,5 @@ dependencies {
     //工具类
     implementation 'com.blankj:utilcodex:1.31.0'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
+    implementation 'com.github.yunianshu:StickerViewFork:1.0.0'
 }

@@ -3,6 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/drawable/sticker_transparent_background.xml" value="0.187" />
+        <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/layout/activity_adjustment.xml" value="0.6708333333333333" />
+        <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/layout/activity_crop.xml" value="0.5325" />
+        <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/layout/activity_filter.xml" value="0.5325" />
+        <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/layout/activity_frame.xml" value="0.82625" />
+        <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/layout/activity_words.xml" value="0.67" />
         <entry key="..\:/android/PhotoEdit/app/src/main/res/layout/activity_main.xml" value="0.328125" />
         <entry key="..\:/android/PhotoEdit/library/src/main/res/drawable/base_radius.xml" value="0.1995" />
         <entry key="..\:/android/PhotoEdit/library/src/main/res/drawable/bg_seekbar_border.xml" value="0.2075" />
@@ -30,7 +36,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

@@ -1,6 +1,7 @@
 package com.yunianshu.library.ui.words
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.gyf.immersionbar.ktx.immersionBar
@@ -46,6 +47,9 @@ class WordsActivity : BaseActivity(),BaseDataBindingAdapter.OnItemClickListener<
         immersionBar {
             statusBarDarkFont(true)
         }
+
+        stickerView.setTextColor(Color.LTGRAY)
+        stickerView.setText("diastase's\nalfalfa's")
     }
 
     inner class WordsClickProxy {

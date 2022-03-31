@@ -3,6 +3,7 @@ package com.yunianshu.library.ui.crop
 import android.graphics.*
 import android.net.Uri
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.Utils
 import com.gyf.immersionbar.ktx.immersionBar
@@ -25,6 +26,7 @@ import java.io.File
 class CropActivity : BaseActivity(), CropImageView.OnCropImageCompleteListener {
 
     private lateinit var viewModel: CropViewModel
+    private val cropImageView:CropImageView by lazy { findViewById(R.id.cropImageView) }
     private var width: Int = 0
     private var height: Int = 0
     private var rotate: Boolean = false
@@ -49,6 +51,8 @@ class CropActivity : BaseActivity(), CropImageView.OnCropImageCompleteListener {
         height = intent.getIntExtra(Contant.KEY_HEIGHT, -1)
         rotate = intent.getBooleanExtra(Contant.KEY_ROTATE, false)
         val bitmap = BitmapFactory.decodeFile(url)
+//        val layoutParams = cropImageView.layoutParams as ConstraintLayout.LayoutParams
+//        layoutParams.dimensionRatio = "${bitmap.width}:${bitmap.height}"
         if (bitmap == null) {
             Toast.makeText(this, getString(R.string.text_image_no_find), Toast.LENGTH_LONG).show()
             return
@@ -91,7 +95,7 @@ class CropActivity : BaseActivity(), CropImageView.OnCropImageCompleteListener {
             var path = Utils.getApp()
                 .getExternalFilesDir("edit")!!.absolutePath + File.separator + "crop_" + System.currentTimeMillis() + ".jpg"
             FileUtils.createOrExistsFile(path)
-            findViewById<CropImageView>(R.id.cropImageView).saveCroppedImageAsync(
+            cropImageView.saveCroppedImageAsync(
                 Uri.fromFile(
                     File(
                         path
