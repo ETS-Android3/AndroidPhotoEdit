@@ -19,6 +19,7 @@ open class StickerAdapter(context: Context) :
         R.layout.item_photo_sticker, StickerCallBack()
     ) {
     class StickerCallBack : DiffUtil.ItemCallback<StickerInfo>() {
+
         override fun areItemsTheSame(oldItem: StickerInfo, newItem: StickerInfo): Boolean {
             return true
         }
@@ -26,7 +27,6 @@ open class StickerAdapter(context: Context) :
         override fun areContentsTheSame(oldItem: StickerInfo, newItem: StickerInfo): Boolean {
             return true
         }
-
     }
 
     override fun onBindItem(

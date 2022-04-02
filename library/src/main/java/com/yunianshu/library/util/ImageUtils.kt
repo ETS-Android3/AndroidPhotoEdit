@@ -1,6 +1,6 @@
 package com.yunianshu.library.util
 
-import android.graphics.Bitmap
+import android.graphics.*
 import com.blankj.utilcode.util.FileUtils
 
 object ImageUtils {
@@ -62,5 +62,41 @@ object ImageUtils {
         result = 31 * result + FileUtils.getSize(path).hashCode()
         result = 31 * result + FileUtils.getFileLastModified(path).hashCode()
         return result
+    }
+    /**
+     * 纯色图片改变颜色
+     */
+    fun setSingleColorImageByARGB(
+        baseBitmap: Bitmap,
+        rValue: Int,
+        gValue: Int,
+        bValue: Int,
+        alpha:Float
+    ): Bitmap {
+
+        // 1.获取一个与baseBitmap大小一致的可编辑的空图片
+        var afterBitmap = Bitmap.createBitmap(
+            baseBitmap.width,
+            baseBitmap.height, baseBitmap.config
+        )
+        // 2.使用Bitmap对象创建画布Canvas, 然后创建画笔Paint。
+        var canvas = Canvas(afterBitmap)
+        var paint = Paint()
+        // 根据SeekBar定义RGBA的矩阵, 通过修改矩阵第五列颜色的偏移量改变图片的颜色
+        val src = floatArrayOf(
+            1f, 0f, 0f, 0f, rValue.toFloat(),
+            0f, 1f, 0f, 0f, gValue.toFloat(),
+            0f, 0f, 1f, 0f, bValue.toFloat(),
+            0f, 0f, 0f, alpha, 0f
+        )
+
+        // 3.定义ColorMatrix，并指定RGBA矩阵
+        val colorMatrix = ColorMatrix()
+        colorMatrix.set(src)
+        // 4.使用ColorMatrix创建一个ColorMatrixColorFilter对象, 作为画笔的滤镜, 设置Paint的颜色
+        paint.colorFilter = ColorMatrixColorFilter(colorMatrix)
+        // 5.通过指定了RGBA矩阵的Paint把原图画到空白图片上
+        canvas.drawBitmap(baseBitmap, Matrix(), paint)
+        return afterBitmap
     }
 }

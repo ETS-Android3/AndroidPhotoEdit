@@ -2,6 +2,17 @@
   "bubble": [
     {
       "ID": "001-边框",
+      "name": "bubble",
+      "path": "bubble/bubble.png",
+      "type": 2,
+      "originScale": 3,
+      "paddingTop": 20,
+      "paddingLeft": 20,
+      "paddingRight": 40,
+      "paddingBottom": 40
+    },
+    {
+      "ID": "001-边框",
       "name": "qipao1",
       "path": "bubble/qipao1.png",
       "type": 2,

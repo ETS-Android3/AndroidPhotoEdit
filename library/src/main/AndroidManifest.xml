@@ -22,11 +22,6 @@
 
     <application>
         <activity
-            android:name=".ui.words.WordsActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"/>
-        <activity
             android:name=".ui.sticker.StickerActivity"
             android:exported="false"
             android:screenOrientation="portrait"

@@ -2,93 +2,195 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <data>
-       <variable
-           name="vm"
-           type="com.yunianshu.library.PhotoShareViewModel" />
+
+        <variable
+            name="vm"
+            type="com.yunianshu.library.PhotoViewModel" />
+
+        <variable
+            name="sharevm"
+            type="com.yunianshu.library.ShareViewModel" />
+
         <variable
             name="click"
             type="com.yunianshu.library.PhotoEditActivity.PhotoEditClickProxy" />
+
         <variable
             name="adapter"
             type="com.yunianshu.library.PhotoEditAdapter" />
+
+        <variable
+            name="fmadapter"
+            type="com.yunianshu.library.adapter.RgAdapter" />
+        <variable
+            name="stickerClick"
+            type="com.yunianshu.library.PhotoEditActivity.ShareStickerListener" />
     </data>
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/base_color"
         android:fitsSystemWindows="true">
-        <com.google.android.material.appbar.CollapsingToolbarLayout
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout"
+            visiable="@{!sharevm.showEditView}"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
-            android:background="@color/base_color">
+            android:background="@color/base_color"
+            android:gravity="center_vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
             <ImageView
                 android:id="@+id/ivBack"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:clickable="true"
+                android:contentDescription="@string/text_back"
+                android:focusable="true"
+                android:onClick="@{()->click.back()}"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
-                android:clickable="true"
-                android:onClick="@{()->click.back()}"
-                android:contentDescription="@string/text_back"
                 app:layout_constraintStart_toStartOf="parent"
-                app:srcCompat="@drawable/ic_btn_back"
-                android:focusable="true" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/text_print_preview"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/white"/>
+                app:srcCompat="@drawable/ic_btn_back" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|end"
-                android:text="@string/text_complete"
+                android:layout_centerInParent="true"
+                android:text="@string/text_print_preview"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
                 android:onClick="@{()->click.complete()}"
                 android:padding="20dp"
+                android:text="@string/text_complete"
                 android:textColor="@color/white"
                 android:textSize="14sp" />
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </RelativeLayout>
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="?android:attr/actionBarSize"
-            android:background="@color/white">
+            android:layout_height="0dp"
+            android:background="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/relativeLayout">
 
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="236dp"
-                android:layout_height="398dp"
+            <com.yunianshu.sticker.StickerView
+                android:id="@+id/sticker_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:padding="16dp"
+                android:padding="@dimen/padding_4dp"
                 android:translationZ="5dp"
-                app:layout_constraintBottom_toTopOf="@+id/recyclerView"
+                listener="@{stickerClick}"
+                addSticker="@{sharevm.currentSticker}"
+                refresh="@{vm.refreshStickerView}"
+                app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:showBorder="true"
+                app:showIcons="true"
+                app:borderAlpha="255">
 
-            <View
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="236dp"
+                    android:layout_height="434dp" />
+            </com.yunianshu.sticker.StickerView>
+
+            <LinearLayout
+                android:id="@+id/linearLayout4"
                 android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:background="@color/base_center_color"
-                app:layout_constraintBottom_toTopOf="@+id/recyclerView" />
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:orientation="horizontal"
-                adapter="@{adapter}"
-                submitList="@{vm.list}"
-                tools:listitem="@layout/item_photo_edit"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent">
+
+                <View
+                    android:id="@+id/view2"
+                    visiable="@{!sharevm.showEditView}"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="@color/base_center_color"
+                    app:layout_constraintBottom_toTopOf="@+id/recyclerView" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    adapter="@{adapter}"
+                    submitList="@{vm.list}"
+                    visiable="@{!sharevm.showEditView}"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_photo_edit" />
+
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/viewPager2"
+                    current="@{vm.currentPaper}"
+                    visiable="@{sharevm.showEditView}"
+                    useEnable="@{false}"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adapter="@{fmadapter}" />
+
+                <LinearLayout
+                    android:id="@+id/linearLayout"
+                    visiable="@{sharevm.showEditView}"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_gravity="bottom"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="20dp"
+                        android:background="@drawable/ic_close"
+                        android:contentDescription="@string/base_close"
+                        android:onClick="@{()->click.last()}"
+                        android:padding="20dp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@{vm.currentText}"
+                        android:textColor="#999999"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="20dp"
+                        android:background="@drawable/ic_yes"
+                        android:contentDescription="@string/base_sure"
+                        android:onClick="@{()->click.save()}" />
+                </LinearLayout>
+            </LinearLayout>
+
+
+
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

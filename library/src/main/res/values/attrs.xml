@@ -1,6 +1,11 @@
 <resources>
+
     <declare-styleable name="FullscreenAttrs">
         <attr name="fullscreenBackgroundColor" format="color" />
         <attr name="fullscreenTextColor" format="color" />
+    </declare-styleable>
+    <declare-styleable name="ClearEditText">
+        <attr name="drawable_clear" format="reference" />
+        <attr name="drawable_label" format="reference" />
     </declare-styleable>
 </resources>

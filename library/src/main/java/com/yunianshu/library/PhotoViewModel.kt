@@ -10,14 +10,18 @@ import com.yunianshu.library.bean.PhotoEditItem
  * Create by Winggl
  * createTime: 2022/3/21
  */
-class PhotoShareViewModel:ViewModel() {
+class PhotoViewModel:ViewModel() {
 
 
     private val list = UnPeekLiveData<List<PhotoEditItem>>()
 
-    private val originBitmap = UnPeekLiveData<Bitmap>()
+    val currentPaper = UnPeekLiveData<Int>()
 
-    private val currentBitmap = UnPeekLiveData<Bitmap>()
+    val currentText = UnPeekLiveData<String>()
+
+    val refreshStickerView = UnPeekLiveData<Boolean>()
+
+
 
     fun setList(data:List<PhotoEditItem>){
         list.postValue(data)
@@ -25,5 +29,9 @@ class PhotoShareViewModel:ViewModel() {
 
     fun getList():UnPeekLiveData<List<PhotoEditItem>>{
         return list
+    }
+
+    fun refreshStickerView(){
+        refreshStickerView.postValue(true)
     }
 }
