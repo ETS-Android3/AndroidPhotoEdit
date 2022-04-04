@@ -37,12 +37,21 @@ class TextColorAdapter(context: Context) :
         holder: RecyclerView.ViewHolder?
     ) {
         if (item!!.color == -1) {
-            binding!!.drawable = TextDrawable.builder()
-                .beginConfig()
-                .withBorder(2)
-                .textColor(Color.BLACK)
-                .endConfig()
-                .buildRound("选", Color.WHITE)
+            if(item.colorString == ""){
+                binding!!.drawable = TextDrawable.builder()
+                    .beginConfig()
+                    .withBorder(2)
+                    .textColor(Color.BLACK)
+                    .endConfig()
+                    .buildRound("选", Color.WHITE)
+            }else{
+                binding!!.drawable = TextDrawable.builder()
+                    .beginConfig()
+                    .withBorder(2)
+                    .textColor(Color.parseColor(item.colorString))
+                    .endConfig()
+                    .buildRound("选", Color.WHITE)
+            }
         } else {
             binding?.drawable =
                 item?.color?.let {

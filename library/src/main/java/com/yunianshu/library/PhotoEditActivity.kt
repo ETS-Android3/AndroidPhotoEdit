@@ -93,6 +93,7 @@ class PhotoEditActivity : BaseActivity() {
                 updateSticker(it)
             }
         }
+        //设置文字透明度
         shareVM.textStickerAlpha.observeSticky(this) {
             if (stickerView.currentSticker != null) {
                 val sticker = stickerView.currentSticker as TextSticker
@@ -100,6 +101,7 @@ class PhotoEditActivity : BaseActivity() {
                 viewModel.refreshStickerView()
             }
         }
+        //设置排列方式
         shareVM.textStickerAlign.observeSticky(this) {
             if (stickerView.currentSticker != null) {
                 val sticker = stickerView.currentSticker as TextSticker
@@ -112,6 +114,7 @@ class PhotoEditActivity : BaseActivity() {
                 viewModel.refreshStickerView()
             }
         }
+        //设置文字粗细
         shareVM.textStickerBold.observeSticky(this) {
             if (stickerView.currentSticker != null) {
                 val sticker = stickerView.currentSticker as TextSticker
@@ -152,6 +155,7 @@ class PhotoEditActivity : BaseActivity() {
                 viewModel.refreshStickerView()
             }
         }
+        //文字颜色
         shareVM.textStickerColor.observeSticky(this) {
             if (stickerView.currentSticker != null) {
                 val sticker = stickerView.currentSticker as TextSticker
@@ -159,6 +163,7 @@ class PhotoEditActivity : BaseActivity() {
                 viewModel.refreshStickerView()
             }
         }
+        //设置字体斜体
         shareVM.textStickerItalic.observeSticky(this) {
             if (stickerView.currentSticker != null) {
                 val sticker = stickerView.currentSticker as TextSticker
@@ -364,6 +369,9 @@ class PhotoEditActivity : BaseActivity() {
         viewModel.refreshStickerView()
     }
 
+    /**
+     * 添加文字气泡
+     */
     private fun showInputDialog(item: StickerInfo) {
         dialog.setHint(R.string.tip_enter_content)
             .setOnTextChangedListener(false) {
@@ -402,6 +410,9 @@ class PhotoEditActivity : BaseActivity() {
             }.show()
     }
 
+    /**
+     * 单纯添加文字
+     */
     fun showInputDialog(sticker: TextSticker) {
         dialog.setHint(R.string.tip_enter_content)
             .setContent(sticker.text)

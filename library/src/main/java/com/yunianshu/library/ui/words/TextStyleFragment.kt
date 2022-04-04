@@ -34,6 +34,8 @@ class TextStyleFragment : BaseFragment() {
                     .setPreferenceName("MyColorPickerDialog")
                     .setPositiveButton(getString(R.string.base_sure),
                         ColorEnvelopeListener { envelope, _ ->
+                            item.colorString = "#${envelope.hexCode}"
+                            adapter.notifyDataSetChanged()
                             shareViewModel.textStickerColor.postValue(TextColorInfo(envelope.color))
                         })
                     .setNegativeButton(

@@ -54,8 +54,9 @@ public class TextDrawable extends ShapeDrawable {
         // border paint settings
         borderThickness = builder.borderThickness;
         borderPaint = new Paint();
-        borderPaint.setColor(getDarkerShade(color));
+        borderPaint.setColor(getDarkerShade(builder.textColor));
         borderPaint.setStyle(Paint.Style.STROKE);
+        borderPaint.setAntiAlias(true);
         borderPaint.setStrokeWidth(borderThickness);
 
         // drawable paint color
