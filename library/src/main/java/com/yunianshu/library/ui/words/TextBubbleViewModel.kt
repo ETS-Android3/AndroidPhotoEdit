@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import com.kunminx.architecture.ui.callback.UnPeekLiveData
 import com.yunianshu.library.bean.StickerInfo
 
-class TextViewModel : ViewModel() {
+class TextBubbleViewModel : ViewModel() {
 
-   var editType = UnPeekLiveData<Int>()
+    var list = UnPeekLiveData<List<StickerInfo>>()
 
 }

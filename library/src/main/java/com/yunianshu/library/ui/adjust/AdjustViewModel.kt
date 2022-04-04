@@ -33,7 +33,7 @@ class AdjustViewModel : ViewModel() {
     }
 
     fun select(pos: Int) {
-        curBaseInfo.postValue(baseInfos.value?.get(pos) ?: curBaseInfo.value)
+        curBaseInfo.postValue(baseInfos.value!![pos])
     }
 
     fun setProgressChanged(progress:Int){

@@ -1,7 +1,9 @@
 package com.yunianshu.library.util
 
+import android.content.Context
 import android.graphics.*
 import com.blankj.utilcode.util.FileUtils
+import com.yunianshu.sticker.TextDrawable
 
 object ImageUtils {
     /**
@@ -63,6 +65,7 @@ object ImageUtils {
         result = 31 * result + FileUtils.getFileLastModified(path).hashCode()
         return result
     }
+
     /**
      * 纯色图片改变颜色
      */
@@ -71,7 +74,7 @@ object ImageUtils {
         rValue: Int,
         gValue: Int,
         bValue: Int,
-        alpha:Float
+        alpha: Float
     ): Bitmap {
 
         // 1.获取一个与baseBitmap大小一致的可编辑的空图片
@@ -99,4 +102,20 @@ object ImageUtils {
         canvas.drawBitmap(baseBitmap, Matrix(), paint)
         return afterBitmap
     }
+
+    /**
+     * 图片转换
+     * param drawable 文字图片
+     */
+    fun drawableToBitmap(drawable: TextDrawable): Bitmap {
+        val config =
+            if (drawable.getOpacity() != PixelFormat.OPAQUE) Bitmap.Config.ARGB_8888 else Bitmap.Config.RGB_565
+        val createBitmap =
+            Bitmap.createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight, config)
+        val canvas = Canvas(createBitmap)
+        drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
+        drawable.draw(canvas)
+        return createBitmap
+    }
+
 }

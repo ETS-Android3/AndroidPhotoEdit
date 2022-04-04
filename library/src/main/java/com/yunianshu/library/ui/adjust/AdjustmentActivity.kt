@@ -99,7 +99,6 @@ class AdjustmentActivity : BaseActivity() {
         viewModel.setInfo(infos)
         viewModel.curBaseInfo.postValue(infos[0])
         viewModel.selectAdjust(getString(R.string.text_brightness))
-        viewModel.select(0)
         switchFilterTo(group.filters[0])
         adapter.setOnItemClickListener { _, item, position ->
             viewModel.selectAdjust(item.text)

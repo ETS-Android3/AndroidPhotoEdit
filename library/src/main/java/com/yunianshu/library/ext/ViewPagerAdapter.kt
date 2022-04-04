@@ -14,5 +14,5 @@ fun ViewPager2.setCurrent(paper:Int){
 
 @BindingAdapter("useEnable")
 fun ViewPager2.useEnable(boolean: Boolean){
-    this.isUserInputEnabled = false
+    this.isUserInputEnabled = boolean
 }

@@ -23,7 +23,7 @@
             android:background="@drawable/input_content_edit_bg_shape"
             android:gravity="start"
             android:inputType="textMultiLine"
-            android:padding="12dp"
+            android:padding="8dp"
             android:textColor="#4E4C56"
             android:textColorHint="#C0BFC4"
             android:textSize="15sp"
@@ -31,7 +31,7 @@
             app:layout_constraintEnd_toStartOf="@+id/edit_iv_finish"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:hint="请双击文本输入" />
+            tools:hint="@string/tip_enter_content" />
 
         <TextView
             android:id="@+id/edit_iv_finish"
@@ -41,11 +41,16 @@
             android:background="@drawable/base_selector_black_corners_pressed"
             android:paddingHorizontal="15dp"
             android:paddingVertical="4dp"
-            android:text="@string/text_complete"
+            android:text="@string/base_sure"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/edit_et_input_content" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/textViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"/>
 </LinearLayout>

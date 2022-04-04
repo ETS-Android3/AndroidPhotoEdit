@@ -4,7 +4,9 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Rect
+import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
+import android.text.Layout
 import android.text.TextUtils
 import android.util.Log
 import android.widget.ImageView
@@ -91,6 +93,108 @@ class PhotoEditActivity : BaseActivity() {
                 updateSticker(it)
             }
         }
+        shareVM.textStickerAlpha.observeSticky(this) {
+            if (stickerView.currentSticker != null) {
+                val sticker = stickerView.currentSticker as TextSticker
+                sticker.setAlpha(it.toInt())
+                viewModel.refreshStickerView()
+            }
+        }
+        shareVM.textStickerAlign.observeSticky(this) {
+            if (stickerView.currentSticker != null) {
+                val sticker = stickerView.currentSticker as TextSticker
+                when (it) {
+                    0 -> sticker.setTextAlign(Layout.Alignment.ALIGN_NORMAL)
+                    1 -> sticker.setTextAlign(Layout.Alignment.ALIGN_OPPOSITE)
+                    2 -> sticker.setTextAlign(Layout.Alignment.ALIGN_CENTER)
+                }
+                sticker.resizeText()
+                viewModel.refreshStickerView()
+            }
+        }
+        shareVM.textStickerBold.observeSticky(this) {
+            if (stickerView.currentSticker != null) {
+                val sticker = stickerView.currentSticker as TextSticker
+                if (shareVM.textStickerItalic.value == true) {
+                    if (it) {
+                        sticker.setTypeface(
+                            Typeface.create(
+                                Typeface.SANS_SERIF,
+                                Typeface.BOLD_ITALIC
+                            )
+                        )
+                    } else {
+                        sticker.setTypeface(
+                            Typeface.create(
+                                Typeface.SANS_SERIF,
+                                Typeface.ITALIC
+                            )
+                        )
+                    }
+                } else {
+                    if (it) {
+                        sticker.setTypeface(
+                            Typeface.create(
+                                Typeface.SANS_SERIF,
+                                Typeface.BOLD
+                            )
+                        )
+                    } else {
+                        sticker.setTypeface(
+                            Typeface.create(
+                                Typeface.SANS_SERIF,
+                                Typeface.NORMAL
+                            )
+                        )
+                    }
+                }
+                sticker.setFakeBoldText(it)
+                viewModel.refreshStickerView()
+            }
+        }
+        shareVM.textStickerColor.observeSticky(this) {
+            if (stickerView.currentSticker != null) {
+                val sticker = stickerView.currentSticker as TextSticker
+                sticker.setTextColor(it.color)
+                viewModel.refreshStickerView()
+            }
+        }
+        shareVM.textStickerItalic.observeSticky(this) {
+            if (stickerView.currentSticker != null) {
+                val sticker = stickerView.currentSticker as TextSticker
+                if (shareVM.textStickerBold.value == true) {
+                    if (it) {
+                        sticker.setTypeface(
+                            Typeface.create(
+                                Typeface.SANS_SERIF,
+                                Typeface.BOLD_ITALIC
+                            )
+                        )
+                    } else {
+                        sticker.setTypeface(
+                            Typeface.create(
+                                Typeface.SANS_SERIF,
+                                Typeface.BOLD
+                            )
+                        )
+                    }
+                } else {
+                    if (it) {
+                        sticker.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.ITALIC))
+                    } else {
+                        sticker.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL))
+                    }
+                }
+                viewModel.refreshStickerView()
+            }
+        }
+        shareVM.textStickerUnderline.observeSticky(this) {
+            if (stickerView.currentSticker != null) {
+                val sticker = stickerView.currentSticker as TextSticker
+                sticker.setTextUnderLine(it)
+                viewModel.refreshStickerView()
+            }
+        }
     }
 
     /**
@@ -170,7 +274,7 @@ class PhotoEditActivity : BaseActivity() {
                 bitmap.width.toFloat(),
                 bitmap.height.toFloat()
             )
-            var path =
+            val path =
                 tempPath() + File.separator + "rotate_" + com.yunianshu.library.util.ImageUtils.hashCode(
                     filePath
                 ) + ".jpg"
@@ -194,15 +298,6 @@ class PhotoEditActivity : BaseActivity() {
         list.add(PhotoEditItem(R.mipmap.photoedit_icon_text, getString(R.string.text_text)))
         viewModel.setList(list)
     }
-
-    /**
-     * 横向图片旋转为纵向
-     * @param srcPath
-     */
-    private fun rotatePic(srcPath: String) {
-
-    }
-
 
     inner class PhotoEditClickProxy {
 
@@ -257,7 +352,7 @@ class PhotoEditActivity : BaseActivity() {
                 sticker.setDrawable(
                     drawable,
                     Rect(
-                        ConvertUtils.px2dp(bubbleInfo!!.paddingLeft.toFloat()),
+                        ConvertUtils.px2dp(bubbleInfo.paddingLeft.toFloat()),
                         ConvertUtils.px2dp(bubbleInfo.paddingTop.toFloat()),
                         drawable.intrinsicWidth - ConvertUtils.px2dp(bubbleInfo.paddingRight.toFloat()),
                         drawable.intrinsicHeight - ConvertUtils.px2dp(bubbleInfo.paddingBottom.toFloat())
@@ -272,6 +367,9 @@ class PhotoEditActivity : BaseActivity() {
     private fun showInputDialog(item: StickerInfo) {
         dialog.setHint(R.string.tip_enter_content)
             .setOnTextChangedListener(false) {
+                if(it.isEmpty()){
+                    return@setOnTextChangedListener
+                }
                 val sticker = TextSticker(this)
                 val bubbleInfo = item.bubbleInfo
                 sticker.setText(it.toString())
@@ -305,7 +403,8 @@ class PhotoEditActivity : BaseActivity() {
     }
 
     fun showInputDialog(sticker: TextSticker) {
-        dialog.setHint(R.string.tip_enter_content).setContent(sticker.text)
+        dialog.setHint(R.string.tip_enter_content)
+            .setContent(sticker.text)
             .setOnTextChangedListener(false) {
                 if (!TextUtils.isEmpty(it.toString())) {
                     sticker.text = it.toString()

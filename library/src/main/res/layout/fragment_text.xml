@@ -10,15 +10,14 @@
             type="com.yunianshu.library.ui.words.TextViewModel" />
 
         <variable
+            name="click"
+            type="com.yunianshu.library.ui.words.TextFragment.TextClickProxy" />
+
+        <variable
             name="adapter"
-            type="com.yunianshu.library.adapter.StickerAdapter" />
+            type="com.yunianshu.library.adapter.RgAdapter" />
 
     </data>
-
-    <ViewFlipper
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -27,9 +26,10 @@
             tools:context=".ui.crop.FilterActivity">
 
             <LinearLayout
+                android:id="@+id/linearLayout3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@+id/recyclerView3">
+                app:layout_constraintBottom_toTopOf="@+id/viewPager22">
 
                 <TextView
                     android:layout_width="0dp"
@@ -37,37 +37,43 @@
                     android:layout_weight="1"
                     android:drawablePadding="@dimen/padding_4dp"
                     android:gravity="center"
+                    android:onClick="@{()->click.textBubble()}"
                     android:padding="10dp"
-                    android:text="@string/text_color" />
+                    android:text="@string/text_bubble"
+                    android:textColor='@{vm.editType == 0?@color/base_color:@color/black_overlay}'
+                    android:textSize='@{vm.editType == 0?@dimen/sp_16:@dimen/sp_14}' />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="@{()->click.textStyle()}"
                     android:padding="10dp"
-                    android:text="@string/text_style" />
+                    android:text="@string/text_style"
+                    android:textColor='@{vm.editType == 1?@color/base_color:@color/black_overlay}'
+                    android:textSize='@{vm.editType == 1?@dimen/sp_16:@dimen/sp_14}' />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="@{()->click.textFont()}"
                     android:padding="10dp"
-                    android:text="@string/text_font" />
+                    android:text="@string/text_font"
+                    android:textColor='@{vm.editType == 2?@color/base_color:@color/black_overlay}'
+                    android:textSize='@{vm.editType == 2?@dimen/sp_16:@dimen/sp_14}' />
             </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView3"
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager22"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                submitList="@{vm.list}"
+                android:layout_height="120dp"
                 adapter="@{adapter}"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                useEnable="@{false}"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </ViewFlipper>
 </layout>

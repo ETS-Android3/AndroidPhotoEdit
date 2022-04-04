@@ -128,6 +128,7 @@ class CropActivity : BaseActivity(), CropImageView.OnCropImageCompleteListener {
         }
 
         override fun onStartTrackingTouch(seekBar: IndicatorSeekBar) {
+
         }
 
         override fun onStopTrackingTouch(seekBar: IndicatorSeekBar) {

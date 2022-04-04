@@ -104,12 +104,6 @@ public class ModifyContentDialog extends Dialog {
     }
 
     @Override
-    public void show() {
-        super.show();
-//        KeyboardUtils.showSoftInput( etInputContent);
-    }
-
-    @Override
     public void dismiss() {
         KeyboardUtils.hideSoftInput(etInputContent);
         super.dismiss();

@@ -22,7 +22,6 @@ class PhotoViewModel:ViewModel() {
     val refreshStickerView = UnPeekLiveData<Boolean>()
 
 
-
     fun setList(data:List<PhotoEditItem>){
         list.postValue(data)
     }

@@ -23,6 +23,7 @@
     <string name="base_sure">确认</string>
     <string name="base_close">关闭</string>
     <string name="tip_enter_content">请输入文字</string>
+    <string name="text_bubble">气泡</string>
 
     <string-array name="filters">
         <item>原始</item>

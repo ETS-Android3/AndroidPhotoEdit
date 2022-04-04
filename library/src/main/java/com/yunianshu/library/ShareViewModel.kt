@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.kunminx.architecture.ui.callback.UnPeekLiveData
 import com.yunianshu.library.bean.BubbleInfo
 import com.yunianshu.library.bean.StickerInfo
+import com.yunianshu.library.bean.TextColorInfo
 import com.yunianshu.sticker.Sticker
 
 /**
@@ -43,6 +44,47 @@ class ShareViewModel : ViewModel() {
     var textStickerInfo = UnPeekLiveData<StickerInfo>()
 
     /**
+     * 文字alpha
+     */
+    var textStickerAlpha = UnPeekLiveData<Float>()
+
+    /**
+     * 文字粗体
+     */
+    var textStickerBold = UnPeekLiveData<Boolean>()
+
+    /**
+     * 文字颜色
+     */
+    var textStickerColor = UnPeekLiveData<TextColorInfo>()
+
+    /**
+     * 文字align
+     */
+
+    var textStickerAlign = UnPeekLiveData<Int>()
+
+    /**
+     * 文字斜体
+     */
+    var textStickerItalic = UnPeekLiveData<Boolean>()
+
+    /**
+     * 文字下划线
+     */
+    var textStickerUnderline = UnPeekLiveData<Boolean>()
+
+
+    init {
+        showEditView.value = false
+        textStickerAlpha.value = 255f
+        textStickerBold.value = false
+        textStickerAlign.value = 0
+        textStickerItalic.value = false
+        textStickerUnderline.value = false
+    }
+
+    /**
      * 添加气泡
      */
     fun addSticker(sticker: Sticker) {
@@ -54,6 +96,10 @@ class ShareViewModel : ViewModel() {
     }
 
     /**
-     * 获取添加的气泡
+     * 改变文字的透明度
      */
+    fun changeTextStickerAlpha() {
+        textStickerAlpha.value = textStickerAlpha.value?.plus(0.1f)
+
+    }
 }

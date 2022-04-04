@@ -86,7 +86,7 @@ public class TextSticker extends Sticker {
     textRect = new Rect(0, 0, getWidth(), getHeight());
     minTextSizePixels = convertSpToPx(1);
     maxTextSizePixels = convertSpToPx(32);
-    alignment = Layout.Alignment.ALIGN_CENTER;
+    alignment = Layout.Alignment.ALIGN_NORMAL;
     textPaint.setTextSize(maxTextSizePixels);
   }
 
@@ -167,6 +167,27 @@ public class TextSticker extends Sticker {
   @NonNull public TextSticker setTypeface(@Nullable Typeface typeface) {
     textPaint.setTypeface(typeface);
 
+    return this;
+  }
+  /**
+   * Set the text to be displayed.
+   *
+   * @param boo 是否设置文字加粗
+   * @return This TextSticker.
+   */
+  @NonNull public TextSticker setFakeBoldText(boolean boo) {
+    textPaint.setFakeBoldText(boo);
+    return this;
+  }
+
+  /**
+   * Set the text to be displayed.
+   *
+   * @param show 是否显示下划线
+   * @return This TextSticker.
+   */
+  @NonNull public TextSticker setTextUnderLine(boolean show) {
+    textPaint.setUnderlineText(show);
     return this;
   }
 

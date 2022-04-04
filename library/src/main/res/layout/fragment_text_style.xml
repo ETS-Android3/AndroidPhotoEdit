@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="vm"
+            type="com.yunianshu.library.ui.words.TextStyleViewModel" />
+
+        <variable
+            name="sharevm"
+            type="com.yunianshu.library.ShareViewModel" />
+
+        <variable
+            name="listener"
+            type="com.yunianshu.library.ui.words.TextStyleFragment.TextStyleColorSeekBarListener" />
+
+        <variable
+            name="adapter"
+            type="com.yunianshu.library.adapter.TextColorAdapter" />
+
+        <variable
+            name="click"
+            type="com.yunianshu.library.ui.words.TextStyleFragment.TextStyleClickProxy" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="10dp"
+        tools:context=".ui.words.TextStyleFragment">
+
+        <LinearLayout
+            android:id="@+id/linearLayout5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                drawable_radius="@{3}"
+                drawable_strokeColor='@{0xff000000}'
+                drawable_strokeWidth="@{1}"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:gravity="center"
+                android:text="文"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                submitList="@{vm.list}"
+                adapter="@{adapter}"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                tools:listitem="@layout/item_text_color"
+                app:spanCount="9" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="透明度"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout5" />
+
+        <com.yunianshu.indicatorseekbar.widget.IndicatorSeekBar
+            android:id="@+id/indicatorSeekBar"
+            OnSeekChangeListener="@{listener}"
+            max="@{255}"
+            min="@{0}"
+            progress="@{255}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:isb_indicator_color="@color/white"
+            app:isb_indicator_text_color="@color/base_color"
+            app:isb_indicator_text_size="16sp"
+            app:isb_thumb_color="@color/base_color"
+            app:isb_track_progress_color="@color/base_color"
+            app:layout_constraintBottom_toBottomOf="@+id/textView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView"
+            app:layout_constraintTop_toTopOf="@+id/textView" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="@{() -> click.clickBold()}"
+                android:drawableTop="@drawable/ic_text_bold"
+                android:gravity="center_horizontal"
+                android:textSize="@dimen/sp_14"
+                android:text="粗体" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_text_italic"
+                android:gravity="center_horizontal"
+                android:onClick="@{() -> click.clickItalic()}"
+                android:textSize="@dimen/sp_14"
+                android:text="斜体" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_text_underlined"
+                android:gravity="center_horizontal"
+                android:textSize="@dimen/sp_14"
+                android:onClick="@{() -> click.clickUnderline()}"
+                android:text="下滑线" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="@dimen/sp_14"
+                android:drawableTop="@drawable/ic_text_align_left"
+                android:gravity="center_horizontal"
+                android:onClick="@{() -> click.clickAlignLeft()}"
+                android:text="居左" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_text_align_right"
+                android:gravity="center_horizontal"
+                android:onClick="@{() -> click.clickAlignRight()}"
+                android:textSize="@dimen/sp_14"
+                android:text="居右" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_text_align_center"
+                android:gravity="center_horizontal"
+                android:onClick="@{() -> click.clickAlignCenter()}"
+                android:textSize="@dimen/sp_14"
+                android:text="居中" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

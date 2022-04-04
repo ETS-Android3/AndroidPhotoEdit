@@ -8,4 +8,18 @@
     <color name="base_center_color">#ffe9e9e9</color>
 
     <color name="colorprt_app_color_gray_low">#FFE9E9E9</color>
+
+    <color name="color_black">#FF000000</color>
+    <color name="color_white">#ffffffff</color>
+
+    <array name="color_primary">
+        <item>#797979</item>
+        <item>#FD656B</item>
+        <item>#F19C44</item>
+        <item>#77E73F</item>
+        <item>#2DF5FC</item>
+        <item>#5551FF</item>
+        <item>#2F90FD</item>
+        <item>#F522A8</item>
+    </array>
 </resources>

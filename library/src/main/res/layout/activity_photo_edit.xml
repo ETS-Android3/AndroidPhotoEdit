@@ -92,13 +92,15 @@
             <com.yunianshu.sticker.StickerView
                 android:id="@+id/sticker_view"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:background="@color/white"
                 android:padding="@dimen/padding_4dp"
                 android:translationZ="5dp"
                 listener="@{stickerClick}"
                 addSticker="@{sharevm.currentSticker}"
                 refresh="@{vm.refreshStickerView}"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
                 app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -109,8 +111,10 @@
 
                 <ImageView
                     android:id="@+id/imageView"
-                    android:layout_width="236dp"
-                    android:layout_height="434dp" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY"/>
             </com.yunianshu.sticker.StickerView>
 
             <LinearLayout
