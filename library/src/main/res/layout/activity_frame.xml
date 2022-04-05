@@ -13,6 +13,10 @@
             name="click"
             type="com.yunianshu.library.ui.frame.FrameActivity.FrameClickProxy" />
 
+        <variable
+            name="adapter"
+            type="com.yunianshu.library.adapter.FrameAdapter" />
+
 
     </data>
 
@@ -35,17 +39,19 @@
             <ImageView
                 android:id="@+id/frameImage"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
-                android:scaleType="fitXY" />
+                android:scaleType="fitXY"
+                loadResource="@{vm.bitmap}"/>
 
             <ImageView
-                android:id="@+id/filterImageView"
+                android:id="@+id/imageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
+                load="@{vm.url}"
                 android:scaleType="fitXY" />
         </FrameLayout>
 
@@ -54,6 +60,8 @@
             android:id="@+id/recyclerView2"
             android:layout_width="match_parent"
             android:layout_height="80dp"
+            adapter="@{adapter}"
+            submitList="@{vm.list}"
             android:orientation="horizontal"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout"

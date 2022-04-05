@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="item"
+            type="com.yunianshu.library.response.Frame" />
+    </data>
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="wrap_content"
+        android:padding="20dp"
+        android:layout_height="80dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY" />
+
+</layout>

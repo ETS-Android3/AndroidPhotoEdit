@@ -1,14 +1,12 @@
-package com.yunianshu.library.util
+package com.yunianshu.library.ext
 
-import android.animation.ObjectAnimator
-import android.animation.PropertyValuesHolder
-import android.animation.ValueAnimator
 import android.graphics.Bitmap
 import android.net.Uri
 import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import coil.load
+import com.bumptech.glide.Glide
 import com.yunianshu.indicatorseekbar.widget.IndicatorSeekBar
 import com.yunianshu.indicatorseekbar.widget.OnSeekChangeListener
 import com.yunianshu.library.R
@@ -38,6 +36,13 @@ fun ImageView.load(url: String?) {
         this.load(file) {
             placeholder(R.drawable.ic_load_default)
         }
+    }
+}
+@BindingAdapter("loadResource")
+fun ImageView.loadB(bitmap :Int) {
+    bitmap?.let {
+        setImageResource(bitmap)
+//        Glide.with(this).load(it).into(this)
     }
 }
 

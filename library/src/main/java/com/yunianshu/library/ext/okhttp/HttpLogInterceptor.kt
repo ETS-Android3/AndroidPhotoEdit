@@ -102,7 +102,7 @@ class HttpLogInterceptor @JvmOverloads constructor(var printResponseHeader: Bool
 
                 var gzippedLength: Long? = null
                 if ("gzip".equals(headers.get("Content-Encoding"), ignoreCase = true)) {
-                    gzippedLength = buffer.size()
+                    gzippedLength = buffer.size
                     GzipSource(buffer.clone()).use { gzippedResponseBody ->
                         buffer = Buffer()
                         buffer.writeAll(gzippedResponseBody)
@@ -117,7 +117,7 @@ class HttpLogInterceptor @JvmOverloads constructor(var printResponseHeader: Bool
 
                 responseMessage += "\n"
                 if (!isPlaintext(buffer)) {
-                    responseMessage += "\n$responsePrefixEnd END HTTP (binary " + buffer.size() + "-byte body omitted)"
+                    responseMessage += "\n$responsePrefixEnd END HTTP (binary " + buffer.size + "-byte body omitted)"
                     return response
                 }
 
@@ -132,9 +132,9 @@ class HttpLogInterceptor @JvmOverloads constructor(var printResponseHeader: Bool
                 }
 
                 responseMessage += if (gzippedLength != null) {
-                    "\n$responsePrefixEnd END HTTP (" + buffer.size() + "-byte, $gzippedLength-gzipped-byte body)"
+                    "\n$responsePrefixEnd END HTTP (" + buffer.size + "-byte, $gzippedLength-gzipped-byte body)"
                 } else {
-                    "\n$responsePrefixEnd END HTTP (" + buffer.size() + "-byte body)"
+                    "\n$responsePrefixEnd END HTTP (" + buffer.size + "-byte body)"
                 }
             }
             log(responseMessage)
@@ -175,7 +175,7 @@ class HttpLogInterceptor @JvmOverloads constructor(var printResponseHeader: Bool
         internal fun isPlaintext(buffer: Buffer): Boolean {
             try {
                 val prefix = Buffer()
-                val byteCount = if (buffer.size() < 64) buffer.size() else 64
+                val byteCount = if (buffer.size < 64) buffer.size else 64
                 buffer.copyTo(prefix, 0, byteCount)
                 for (i in 0..15) {
                     if (prefix.exhausted()) {

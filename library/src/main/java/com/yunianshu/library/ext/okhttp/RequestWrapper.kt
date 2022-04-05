@@ -1,10 +1,9 @@
-package com.lxj.androidktx.okhttp
+package com.yunianshu.library.ext.okhttp
 
-import com.lxj.androidktx.core.toJson
-import com.yunianshu.library.ext.okhttp.mediaType
-import me.jessyan.progressmanager.ProgressListener
-import me.jessyan.progressmanager.ProgressManager
-import me.jessyan.progressmanager.body.ProgressInfo
+import com.yunianshu.library.ext.okhttp.progressmanager.ProgressListener
+import com.yunianshu.library.ext.okhttp.progressmanager.ProgressManager
+import com.yunianshu.library.ext.okhttp.progressmanager.body.ProgressInfo
+import com.yunianshu.library.ext.toJson
 import okhttp3.*
 import java.io.File
 import java.lang.Exception
@@ -59,7 +58,7 @@ data class RequestWrapper(
     /**
      * 自定义任意body
      */
-    fun customBody(body: RequestBody): RequestWrapper{
+    fun customBody(body: RequestBody): RequestWrapper {
         customReqBody = body
         return this
     }
@@ -67,7 +66,7 @@ data class RequestWrapper(
     /**
      * 以json串方式的body封装
      */
-    fun jsonParam(json: String): RequestWrapper{
+    fun jsonParam(json: String): RequestWrapper {
         customReqBody = buildJsonBody(json)
         return this
     }
@@ -168,8 +167,8 @@ data class RequestWrapper(
         return "${url()}$queryParams"
     }
 
-    fun uploadListener(onProgress: (progressInfo: ProgressInfo?)->Unit, onError: ((id: Long, e: Exception?)->Unit)? = null): RequestWrapper{
-        ProgressManager.getInstance().addRequestListener(url, object : ProgressListener{
+    fun uploadListener(onProgress: (progressInfo: ProgressInfo?)->Unit, onError: ((id: Long, e: Exception?)->Unit)? = null): RequestWrapper {
+        ProgressManager.getInstance().addRequestListener(url, object : ProgressListener {
             override fun onProgress(progressInfo: ProgressInfo?) {
                 onProgress(progressInfo)
             }
@@ -180,7 +179,7 @@ data class RequestWrapper(
         return this
     }
 
-    fun downloadListener(onProgress: (progressInfo: ProgressInfo?)->Unit, onError: ((id: Long, e: Exception?)->Unit)? = null): RequestWrapper{
+    fun downloadListener(onProgress: (progressInfo: ProgressInfo?)->Unit, onError: ((id: Long, e: Exception?)->Unit)? = null): RequestWrapper {
         ProgressManager.getInstance().addResponseListener(url, object : ProgressListener{
             override fun onProgress(progressInfo: ProgressInfo?) {
                 onProgress(progressInfo)

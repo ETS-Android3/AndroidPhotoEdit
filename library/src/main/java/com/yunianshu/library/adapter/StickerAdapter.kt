@@ -7,7 +7,7 @@ import com.kunminx.binding_recyclerview.adapter.SimpleDataBindingAdapter
 import com.yunianshu.library.R
 import com.yunianshu.library.bean.StickerInfo
 import com.yunianshu.library.databinding.ItemPhotoStickerBinding
-import com.yunianshu.library.util.load
+import com.yunianshu.library.ext.load
 
 /**
  * Create by WingGL

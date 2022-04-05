@@ -7,7 +7,6 @@ import com.kunminx.binding_recyclerview.adapter.SimpleDataBindingAdapter
 import com.yunianshu.library.R
 import com.yunianshu.library.bean.StickerInfo
 import com.yunianshu.library.databinding.ItemTextBubleBinding
-import com.yunianshu.library.util.load
 
 class TextStickerAdapter(context: Context) :
     SimpleDataBindingAdapter<StickerInfo, ItemTextBubleBinding>(

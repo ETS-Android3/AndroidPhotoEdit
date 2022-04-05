@@ -1,5 +1,6 @@
-package com.lxj.androidktx.okhttp
+package com.yunianshu.library.ext.okhttp
 
+import com.lxj.androidktx.okhttp.HttpLogInterceptor
 import com.yunianshu.library.ext.okhttp.progressmanager.ProgressManager
 import com.yunianshu.library.util.HttpsUtils
 import okhttp3.*
@@ -40,7 +41,7 @@ object OkExt {
     /**
      * 自定义超时时间
      */
-    fun timeout(timeout: Long): OkExt{
+    fun timeout(timeout: Long): OkExt {
         val builder = okHttpClient.newBuilder()
                 .writeTimeout(timeout, TimeUnit.MILLISECONDS)
                 .readTimeout(timeout, TimeUnit.MILLISECONDS)
@@ -81,7 +82,7 @@ object OkExt {
     /**
      * 设置baseUrl，必须以/结尾；支持多个baseUrl设置
      */
-    fun baseUrl(tag: String = DefaultUrlTag, url: String): OkExt{
+    fun baseUrl(tag: String = DefaultUrlTag, url: String): OkExt {
         if(!url.endsWith("/")){
             throw IllegalArgumentException("baseUrl必须以/结尾")
         }
@@ -92,7 +93,7 @@ object OkExt {
     /**
      * 设置自定义的Client
      */
-    fun setClient(client: OkHttpClient): OkExt{
+    fun setClient(client: OkHttpClient): OkExt {
         okHttpClient = client
         return this
     }
@@ -100,7 +101,7 @@ object OkExt {
     /**
      * 配置解析Json
      */
-    fun jsonConfig(format: String = "yyyy-MM-dd HH:mm:ss", lenient: Boolean = false): OkExt{
+    fun jsonConfig(format: String = "yyyy-MM-dd HH:mm:ss", lenient: Boolean = false): OkExt {
         dateFormat = format
         lenientJson = lenient
         return this

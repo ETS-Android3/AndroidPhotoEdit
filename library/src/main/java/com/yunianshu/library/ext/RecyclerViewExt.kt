@@ -1,20 +1,16 @@
-package com.lxj.androidktx.core
+package com.yunianshu.library.ext
 
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
-import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.*
 import com.blankj.utilcode.util.AdaptScreenUtils
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.lxj.androidktx.util.RecyclerViewDivider
-import com.lxj.androidktx.util.SafeGridLayoutManager
-import com.lxj.androidktx.util.SafeLinearLayoutManager
-import com.lxj.androidktx.util.SafeStaggeredGridLayoutManager
 import com.lxj.easyadapter.*
-import com.yunianshu.library.ext.dp
-import com.yunianshu.library.ext.toBean
-import com.yunianshu.library.ext.toJson
+import com.yunianshu.library.util.SafeGridLayoutManager
+import com.yunianshu.library.util.SafeLinearLayoutManager
+import com.yunianshu.library.util.SafeStaggeredGridLayoutManager
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -98,8 +94,8 @@ inline val RecyclerView.orientation
  */
 fun <T> RecyclerView.bindData(
     data: List<T>, layoutId: Int,
-    onPayloadsChange: ((holder: RecyclerView.ViewHolder, t: T, position: Int, payloads: List<Any>) -> Unit)? = null,
-    bindFn: (holder: RecyclerView.ViewHolder, t: T, position: Int) -> Unit,
+    onPayloadsChange: ((holder: ViewHolder, t: T, position: Int, payloads: List<Any>) -> Unit)? = null,
+    bindFn: (holder: ViewHolder, t: T, position: Int) -> Unit,
 ): RecyclerView {
     adapter = object : EasyAdapter<T>(data, layoutId) {
         override fun bind(holder: ViewHolder, t: T, position: Int) {

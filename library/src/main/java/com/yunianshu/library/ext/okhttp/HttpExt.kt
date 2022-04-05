@@ -2,16 +2,15 @@ package com.yunianshu.library.ext.okhttp
 
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.NetworkUtils
-import com.lxj.androidktx.okhttp.HttpCallback
-import com.lxj.androidktx.okhttp.OkExt
-import com.lxj.androidktx.okhttp.RequestWrapper
 import com.yunianshu.library.ext.toBean
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Request
+import okhttp3.Response
 import java.io.File
 import java.io.IOException
-import java.lang.Exception
 import java.net.URLConnection.getFileNameMap
 
 
