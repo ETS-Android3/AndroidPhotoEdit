@@ -110,5 +110,23 @@
       "paddingRight": 18,
       "paddingBottom": 19
     }
+  ],
+  "font": [
+    {
+      "ID": "1",
+      "name": "font",
+      "path": "font/font1.png",
+      "type": 0
+    },{
+      "ID": "2",
+      "name": "font",
+      "path": "font/font2.png",
+      "type": 0
+    },{
+      "ID": "3",
+      "name": "font",
+      "path": "font/font3.png",
+      "type": 0
+    }
   ]
 }

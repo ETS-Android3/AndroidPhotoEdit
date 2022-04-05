@@ -75,5 +75,9 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0'
 
+    //颜色选择器
     implementation "com.github.skydoves:colorpickerview:2.2.4"
+    //recyclerview相关
+    api 'com.github.li-xiaojun:EasyAdapter:1.2.7'
+    api 'com.google.android:flexbox:2.0.1'
 }
