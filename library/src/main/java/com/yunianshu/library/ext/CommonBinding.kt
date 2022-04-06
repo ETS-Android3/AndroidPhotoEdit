@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.databinding.BindingAdapter
 import coil.load
 import com.bumptech.glide.Glide
@@ -38,11 +39,19 @@ fun ImageView.load(url: String?) {
         }
     }
 }
+@BindingAdapter("url")
+fun ImageView.url(url: String?) {
+    url?.let {
+        this.load(url) {
+            placeholder(R.drawable.ic_load_default)
+        }
+    }
+}
 @BindingAdapter("loadResource")
 fun ImageView.loadB(bitmap :Int) {
     bitmap?.let {
-        setImageResource(bitmap)
-//        Glide.with(this).load(it).into(this)
+//        setImageResource(bitmap)
+        Glide.with(this).load(it).into(this)
     }
 }
 
@@ -68,4 +77,17 @@ fun View.setDrawable(drawable: TextDrawable) {
     drawable?.let {
         this.background = it
     }
+}
+
+@BindingAdapter("onTouchListener")
+fun View.onTouchListener(listener: View.OnTouchListener) {
+    this.setOnTouchListener(listener)
+}
+
+@BindingAdapter("addView")
+fun addChildView(view: LinearLayout,child: View) {
+    child?.let {
+        view.addView(it)
+    }
+
 }

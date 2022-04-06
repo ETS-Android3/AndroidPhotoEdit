@@ -36,6 +36,5 @@ class FrameAdapter(context: Context) : SimpleDataBindingAdapter<Frame, ItemFrame
         holder: RecyclerView.ViewHolder?
     ) {
         binding.item = item
-        binding.image.load(item.src)
     }
 }

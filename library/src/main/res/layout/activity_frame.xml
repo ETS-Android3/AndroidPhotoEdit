@@ -17,6 +17,10 @@
             name="adapter"
             type="com.yunianshu.library.adapter.FrameAdapter" />
 
+        <variable
+            name="view"
+            type="com.yunianshu.library.view.AlbumImageView" />
+
 
     </data>
 
@@ -27,33 +31,18 @@
         android:fitsSystemWindows="true"
         tools:context=".ui.crop.FilterActivity">
 
-        <FrameLayout
+        <LinearLayout
+            android:id="@+id/frame_layout"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_margin="20dp"
             app:layout_constraintBottom_toTopOf="@+id/recyclerView2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/frameImage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:scaleType="fitXY"
-                loadResource="@{vm.bitmap}"/>
-
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                load="@{vm.url}"
-                android:scaleType="fitXY" />
-        </FrameLayout>
+        </LinearLayout>
 
 
         <androidx.recyclerview.widget.RecyclerView

@@ -45,7 +45,7 @@
             android:name=".ui.adjust.AdjustmentActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MaterialComponents.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity
             android:name=".PhotoEditActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

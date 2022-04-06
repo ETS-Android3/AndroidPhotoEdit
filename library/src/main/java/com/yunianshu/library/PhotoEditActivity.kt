@@ -48,6 +48,7 @@ class PhotoEditActivity : BaseActivity() {
     private var rotate: Boolean = false
     private var width: Int = 0
     private var height: Int = 0
+    private lateinit var typeName: String
     private val stickerView: StickerView by lazy { findViewById(R.id.sticker_view) }
 
     /**
@@ -210,6 +211,7 @@ class PhotoEditActivity : BaseActivity() {
         rotate = intent.getBooleanExtra("rotate", false)
         width = intent.getIntExtra("width", 0)
         height = intent.getIntExtra("height", 0)
+        typeName = intent.getStringExtra("typeName").toString()
     }
 
     /**
@@ -258,6 +260,7 @@ class PhotoEditActivity : BaseActivity() {
                 }
             }
             intent?.putExtra("url", filePath)
+            intent?.putExtra("typeName", typeName)
             activityResultLauncher.launch(intent)
         }
     }

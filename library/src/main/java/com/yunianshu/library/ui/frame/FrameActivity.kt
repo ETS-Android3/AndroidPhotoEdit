@@ -1,9 +1,15 @@
 package com.yunianshu.library.ui.frame
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
-import android.view.MotionEvent
-import android.view.View
+import android.net.Uri
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import com.blankj.utilcode.util.FileUtils
+import com.blankj.utilcode.util.GsonUtils
+import com.blankj.utilcode.util.ImageUtils
+import com.blankj.utilcode.util.Utils
 import com.gyf.immersionbar.ktx.immersionBar
 import com.kunminx.architecture.ui.page.DataBindingConfig
 import com.yunianshu.library.BR
@@ -11,13 +17,24 @@ import com.yunianshu.library.BaseActivity
 import com.yunianshu.library.Contant
 import com.yunianshu.library.R
 import com.yunianshu.library.adapter.FrameAdapter
-import com.yunianshu.library.bean.FrameInfo
 import com.yunianshu.library.databinding.ActivityFrameBinding
-import com.yunianshu.library.ext.okhttp.http
-import com.yunianshu.library.ext.okhttp.post
 import com.yunianshu.library.response.Frame
+import com.yunianshu.library.response.FrameResponse
+import com.yunianshu.library.util.HttpUtil.request
+import com.yunianshu.library.view.AlbumImageView
+import com.yunianshu.library.view.AlbumImageView.ALBUM_IMAGE_SHAPE
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.io.File
+import java.io.IOException
+import java.io.InputStream
+import java.net.HttpURLConnection
+import java.net.MalformedURLException
+import java.net.URL
+import kotlin.concurrent.thread
 
 /**
  * 4.相框调整
@@ -27,11 +44,10 @@ class FrameActivity : BaseActivity() {
     private lateinit var viewModel: FrameViewModel
     private lateinit var adapter: FrameAdapter
     private lateinit var url: String
+    private lateinit var typeName: String
+    private lateinit var view: AlbumImageView
     private val binding: ActivityFrameBinding by lazy { ActivityFrameBinding.inflate(layoutInflater) }
-    var lastx //手指在屏幕上抬起时的位置x
-            = 0
-    var lasty //手指在屏幕上抬起时的位置y
-            = 0
+
 
     override fun initViewModel() {
         viewModel = getActivityScopeViewModel(FrameViewModel::class.java)
@@ -49,68 +65,74 @@ class FrameActivity : BaseActivity() {
             statusBarDarkFont(true)
         }
         url = intent.getStringExtra(Contant.KEY_URL).toString()
+        typeName = intent.getStringExtra(Contant.KEY_TYPENAME).toString()
         viewModel.url.postValue(url)
-        //为图片添加移动监听
-        binding.imageView.setOnTouchListener(object : View.OnTouchListener {
-            var startx= 0  //手指第一次点击屏幕时的位置x
-            var starty = 0 //手指第一次点击屏幕时的位置y
+        val source = BitmapFactory.decodeFile(url)
+        val bitmap = Bitmap.createBitmap(source.width, source.height, Bitmap.Config.ARGB_8888)
+        val view = AlbumImageView(this, ALBUM_IMAGE_SHAPE, source, arrayOf(bitmap), 0F, 0F)
+//        viewModel.frame.postValue(view)
+        val layoutParams = view.layoutParams
+        view.layoutParams = ViewGroup.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT)
+        findViewById<LinearLayout>(R.id.frame_layout).addView(view)
+        adapter.setOnItemClickListener { _, item, _ ->
+            addFrameView(item.image)
+        }
+        GlobalScope.launch {
+            try {
+                getHttpData()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                when (event!!.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        startx = event.rawX.toInt()
-                        starty = event.rawY.toInt()
-                    }
-                    MotionEvent.ACTION_UP -> {
-                        lastx = binding.imageView.getLeft()
-                        println("lastx:$lastx")
-                        lasty = binding.imageView.getTop()
-                        println("lasty:$lasty")
-                    }
-                    MotionEvent.ACTION_MOVE -> {
-                        val x = event.rawX.toInt()
-                        val y = event.rawY.toInt()
-                        val dx = x - startx
-                        val dy = y - starty
-                        binding.imageView.layout(
-                            binding.imageView.getLeft() + dx,
-                            binding.imageView.getTop() + dy,
-                            binding.imageView.getRight() + dx,
-                            binding.imageView.getBottom() + dy
-                        )
-                        startx = event.rawX.toInt()
-                        starty = event.rawY.toInt()
-                        binding.imageView.invalidate()
+    private fun addFrameView(imageUrl:String){
+        val source = BitmapFactory.decodeFile(url)
+        var imageurl:URL? = null;
+        try {
+            imageurl =URL(imageUrl)
+        } catch (e: MalformedURLException) {
+            e.printStackTrace()
+        }
+        thread {
+            try {
+                val conn:HttpURLConnection = imageurl!!.openConnection() as HttpURLConnection
+                conn.doInput = true
+                conn.connect()
+                val input:InputStream  = conn.inputStream;
+                val bitmap = BitmapFactory.decodeStream(input);
+                input.close();
+                if (bitmap != null) {
+                    view = AlbumImageView(this@FrameActivity, ALBUM_IMAGE_SHAPE, source, arrayOf(bitmap), 0F, 0F)
+                    val layoutParams = view.layoutParams
+                    view.layoutParams = ViewGroup.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT)
+                    runOnUiThread {
+                        findViewById<LinearLayout>(R.id.frame_layout).removeAllViews()
+                        findViewById<LinearLayout>(R.id.frame_layout).addView(view)
                     }
                 }
-                return true
+            } catch ( e: IOException) {
+                e.printStackTrace();
             }
-        })
-
-
-        var frames = mutableListOf<Frame>()
-        frames.add(Frame(src = R.drawable.frame1, thumbnail = ""))
-        frames.add(Frame(src = R.drawable.frame2, thumbnail = ""))
-        viewModel.list.postValue(frames)
-
-        adapter.setOnItemClickListener { _, item, _ ->
-            viewModel.bitmap.postValue(item.src)
         }
+
     }
 
     /**
      * 获取网络资源
      */
 
-    fun getHttpData() {
-        GlobalScope.launch {
-            var frameInfo =
-                "https://businessapi.hprtupgrade.com/api/bphoto.beautiful_photos/dataPhotoFrameList".http()
-                    .params(mapOf("page" to 0, "size" to 50, "model" to "Cp4000"))
-                    .post<FrameInfo>().await()
-
+    private suspend fun getHttpData() {
+        val list = mutableListOf<Frame>()
+        val response =
+            request("https://businessapi.hprtupgrade.com/api/bphoto.beautiful_photos/dataPhotoFrameList?page=1&Size=0&model=${typeName}")
+        val fromJson = GsonUtils.fromJson(response, FrameResponse::class.java)
+        fromJson.data.list?.forEach {
+            list.add(it)
         }
+        viewModel.list.postValue(list)
     }
+
 
     //获取合并图片
     fun montage(xiangkuang: Bitmap, phto: Bitmap?, phtoX: Int, phtoY: Int): Bitmap? {
@@ -132,9 +154,40 @@ class FrameActivity : BaseActivity() {
          * 保存图片
          */
         fun complete() {
-
+            view.setDrawingCacheEnabled(true);
+            val bitmap:Bitmap  = Bitmap.createBitmap(view.getDrawingCache());
+            view.setDrawingCacheEnabled(false);
+            var path = Utils.getApp()
+                .getExternalFilesDir("edit")!!.absolutePath + File.separator + "frame_" + System.currentTimeMillis() + ".jpg"
+            FileUtils.createOrExistsFile(path)
+            ImageUtils.save(bitmap,path,Bitmap.CompressFormat.JPEG)
+            setResult(Contant.ADJUST, intent.setData(Uri.fromFile(File(path))))
+            finish()
         }
-
     }
+
+    private fun sendRequestWithOkHttp(map: Map<String, String>) {
+        thread {
+            try {
+                val client = OkHttpClient()
+                val body = FormBody.Builder()
+                for (key in map.keys) {
+                    body.add(key, map[key])
+                }
+                val request = Request.Builder()
+                    .url("https://businessapi.hprtupgrade.com")
+                    .post(body.build())
+                    .build()
+                val response = client.newCall(request).execute()
+                val responseData = response.body().toString()
+                if (responseData != null) {
+
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
 
 }

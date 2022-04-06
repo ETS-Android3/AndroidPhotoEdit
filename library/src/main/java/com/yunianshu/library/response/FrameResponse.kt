@@ -17,17 +17,14 @@ data class Data(
 )
 
 data class Frame(
-    var create_time: Int = 0,
-    var create_uid: Int = 0,
-    var file: String = "",
-    var font_id: Int = 0,
-    var font_name: String = "",
+    var model_id: Int = 0,
     var image: String = "",
     var src:Int = 0,
     var sort: Int = 0,
     var status: Int = 0,
     var thumbnail: String,
-    var type_name: String = "",
-    var types_id: Int = 0,
-    var update_time: Int = 0
+    var frame_name: String = "",
+    var frame_id: Int = 0,
+    var update_time: Int = 0,
+    var create_time: Int = 0
 )

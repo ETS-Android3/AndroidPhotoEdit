@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
     fun startActivity(localMedia: LocalMedia){
         val intent = Intent(this@MainActivity, PhotoEditActivity::class.java)
         intent.putExtra("url",localMedia.availablePath)
+        intent.putExtra("typeName","CP4000")
         if(localMedia.width>localMedia.height){
             intent.putExtra("rotate",true)
         }
