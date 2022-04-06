@@ -41,6 +41,8 @@ public class AlbumImageView extends AppCompatImageView {
     private float previousDistance = 0.0f;
     private PointF midPoint = new PointF();
 
+    private Bitmap result;
+
 
     public AlbumImageView(Context context, int imageType, Bitmap src, Bitmap[] bitmapMask, float xOffset, float yOffset) {
         super(context);
@@ -97,6 +99,7 @@ public class AlbumImageView extends AppCompatImageView {
             canvas.drawBitmap(bitmapMask[0], 0, 0, null);
             //画原图
             canvas.drawBitmap(src, xOffset, yOffset, paint);
+            this.result = bmp.copy(Bitmap.Config.ARGB_8888,true);
             return bmp;
         } else {
             //DST_ATOP 取上层非交集部分与下层交集部分
@@ -113,8 +116,13 @@ public class AlbumImageView extends AppCompatImageView {
             canvas1.drawBitmap(bitmapMask[1], 0, 0, null);
             canvas1.drawBitmap(bmp, 0, 0, paint1);
             bmp.recycle();
+            this.result = result.copy(Bitmap.Config.ARGB_8888,true);
             return result;
         }
+    }
+
+    public Bitmap getResult(){
+        return result;
     }
 
     @Override

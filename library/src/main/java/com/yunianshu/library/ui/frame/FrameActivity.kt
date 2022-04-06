@@ -154,9 +154,7 @@ class FrameActivity : BaseActivity() {
          * 保存图片
          */
         fun complete() {
-            view.setDrawingCacheEnabled(true);
-            val bitmap:Bitmap  = Bitmap.createBitmap(view.getDrawingCache());
-            view.setDrawingCacheEnabled(false);
+            val bitmap = view.result
             var path = Utils.getApp()
                 .getExternalFilesDir("edit")!!.absolutePath + File.separator + "frame_" + System.currentTimeMillis() + ".jpg"
             FileUtils.createOrExistsFile(path)

@@ -7,7 +7,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.databinding.BindingAdapter
 import coil.load
-import com.bumptech.glide.Glide
 import com.yunianshu.indicatorseekbar.widget.IndicatorSeekBar
 import com.yunianshu.indicatorseekbar.widget.OnSeekChangeListener
 import com.yunianshu.library.R
@@ -47,13 +46,7 @@ fun ImageView.url(url: String?) {
         }
     }
 }
-@BindingAdapter("loadResource")
-fun ImageView.loadB(bitmap :Int) {
-    bitmap?.let {
-//        setImageResource(bitmap)
-        Glide.with(this).load(it).into(this)
-    }
-}
+
 
 @BindingAdapter("loadBitmap")
 fun ImageView.load(bitmap: Bitmap?) {
