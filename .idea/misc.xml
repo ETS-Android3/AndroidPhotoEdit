@@ -52,9 +52,13 @@
         <entry key="..\:/androidProject/AndroidPhotoEdit/library/src/main/res/layout/activity_crop.xml" value="0.2328125" />
         <entry key="..\:/androidProject/AndroidPhotoEdit/library/src/main/res/layout/activity_filter.xml" value="0.3489583333333333" />
         <entry key="..\:/androidProject/AndroidPhotoEdit/library/src/main/res/layout/activity_frame.xml" value="0.3489583333333333" />
+        <entry key="..\:/androidProject/AndroidPhotoEdit/library/src/main/res/layout/activity_photo_edit.xml" value="0.17980072463768115" />
         <entry key="..\:/androidProject/AndroidPhotoEdit/library/src/main/res/layout/activity_sticker.xml" value="0.3489583333333333" />
         <entry key="..\:/androidProject/AndroidPhotoEdit/library/src/main/res/layout/activity_words.xml" value="0.3489583333333333" />
+        <entry key="..\:/androidProject/AndroidPhotoEdit/library/src/main/res/layout/fragment_text_font.xml" value="0.19010416666666666" />
         <entry key="..\:/androidProject/AndroidPhotoEdit/library/src/main/res/layout/item_photo_edit.xml" value="0.259375" />
+        <entry key="..\:/androidProject/AndroidPhotoEdit/library/src/main/res/layout/item_photo_sticker.xml" value="0.21510416666666668" />
+        <entry key="..\:/androidProject/AndroidPhotoEdit/library/src/main/res/layout/item_text_font.xml" value="0.2635416666666667" />
       </map>
     </option>
   </component>

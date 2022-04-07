@@ -2,13 +2,22 @@ package com.yunianshu.library.adapter
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import androidx.core.graphics.alpha
+import androidx.core.graphics.blue
+import androidx.core.graphics.green
+import androidx.core.graphics.red
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import com.blankj.utilcode.util.ConvertUtils
 import com.kunminx.binding_recyclerview.adapter.SimpleDataBindingAdapter
 import com.yunianshu.library.R
 import com.yunianshu.library.bean.FontInfo
 import com.yunianshu.library.databinding.ItemTextFontBinding
+import com.yunianshu.library.util.ImageUtils
 import com.yunianshu.sticker.TextDrawable
 
 /**
@@ -36,7 +45,13 @@ FontCallBack()) {
     ) {
         binding.item = item
         if(item.type == 0){
-            binding.ivFontImage.load(TextDrawable.builder().beginConfig().textColor(Color.BLACK).endConfig().buildRect(item.name, Color.RED))
+            var drawable:Drawable = TextDrawable.builder().beginConfig().fontSize(ConvertUtils.sp2px(20f)).align(Paint.Align.LEFT).height(1).width(2).textColor(Color.BLACK).endConfig().buildRect("默认", Color.TRANSPARENT)
+//            val color = Color.parseColor("#82D0E7")
+//            var bitmap = ImageUtils.setSingleColorImageByARGB(ImageUtils.drawableToBitmap(drawable as TextDrawable),color.red,color.green,color.blue,color.alpha)
+//            if(item.select){
+//                drawable = BitmapDrawable(bitmap)
+//            }
+            binding.ivFontImage.load(drawable)
         }else{
             binding.ivFontImage.load(item.fontImage){
                 crossfade(true)

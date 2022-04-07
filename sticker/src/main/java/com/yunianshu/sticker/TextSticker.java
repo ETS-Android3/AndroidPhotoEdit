@@ -244,9 +244,19 @@ public class TextSticker extends Sticker {
     return this;
   }
 
-  @NonNull public TextSticker setMaxTextSize(@Dimension(unit = Dimension.SP) float size) {
+  /**
+   * 新增
+   * @param size 文字大小
+   * @time 2022.04.07
+   * @return
+   */
+  public TextSticker setTextSize(@Dimension(unit = Dimension.SP) float size){
     textPaint.setTextSize(convertSpToPx(size));
-    maxTextSizePixels = textPaint.getTextSize();
+    return this;
+  }
+
+  @NonNull public TextSticker setMaxTextSize(@Dimension(unit = Dimension.SP) float size) {
+    maxTextSizePixels = convertSpToPx(size);
     return this;
   }
 

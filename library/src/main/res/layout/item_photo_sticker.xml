@@ -5,7 +5,7 @@
     <data>
          <variable
              name="item"
-             type="com.yunianshu.library.bean.StickerInfo" />
+             type="com.yunianshu.library.response.Stk" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
@@ -29,7 +29,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@{item.text}"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

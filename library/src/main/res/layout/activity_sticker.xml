@@ -43,8 +43,10 @@
         <com.yunianshu.library.view.imagezoom.ImageViewTouch
             android:id="@+id/stickerImage"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:layout_margin="20dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
             loadBitmap="@{vm.bitmap}"
             app:layout_constraintBottom_toTopOf="@+id/stickerList"
             app:layout_constraintEnd_toEndOf="parent"

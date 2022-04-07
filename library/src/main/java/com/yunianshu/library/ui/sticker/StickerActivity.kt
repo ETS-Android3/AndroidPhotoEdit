@@ -5,10 +5,15 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.net.Uri
+import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.blankj.utilcode.util.FileUtils
+import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.ImageUtils
 import com.blankj.utilcode.util.Utils
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.Target
 import com.gyf.immersionbar.ktx.immersionBar
 import com.kunminx.architecture.ui.page.DataBindingConfig
 import com.kunminx.binding_recyclerview.adapter.BaseDataBindingAdapter
@@ -18,15 +23,21 @@ import com.yunianshu.library.Contant
 import com.yunianshu.library.R
 import com.yunianshu.library.adapter.StickerAdapter
 import com.yunianshu.library.bean.StickerInfo
+import com.yunianshu.library.response.StickerResponse
+import com.yunianshu.library.response.Stk
+import com.yunianshu.library.util.HttpUtil
 import com.yunianshu.library.util.Matrix3
 import com.yunianshu.library.view.StickerView
 import com.yunianshu.library.view.imagezoom.ImageViewTouch
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.concurrent.thread
 
 /**
  * 5.贴纸界面
  */
-class StickerActivity : BaseActivity(),BaseDataBindingAdapter.OnItemClickListener<StickerInfo>{
+class StickerActivity : BaseActivity(),BaseDataBindingAdapter.OnItemClickListener<Stk>{
 
     private lateinit var viewModel: StickerViewModel
     private lateinit var adapter: StickerAdapter
@@ -56,19 +67,30 @@ class StickerActivity : BaseActivity(),BaseDataBindingAdapter.OnItemClickListene
         viewModel.bitmap.postValue(bitmap)
         val layoutParams = imageView.layoutParams as ConstraintLayout.LayoutParams
         layoutParams.dimensionRatio = "${bitmap.width}:${bitmap.height}"
-        loadStickers()
+
+//        loadStickers()
+        GlobalScope.launch {
+            try {
+                getHttpData()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
-    private fun loadStickers() {
-        val list = resources.assets.list("stickers/type1")
-        list?.let {
-            val stickers = mutableListOf<StickerInfo>()
-            for (item in it) {
-                val open = assets.open("stickers/type1/${item}")
-                stickers.add(StickerInfo(bitmap = BitmapFactory.decodeStream(open)))
-            }
-            viewModel.list.postValue(stickers)
+    /**
+     * 获取网络资源
+     */
+
+    private suspend fun getHttpData() {
+        val list = mutableListOf<Stk>()
+        val response =
+            HttpUtil.request("https://businessapi.hprtupgrade.com/api/bphoto.beautiful_photos/dataStickerList?page=1&Size=0")
+        val fromJson: StickerResponse = GsonUtils.fromJson(response, StickerResponse::class.java)
+        fromJson.data.list?.forEach {
+            list.add(it)
         }
+        viewModel.list.postValue(list)
     }
 
 
@@ -110,8 +132,19 @@ class StickerActivity : BaseActivity(),BaseDataBindingAdapter.OnItemClickListene
         }
     }
 
-    override fun onItemClick(viewId: Int, item: StickerInfo, position: Int) {
-        stickerView.addBitImage(item.bitmap)
+    override fun onItemClick(viewId: Int, item: Stk, position: Int) {
+        thread {
+            var bitmap = Glide.with(this)
+                .asBitmap()
+                .load(item.image)
+                .submit(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
+                .get()
+            runOnUiThread {
+                stickerView.addBitImage(bitmap)
+            }
+
+        }
+
     }
 
 }

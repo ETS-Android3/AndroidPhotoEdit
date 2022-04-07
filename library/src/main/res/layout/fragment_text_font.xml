@@ -16,6 +16,7 @@
             type="com.yunianshu.library.adapter.FontAdapter" />
     </data>
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fontRecycleView"
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:orientation="vertical"

@@ -38,26 +38,9 @@ class TextBubbleFragment : BaseFragment() {
 
         var infos = mutableListOf<StickerInfo>()
         //默认添加文字 文字边距默认10
-        infos.add(
-            StickerInfo(
-                bitmap = drawableToBitmap(
-                    TextDrawable.builder()
-                        .beginConfig()
-                        .width(100)
-                        .height(50)
-                        .endConfig()
-                        .buildRoundRect("Hi", Color.parseColor("#82D0E7"), 5)
-                ),
-                bubbleInfo = BubbleInfo(
-                    type = Contant.STICKER_TYPE_TEXT,
-                    paddingLeft = 10,
-                    paddingBottom = 10,
-                    paddingRight = 10,
-                    paddingTop = 10
-                ),
-                select = true
-            )
-        )
+        shareVM.textStickerInfo.value?.let {
+            infos.add(it)
+        }
         //添加assets文件内容
         for (item in list) {
             infos.add(

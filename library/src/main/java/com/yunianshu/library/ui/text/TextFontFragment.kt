@@ -10,6 +10,7 @@ import com.yunianshu.library.adapter.FontAdapter
 import com.yunianshu.library.bean.FontInfo
 import com.yunianshu.library.response.FontResponse
 import com.yunianshu.library.util.HttpUtil
+import com.yunianshu.library.util.RecycleViewUtils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -29,11 +30,12 @@ class TextFontFragment : BaseFragment() {
               e.printStackTrace()
           }
         }
-        adapter.setOnItemClickListener { _, item, _ ->
+        adapter.setOnItemClickListener { view, item, pos ->
             shareViewModel.textStickerFont.value!!.select = false
             item.select = true
             shareViewModel.textStickerFont.postValue(item)
             adapter.notifyDataSetChanged()
+            RecycleViewUtils.toPosition(mActivity.findViewById(R.id.fontRecycleView),pos,viewModel.list.value!!.size,1)
         }
     }
 

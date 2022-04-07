@@ -74,7 +74,7 @@ object ImageUtils {
         rValue: Int,
         gValue: Int,
         bValue: Int,
-        alpha: Float
+        alpha: Int
     ): Bitmap {
 
         // 1.获取一个与baseBitmap大小一致的可编辑的空图片
@@ -90,7 +90,7 @@ object ImageUtils {
             1f, 0f, 0f, 0f, rValue.toFloat(),
             0f, 1f, 0f, 0f, gValue.toFloat(),
             0f, 0f, 1f, 0f, bValue.toFloat(),
-            0f, 0f, 0f, alpha, 0f
+            0f, 0f, 0f, 1f, 0f
         )
 
         // 3.定义ColorMatrix，并指定RGBA矩阵

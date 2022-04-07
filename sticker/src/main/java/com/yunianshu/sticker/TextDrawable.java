@@ -48,7 +48,7 @@ public class TextDrawable extends ShapeDrawable {
         textPaint.setFakeBoldText(builder.isBold);
         textPaint.setStyle(Paint.Style.FILL);
         textPaint.setTypeface(builder.font);
-        textPaint.setTextAlign(Paint.Align.CENTER);
+        textPaint.setTextAlign(builder.align);
         textPaint.setStrokeWidth(builder.borderThickness);
 
         // border paint settings
@@ -152,6 +152,8 @@ public class TextDrawable extends ShapeDrawable {
 
         private int height;
 
+        private Paint.Align align;
+
         private Typeface font;
 
         private RectShape shape;
@@ -178,6 +180,7 @@ public class TextDrawable extends ShapeDrawable {
             fontSize = -1;
             isBold = false;
             toUpperCase = false;
+            align = Paint.Align.CENTER;
         }
 
         @Override
@@ -189,6 +192,12 @@ public class TextDrawable extends ShapeDrawable {
         @Override
         public IConfigBuilder height(int height) {
             this.height = height;
+            return this;
+        }
+
+        @Override
+        public IConfigBuilder align(Paint.Align align) {
+            this.align = align;
             return this;
         }
 
@@ -288,6 +297,8 @@ public class TextDrawable extends ShapeDrawable {
         public IConfigBuilder width(int width);
 
         public IConfigBuilder height(int height);
+
+        public IConfigBuilder align(Paint.Align align);
 
         public IConfigBuilder textColor(int color);
 

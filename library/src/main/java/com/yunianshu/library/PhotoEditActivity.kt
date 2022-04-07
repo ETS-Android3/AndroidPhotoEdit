@@ -1,10 +1,7 @@
 package com.yunianshu.library
 
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Rect
-import android.graphics.Typeface
+import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.text.Layout
 import android.text.TextUtils
@@ -15,6 +12,7 @@ import com.blankj.utilcode.util.*
 import com.gyf.immersionbar.ktx.immersionBar
 import com.kunminx.architecture.ui.page.DataBindingConfig
 import com.yunianshu.library.adapter.RgAdapter
+import com.yunianshu.library.bean.BubbleInfo
 import com.yunianshu.library.bean.FontInfo
 import com.yunianshu.library.bean.PhotoEditItem
 import com.yunianshu.library.bean.StickerInfo
@@ -33,6 +31,7 @@ import com.yunianshu.library.view.ModifyContentDialog
 import com.yunianshu.library.view.StickerListener
 import com.yunianshu.sticker.Sticker
 import com.yunianshu.sticker.StickerView
+import com.yunianshu.sticker.TextDrawable
 import com.yunianshu.sticker.TextSticker
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -100,6 +99,7 @@ class PhotoEditActivity : BaseActivity() {
                     .setAlpha(255)
                 sticker.resizeText()
                 shareVM.addSticker(sticker)
+                viewModel.refreshStickerView()
 //                showInputDialog(it)
             } else {
                 updateSticker(it)
@@ -326,13 +326,7 @@ class PhotoEditActivity : BaseActivity() {
                     intent = Intent(this, StickerActivity::class.java)
                 }
                 Contant.WORDS -> {
-                    shareVM.showTextEditView.postValue(true)
-                    viewModel.currentPaper.postValue(0)
-                    viewModel.currentText.postValue(item.text)
-                    immersionBar {
-                        statusBarColor(com.yunianshu.sticker.R.color.white)
-                        statusBarDarkFont(true)
-                    }
+                    startText(item.text)
                     return@setOnItemClickListener
                 }
             }
@@ -340,6 +334,41 @@ class PhotoEditActivity : BaseActivity() {
             intent?.putExtra("typeName", typeName)
             activityResultLauncher.launch(intent)
         }
+    }
+
+    /**
+     * 点击文字
+     */
+    private fun startText(name:String){
+        if(stickerView.currentSticker == null){
+            shareVM.textStickerInfo.postValue(StickerInfo(
+                bitmap = com.yunianshu.library.util.ImageUtils.drawableToBitmap(
+                    TextDrawable.builder()
+                        .beginConfig()
+                        .width(100)
+                        .height(50)
+                        .endConfig()
+                        .buildRoundRect("Hi", Color.parseColor("#82D0E7"), 5)
+                ),
+                bubbleInfo = BubbleInfo(
+                    type = Contant.STICKER_TYPE_TEXT,
+                    paddingLeft = 10,
+                    paddingBottom = 10,
+                    paddingRight = 10,
+                    paddingTop = 10
+                ),
+                select = true
+            ))
+        }
+        stickerView.show()
+        shareVM.showTextEditView.postValue(true)
+        viewModel.currentPaper.postValue(0)
+        viewModel.currentText.postValue(name)
+        immersionBar {
+            statusBarColor(com.yunianshu.sticker.R.color.white)
+            statusBarDarkFont(true)
+        }
+
     }
 
     private fun initFragment() {
@@ -389,6 +418,7 @@ class PhotoEditActivity : BaseActivity() {
         fun last() {
             shareVM.showTextEditView.postValue(false)
             dialog.dismiss()
+            stickerView.hide()
             immersionBar {
                 statusBarColor(R.color.base_color)
                 statusBarDarkFont(false)
@@ -414,6 +444,7 @@ class PhotoEditActivity : BaseActivity() {
             when (sticker) {
                 is TextSticker -> {
                     showInputDialog(sticker)
+                    stickerView.show()
                 }
             }
         }

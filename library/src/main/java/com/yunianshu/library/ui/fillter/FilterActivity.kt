@@ -19,6 +19,7 @@ import com.xinlan.imageeditlibrary.editimage.fliter.PhotoProcessing
 import com.yunianshu.library.*
 import com.yunianshu.library.adapter.FilterAdapter
 import com.yunianshu.library.bean.FilterItem
+import com.yunianshu.library.util.RecycleViewUtils.toPosition
 import java.io.File
 import kotlin.concurrent.thread
 
@@ -55,7 +56,7 @@ class FilterActivity : BaseActivity() {
                 item.select = true
                 viewModel.currentItem.postValue(item)
                 adapter.notifyDataSetChanged()
-                toPosition(pos,13)
+                toPosition(findViewById(R.id.recyclerView2),pos,13,2)
             }
         }
         val url = intent.getStringExtra(Contant.KEY_URL)
@@ -85,25 +86,6 @@ class FilterActivity : BaseActivity() {
                 viewModel.list.postValue(filterList)
             }
         }
-    }
-
-    private var mFirstVisiblePosition:Int = 0 //上次点击的位置
-    private fun toPosition(i:Int, size:Int) { // i 当前点击的条目，size数据总长度
-        val scrollToPosition: Int = if (i - mFirstVisiblePosition > 0) { //右边
-            if (i + 2 < size) { //保证在数据长度内
-                i + 2
-            } else {
-                size
-            }
-        } else { //左边
-            if (i - 2 > 0) { //保证不会越界
-                i - 2
-            } else {
-                0
-            }
-        } //要滑动的位置
-        findViewById<RecyclerView>(R.id.recyclerView2).smoothScrollToPosition(scrollToPosition) //滑动方法
-        mFirstVisiblePosition = i //重新赋值
     }
 
     inner class FilterClickProxy{

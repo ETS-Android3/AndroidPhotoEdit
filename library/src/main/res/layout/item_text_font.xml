@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
@@ -7,39 +8,42 @@
             type="com.yunianshu.library.bean.FontInfo" />
 
     </data>
+
+        <!--drawable_radius="@{2}"
+        drawable_strokeColor="@{0xff82d0e7}"
+        drawable_strokeWidth="@{item.select?2:0}"-->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        drawable_strokeWidth="@{item.select?2:0}"
-        drawable_strokeColor="@{0xff82d0e7}"
-        drawable_radius="@{2}">
+        android:layout_marginEnd="20dp">
 
         <ImageView
             android:id="@+id/imageView2"
+            visiable="@{item.select}"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            visiable="@{item.select}"
             android:background="@drawable/ic_text_font_select"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_font_image"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.105"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/iv_font_image" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/iv_font_image"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_margin="@dimen/padding_2dp"
             android:adjustViewBounds="true"
             android:padding="10dp"
             android:scaleType="fitXY"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.1"
-            app:layout_constraintStart_toEndOf="@+id/imageView2"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="40dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

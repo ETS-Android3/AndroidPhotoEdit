@@ -38,8 +38,8 @@ import java.util.List;
  */
 public class StickerView extends FrameLayout {
 
-  private final boolean showIcons;//是否显示编辑图标
-  private final boolean showBorder;//是否显示边框
+  private boolean showIcons;//是否显示编辑图标
+  private boolean showBorder;//是否显示边框
   private final boolean bringToFrontCurrentSticker;
 
   @IntDef({
@@ -711,6 +711,22 @@ public class StickerView extends FrameLayout {
   @NonNull public StickerView copySticker() {
     return addSticker(getCurrentSticker(), Sticker.Position.CENTER);
   }
+
+  /**
+   * 显示编辑
+   */
+  public void show(){
+    this.showIcons = true;
+    this.showBorder = true;
+    invalidate();
+  }
+
+  public void hide(){
+    this.showBorder = false;
+    this.showIcons = false;
+    invalidate();
+  }
+
 
   public StickerView addSticker(@NonNull final Sticker sticker,
       final @Sticker.Position int position) {
