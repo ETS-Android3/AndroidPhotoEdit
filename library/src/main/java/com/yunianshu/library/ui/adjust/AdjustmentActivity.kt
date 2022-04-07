@@ -84,15 +84,14 @@ class AdjustmentActivity : BaseActivity() {
         val layoutParams = surfaceView.layoutParams as ConstraintLayout.LayoutParams
         layoutParams.dimensionRatio = "$mBmpW:$mBmpH"
         gpuImage = GPUImage(this)
-        gpuImage.setBackgroundColor(255f, 255f, 255f)
+        gpuImage.setBackgroundColor(0f, 0f, 0f)
         gpuImage.setGLTextureView(surfaceView)
-        thread {
+        if (rotate){
             gpuImage.setImage(
-                if (rotate)
-                    ImageUtils.rotate(bitmap, 90, bitmap.width.toFloat(), bitmap.height.toFloat())
-                else
-                    bitmap
+                ImageUtils.rotate(bitmap, 90, bitmap.width.toFloat(), bitmap.height.toFloat())
             )
+        }else{
+            gpuImage.setImage(bitmap)
         }
         loadPhotoEditItems()
         viewModel.url.postValue(url)

@@ -27,3 +27,17 @@ maven { url 'https://maven.aliyun.com/repository/jcenter' }
 
 5.PhotoProcessing需要优化
 
+todo
+
+6.关于Application的配置
+
+android:largeHeap="true"
+
+android:hardwareAccelerated="false"
+
+添加这两个属性,会导致gpuImage.setImage(bitmap)设置不成功
+
+暂无替代方案(待优化)
+
+
+
