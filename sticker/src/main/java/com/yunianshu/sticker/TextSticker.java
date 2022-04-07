@@ -166,7 +166,6 @@ public class TextSticker extends Sticker {
 
   @NonNull public TextSticker setTypeface(@Nullable Typeface typeface) {
     textPaint.setTypeface(typeface);
-
     return this;
   }
   /**

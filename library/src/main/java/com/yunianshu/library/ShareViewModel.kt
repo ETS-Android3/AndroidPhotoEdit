@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import com.kunminx.architecture.ui.callback.UnPeekLiveData
 import com.yunianshu.library.bean.BubbleInfo
+import com.yunianshu.library.bean.FontInfo
 import com.yunianshu.library.bean.StickerInfo
 import com.yunianshu.library.bean.TextColorInfo
 import com.yunianshu.sticker.Sticker
@@ -11,7 +12,9 @@ import com.yunianshu.sticker.Sticker
 /**
  * Create by WingGL
  * createTime: 2022/4/1
+ * description:PhotoEditActivity共享ViewModel
  */
+
 class ShareViewModel : ViewModel() {
     /**
      * 图片处理缓存库
@@ -26,7 +29,7 @@ class ShareViewModel : ViewModel() {
     /**
      * 是否在编辑中
      */
-    var showEditView = UnPeekLiveData<Boolean>()
+    var showTextEditView = UnPeekLiveData<Boolean>()
 
     /**
      * 气泡集合
@@ -74,14 +77,20 @@ class ShareViewModel : ViewModel() {
      */
     var textStickerUnderline = UnPeekLiveData<Boolean>()
 
+    /**
+     * 文字字体
+     */
+    var textStickerFont = UnPeekLiveData<FontInfo>()
+
 
     init {
-        showEditView.value = false
+        showTextEditView.value = false
         textStickerAlpha.value = 255f
         textStickerBold.value = false
         textStickerAlign.value = 0
         textStickerItalic.value = false
         textStickerUnderline.value = false
+        textStickerFont.value = FontInfo(name = "默认字体",url = null,filePath = null, fontImage = null, select = true)
     }
 
     /**

@@ -11,13 +11,11 @@ import android.text.TextUtils
 import android.util.Log
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
-import com.blankj.utilcode.util.ConvertUtils
-import com.blankj.utilcode.util.ImageUtils
-import com.blankj.utilcode.util.UriUtils
-import com.blankj.utilcode.util.Utils
+import com.blankj.utilcode.util.*
 import com.gyf.immersionbar.ktx.immersionBar
 import com.kunminx.architecture.ui.page.DataBindingConfig
 import com.yunianshu.library.adapter.RgAdapter
+import com.yunianshu.library.bean.FontInfo
 import com.yunianshu.library.bean.PhotoEditItem
 import com.yunianshu.library.bean.StickerInfo
 import com.yunianshu.library.ui.adjust.AdjustmentActivity
@@ -25,12 +23,19 @@ import com.yunianshu.library.ui.crop.CropActivity
 import com.yunianshu.library.ui.fillter.FilterActivity
 import com.yunianshu.library.ui.frame.FrameActivity
 import com.yunianshu.library.ui.sticker.StickerActivity
-import com.yunianshu.library.ui.words.TextFragment
+import com.yunianshu.library.ui.text.TextFragment
+import com.yunianshu.library.util.HttpCallbackListener
+import com.yunianshu.library.util.HttpUtil
+import com.yunianshu.library.util.HttpUtil.download
+import com.yunianshu.library.util.HttpUtil.fetchDownload
+import com.yunianshu.library.util.HttpUtil.request
 import com.yunianshu.library.view.ModifyContentDialog
 import com.yunianshu.library.view.StickerListener
 import com.yunianshu.sticker.Sticker
 import com.yunianshu.sticker.StickerView
 import com.yunianshu.sticker.TextSticker
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.File
 
 
@@ -89,7 +94,13 @@ class PhotoEditActivity : BaseActivity() {
         stickerView.isConstrained = true
         shareVM.textStickerInfo.observeSticky(this) {
             if (stickerView.currentSticker == null) {
-                showInputDialog(it)
+                val sticker = TextSticker(this)
+                sticker.setText("请输入文字")
+                    .setMaxTextSize(24f)
+                    .setAlpha(255)
+                sticker.resizeText()
+                shareVM.addSticker(sticker)
+//                showInputDialog(it)
             } else {
                 updateSticker(it)
             }
@@ -194,12 +205,78 @@ class PhotoEditActivity : BaseActivity() {
                 viewModel.refreshStickerView()
             }
         }
+        //设置下划线
         shareVM.textStickerUnderline.observeSticky(this) {
             if (stickerView.currentSticker != null) {
                 val sticker = stickerView.currentSticker as TextSticker
                 sticker.setTextUnderLine(it)
                 viewModel.refreshStickerView()
             }
+        }
+        //设置字体
+        shareVM.textStickerFont.observeSticky(this) { info ->
+            if (stickerView.currentSticker != null) {
+                val sticker = stickerView.currentSticker as TextSticker
+                when (info.type) {
+                    0 -> {//默认字体
+                        sticker.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL))
+                    }
+                    1 -> {//本地字体
+                        info.filePath?.let {path->
+                            var file = File(path)
+                            if(file.exists()){
+                                sticker.setTypeface(Typeface.createFromFile(file))
+                            }else{
+                                ToastUtils.showShort("本地找不到该下载字体")
+                            }
+                        }
+                    }
+                    2 -> {//网路字体
+                        GlobalScope.launch {
+                            try {
+                                downLoadFont(info)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+
+                    }
+                }
+                viewModel.refreshStickerView()
+            }
+        }
+    }
+
+    /**
+     * 下载字体设置
+     */
+    private suspend fun downLoadFont(info: FontInfo) {
+        val sticker = stickerView.currentSticker as TextSticker
+        info.url?.let { url ->
+            var path = Utils.getApp()
+                .getExternalFilesDir("edit")!!.absolutePath + File.separator + url.substring(
+                url.lastIndexOf(
+                    "."
+                ) - 8)
+            File(path).let {
+                if (!it.exists()) {
+                    var response = fetchDownload(this,url, path)
+                    if (response == path) {
+                        sticker.setTypeface(Typeface.createFromFile(it))
+                        info.type = 1
+                        info.filePath = path
+                    } else {
+                        ToastUtils.showShort("下载失败")
+                    }
+                } else {
+                    //下载的字体已存在
+                    info.type = 1
+                    info.filePath = path
+                    sticker.setTypeface(Typeface.createFromFile(File(path)))
+                }
+                viewModel.refreshStickerView()
+            }
+
         }
     }
 
@@ -249,7 +326,7 @@ class PhotoEditActivity : BaseActivity() {
                     intent = Intent(this, StickerActivity::class.java)
                 }
                 Contant.WORDS -> {
-                    shareVM.showEditView.postValue(true)
+                    shareVM.showTextEditView.postValue(true)
                     viewModel.currentPaper.postValue(0)
                     viewModel.currentText.postValue(item.text)
                     immersionBar {
@@ -310,7 +387,8 @@ class PhotoEditActivity : BaseActivity() {
     inner class PhotoEditClickProxy {
 
         fun last() {
-            shareVM.showEditView.postValue(false)
+            shareVM.showTextEditView.postValue(false)
+            dialog.dismiss()
             immersionBar {
                 statusBarColor(R.color.base_color)
                 statusBarDarkFont(false)
@@ -378,7 +456,7 @@ class PhotoEditActivity : BaseActivity() {
     private fun showInputDialog(item: StickerInfo) {
         dialog.setHint(R.string.tip_enter_content)
             .setOnTextChangedListener(false) {
-                if(it.isEmpty()){
+                if (it.isEmpty()) {
                     return@setOnTextChangedListener
                 }
                 val sticker = TextSticker(this)

@@ -36,7 +36,7 @@
 
         <RelativeLayout
             android:id="@+id/relativeLayout"
-            visiable="@{!sharevm.showEditView}"
+            visiable="@{!sharevm.showTextEditView}"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
             android:background="@color/base_color"
@@ -128,7 +128,7 @@
 
                 <View
                     android:id="@+id/view2"
-                    visiable="@{!sharevm.showEditView}"
+                    visiable="@{!sharevm.showTextEditView}"
                     android:layout_width="match_parent"
                     android:layout_height="0.5dp"
                     android:background="@color/base_center_color"
@@ -138,7 +138,7 @@
                     android:id="@+id/recyclerView"
                     adapter="@{adapter}"
                     submitList="@{vm.list}"
-                    visiable="@{!sharevm.showEditView}"
+                    visiable="@{!sharevm.showTextEditView}"
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
                     android:orientation="horizontal"
@@ -148,7 +148,7 @@
                 <androidx.viewpager2.widget.ViewPager2
                     android:id="@+id/viewPager2"
                     current="@{vm.currentPaper}"
-                    visiable="@{sharevm.showEditView}"
+                    visiable="@{sharevm.showTextEditView}"
                     useEnable="@{false}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -156,7 +156,7 @@
 
                 <LinearLayout
                     android:id="@+id/linearLayout"
-                    visiable="@{sharevm.showEditView}"
+                    visiable="@{sharevm.showTextEditView}"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:layout_gravity="bottom"

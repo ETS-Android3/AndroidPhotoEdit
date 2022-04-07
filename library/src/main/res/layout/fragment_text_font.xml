@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
         <variable
             name="vm"
-            type="com.yunianshu.library.ui.words.TextFontViewModel" />
+            type="com.yunianshu.library.ui.text.TextFontViewModel" />
 
         <variable
             name="sharevm"
             type="com.yunianshu.library.ShareViewModel" />
+        <variable
+            name="adapter"
+            type="com.yunianshu.library.adapter.FontAdapter" />
     </data>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.words.TextFontFragment">
-
-
-    </androidx.recyclerview.widget.RecyclerView>
+        android:layout_height="120dp"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        adapter="@{adapter}"
+        submitList="@{vm.list}"
+        tools:listitem="@layout/item_text_font"
+        tools:context=".ui.text.TextFontFragment"/>
 </layout>

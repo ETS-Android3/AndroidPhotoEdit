@@ -70,7 +70,6 @@ class FrameActivity : BaseActivity() {
         val source = BitmapFactory.decodeFile(url)
         val bitmap = Bitmap.createBitmap(source.width, source.height, Bitmap.Config.ARGB_8888)
         val view = AlbumImageView(this, ALBUM_IMAGE_SHAPE, source, arrayOf(bitmap), 0F, 0F)
-//        viewModel.frame.postValue(view)
         val layoutParams = view.layoutParams
         view.layoutParams = ViewGroup.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT)
         findViewById<LinearLayout>(R.id.frame_layout).addView(view)
@@ -85,7 +84,7 @@ class FrameActivity : BaseActivity() {
             }
         }
     }
-
+    //加载相框控件
     private fun addFrameView(imageUrl:String){
         val source = BitmapFactory.decodeFile(url)
         var imageurl:URL? = null;
@@ -163,29 +162,5 @@ class FrameActivity : BaseActivity() {
             finish()
         }
     }
-
-    private fun sendRequestWithOkHttp(map: Map<String, String>) {
-        thread {
-            try {
-                val client = OkHttpClient()
-                val body = FormBody.Builder()
-                for (key in map.keys) {
-                    body.add(key, map[key])
-                }
-                val request = Request.Builder()
-                    .url("https://businessapi.hprtupgrade.com")
-                    .post(body.build())
-                    .build()
-                val response = client.newCall(request).execute()
-                val responseData = response.body().toString()
-                if (responseData != null) {
-
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
 
 }

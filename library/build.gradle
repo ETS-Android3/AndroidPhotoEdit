@@ -79,5 +79,7 @@ dependencies {
     //颜色选择器
     implementation "com.github.skydoves:colorpickerview:2.2.4"
 
+    //文件下载
+    implementation "androidx.tonyodev.fetch2:xfetch2:3.1.6"
 
 }

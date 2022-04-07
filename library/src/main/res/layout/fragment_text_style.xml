@@ -8,7 +8,7 @@
 
         <variable
             name="vm"
-            type="com.yunianshu.library.ui.words.TextStyleViewModel" />
+            type="com.yunianshu.library.ui.text.TextStyleViewModel" />
 
         <variable
             name="sharevm"
@@ -16,7 +16,7 @@
 
         <variable
             name="listener"
-            type="com.yunianshu.library.ui.words.TextStyleFragment.TextStyleColorSeekBarListener" />
+            type="com.yunianshu.library.ui.text.TextStyleFragment.TextStyleColorSeekBarListener" />
 
         <variable
             name="adapter"
@@ -24,7 +24,7 @@
 
         <variable
             name="click"
-            type="com.yunianshu.library.ui.words.TextStyleFragment.TextStyleClickProxy" />
+            type="com.yunianshu.library.ui.text.TextStyleFragment.TextStyleClickProxy" />
 
     </data>
 
@@ -34,7 +34,7 @@
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
         android:paddingTop="10dp"
-        tools:context=".ui.words.TextStyleFragment">
+        tools:context=".ui.text.TextStyleFragment">
 
         <LinearLayout
             android:id="@+id/linearLayout5"

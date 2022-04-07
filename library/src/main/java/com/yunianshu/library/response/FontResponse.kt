@@ -14,10 +14,10 @@ data class FontResponse(
 
 data class FontData(
     var count: Int,
-    var list: List<FontInfo>
+    var list: List<Font>
 )
 
-data class FontInfo(
+data class Font(
     var create_time: Int,
     var create_uid: Int,
     var file: String,

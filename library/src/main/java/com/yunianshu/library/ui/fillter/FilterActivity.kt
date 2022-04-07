@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.ImageUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.blankj.utilcode.util.Utils
 import com.gyf.immersionbar.ktx.immersionBar
 import com.kunminx.architecture.ui.page.DataBindingConfig
@@ -60,23 +61,29 @@ class FilterActivity : BaseActivity() {
         val url = intent.getStringExtra(Contant.KEY_URL)
         val filterList = mutableListOf<FilterItem>()
         val bitmap = BitmapFactory.decodeFile(url)
-        val beginTime = System.currentTimeMillis()
-        val layoutParams = imageView.layoutParams as ConstraintLayout.LayoutParams
-        layoutParams.dimensionRatio = "${bitmap.width}:${bitmap.height}"
-        val arrFilters = resources.getStringArray(R.array.filters)
-        thread {
-            for (i in 0..12){
-                filterList.add(FilterItem(bitmap = PhotoProcessing.filterPhoto(
-                    Bitmap.createBitmap(
-                        bitmap.copy(
-                            Bitmap.Config.ARGB_8888, true
-                        )
-                    ),i), text = arrFilters[i]))
+        val file = File(url)
+        if(!file.exists()){
+            ToastUtils.showShort("file not exists")
+        }
+        bitmap?.let {
+            val beginTime = System.currentTimeMillis()
+            val layoutParams = imageView.layoutParams as ConstraintLayout.LayoutParams
+            layoutParams.dimensionRatio = "${bitmap.width}:${bitmap.height}"
+            val arrFilters = resources.getStringArray(R.array.filters)
+            thread {
+                for (i in 0..12){
+                    filterList.add(FilterItem(bitmap = PhotoProcessing.filterPhoto(
+                        Bitmap.createBitmap(
+                            bitmap.copy(
+                                Bitmap.Config.ARGB_8888, true
+                            )
+                        ),i), text = arrFilters[i]))
+                }
+                viewModel.currentItem.postValue(filterList[0])
+                val endTime = System.currentTimeMillis()
+                Log.e(localClassName,"beginTime:$beginTime---endTime:$endTime---${endTime-beginTime}")
+                viewModel.list.postValue(filterList)
             }
-            viewModel.currentItem.postValue(filterList[0])
-            val endTime = System.currentTimeMillis()
-            Log.e(localClassName,"beginTime:$beginTime---endTime:$endTime---${endTime-beginTime}")
-            viewModel.list.postValue(filterList)
         }
     }
 

@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.words.TextBubbleFragment">
+    tools:context=".ui.text.TextBubbleFragment">
 
     <data>
         <variable
@@ -11,7 +11,7 @@
 
         <variable
             name="vm"
-            type="com.yunianshu.library.ui.words.TextBubbleViewModel" />
+            type="com.yunianshu.library.ui.text.TextBubbleViewModel" />
     </data>
 
     <androidx.recyclerview.widget.RecyclerView
