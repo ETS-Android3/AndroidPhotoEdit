@@ -32,5 +32,6 @@ open class StickerListener:StickerView.OnStickerOperationListener {
     }
 
     override fun onStickerDoubleTapped(sticker: Sticker) {
+
     }
 }

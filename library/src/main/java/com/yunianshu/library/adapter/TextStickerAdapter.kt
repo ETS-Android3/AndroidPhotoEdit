@@ -29,6 +29,7 @@ class TextStickerAdapter(context: Context) :
         item: StickerInfo,
         holder: RecyclerView.ViewHolder?
     ) {
+        binding.item = item
         binding.text.setImageBitmap(item.bitmap)
     }
 }

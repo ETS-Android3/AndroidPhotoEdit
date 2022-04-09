@@ -25,7 +25,7 @@ abstract class BaseActivity():DataBindingActivity() {
 
     protected open fun <T : ViewModel> getActivityScopeViewModel(modelClass: Class<T>): T {
 
-        return ViewModelProvider(this).get(modelClass)
+        return ViewModelProvider(this)[modelClass]
     }
 
 }

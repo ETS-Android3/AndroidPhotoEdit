@@ -19,6 +19,12 @@ import com.yunianshu.sticker.TextDrawable
  */
 
 class ShareViewModel : ViewModel() {
+
+    /**
+     * 当前编辑状态
+     */
+    var editState = UnPeekLiveData<Int>()
+
     /**
      * 图片处理缓存库
      */
@@ -87,13 +93,15 @@ class ShareViewModel : ViewModel() {
 
 
     init {
+        editState.value = Contant.DEFAULT
         showTextEditView.value = false
         textStickerAlpha.value = 255f
         textStickerBold.value = false
         textStickerAlign.value = 0
         textStickerItalic.value = false
         textStickerUnderline.value = false
-        textStickerFont.value = FontInfo(name = "默认字体",url = null,filePath = null, fontImage = null, select = true)
+        textStickerFont.value =
+            FontInfo(name = "默认字体", url = null, filePath = null, fontImage = null, select = true)
     }
 
     /**

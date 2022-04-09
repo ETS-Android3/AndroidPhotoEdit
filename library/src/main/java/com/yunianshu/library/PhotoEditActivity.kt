@@ -22,12 +22,8 @@ import com.yunianshu.library.ui.fillter.FilterActivity
 import com.yunianshu.library.ui.frame.FrameActivity
 import com.yunianshu.library.ui.sticker.StickerActivity
 import com.yunianshu.library.ui.text.TextFragment
-import com.yunianshu.library.util.HttpCallbackListener
-import com.yunianshu.library.util.HttpUtil
-import com.yunianshu.library.util.HttpUtil.download
 import com.yunianshu.library.util.HttpUtil.fetchDownload
-import com.yunianshu.library.util.HttpUtil.request
-import com.yunianshu.library.view.ModifyContentDialog
+import com.yunianshu.library.view.ModifyTextContentDialog
 import com.yunianshu.library.view.StickerListener
 import com.yunianshu.sticker.Sticker
 import com.yunianshu.sticker.StickerView
@@ -47,7 +43,7 @@ class PhotoEditActivity : BaseActivity() {
     private lateinit var shareVM: ShareViewModel//fragment共享
     private lateinit var adapter: PhotoEditAdapter
     private lateinit var fragmentAdapter: RgAdapter
-    private lateinit var dialog: ModifyContentDialog
+    private lateinit var dialog: ModifyTextContentDialog
     private lateinit var filePath: String
     private var rotate: Boolean = false
     private var width: Int = 0
@@ -84,7 +80,7 @@ class PhotoEditActivity : BaseActivity() {
         immersionBar {
             statusBarColor(R.color.base_color)
         }
-        dialog = ModifyContentDialog(this)
+        dialog = ModifyTextContentDialog(this)
         initIntent()
         loadImage()
         loadPhotoEditItems()
@@ -93,14 +89,7 @@ class PhotoEditActivity : BaseActivity() {
         stickerView.isConstrained = true
         shareVM.textStickerInfo.observeSticky(this) {
             if (stickerView.currentSticker == null) {
-                val sticker = TextSticker(this)
-                sticker.setText("请输入文字")
-                    .setMaxTextSize(24f)
-                    .setAlpha(255)
-                sticker.resizeText()
-                shareVM.addSticker(sticker)
-                viewModel.refreshStickerView()
-//                showInputDialog(it)
+                addTextSticker(it)
             } else {
                 updateSticker(it)
             }
@@ -222,11 +211,11 @@ class PhotoEditActivity : BaseActivity() {
                         sticker.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL))
                     }
                     1 -> {//本地字体
-                        info.filePath?.let {path->
+                        info.filePath?.let { path ->
                             var file = File(path)
-                            if(file.exists()){
+                            if (file.exists()) {
                                 sticker.setTypeface(Typeface.createFromFile(file))
-                            }else{
+                            } else {
                                 ToastUtils.showShort("本地找不到该下载字体")
                             }
                         }
@@ -236,16 +225,18 @@ class PhotoEditActivity : BaseActivity() {
                             try {
                                 downLoadFont(info)
                             } catch (e: Exception) {
-                                e.printStackTrace()
+                                ToastUtils.showShort("下载字体不成功")
                             }
                         }
 
                     }
                 }
+                sticker.resizeText()
                 viewModel.refreshStickerView()
             }
         }
     }
+
 
     /**
      * 下载字体设置
@@ -257,10 +248,11 @@ class PhotoEditActivity : BaseActivity() {
                 .getExternalFilesDir("edit")!!.absolutePath + File.separator + url.substring(
                 url.lastIndexOf(
                     "."
-                ) - 8)
+                ) - 8
+            )
             File(path).let {
                 if (!it.exists()) {
-                    var response = fetchDownload(this,url, path)
+                    var response = fetchDownload(this, url, path)
                     if (response == path) {
                         sticker.setTypeface(Typeface.createFromFile(it))
                         info.type = 1
@@ -278,6 +270,44 @@ class PhotoEditActivity : BaseActivity() {
             }
 
         }
+    }
+
+    /**
+     * 添加文字气泡
+     */
+    fun addTextSticker(info: StickerInfo) {
+        val sticker = TextSticker(this)
+        sticker.setText("请输入文字")
+            .setMaxTextSize(20f)
+            .setTextSize(16f)
+            .setAlpha(255)
+        sticker.resizeText()
+        var bubbleInfo = info.bubbleInfo
+        when (bubbleInfo!!.type) {
+            Contant.STICKER_TYPE_TEXT -> {
+
+            }
+            Contant.STICKER_TYPE_TEXT_BUBBLE -> {
+                //获取assets图片
+                val drawable = BitmapDrawable(
+                    resources,
+                    assets.open(info.bubbleInfo!!.path)
+                )
+                //设置文字的有效范围
+                sticker.setDrawable(
+                    drawable,
+                    Rect(
+                        ConvertUtils.px2dp(bubbleInfo.paddingLeft.toFloat()),
+                        ConvertUtils.px2dp(bubbleInfo.paddingTop.toFloat()),
+                        drawable.intrinsicWidth - ConvertUtils.px2dp(bubbleInfo.paddingRight.toFloat()),
+                        drawable.intrinsicHeight - ConvertUtils.px2dp(bubbleInfo.paddingBottom.toFloat())
+                    )
+                )
+            }
+        }
+        sticker.resizeText()
+        shareVM.addSticker(sticker)
+        viewModel.refreshStickerView()
     }
 
     /**
@@ -308,10 +338,13 @@ class PhotoEditActivity : BaseActivity() {
                 }
             }
         adapter.setOnItemClickListener { _, item, position ->
+            //设置编辑转态
+            shareVM.editState.postValue(position)
             var intent: Intent? = null
             when (position) {
                 Contant.ADJUST -> {
                     intent = Intent(this, AdjustmentActivity::class.java)
+
                 }
                 Contant.FILTER -> {
                     intent = Intent(this, FilterActivity::class.java)
@@ -339,26 +372,32 @@ class PhotoEditActivity : BaseActivity() {
     /**
      * 点击文字
      */
-    private fun startText(name:String){
-        if(stickerView.currentSticker == null){
-            shareVM.textStickerInfo.postValue(StickerInfo(
-                bitmap = com.yunianshu.library.util.ImageUtils.drawableToBitmap(
-                    TextDrawable.builder()
-                        .beginConfig()
-                        .width(100)
-                        .height(50)
-                        .endConfig()
-                        .buildRoundRect("Hi", Color.parseColor("#82D0E7"), 5)
-                ),
-                bubbleInfo = BubbleInfo(
-                    type = Contant.STICKER_TYPE_TEXT,
-                    paddingLeft = 10,
-                    paddingBottom = 10,
-                    paddingRight = 10,
-                    paddingTop = 10
-                ),
-                select = true
-            ))
+    private fun startText(name: String) {
+        if (stickerView.currentSticker == null) {
+            if (shareVM.textStickerInfo.value == null) {
+                shareVM.textStickerInfo.postValue(
+                    StickerInfo(
+                        bitmap = com.yunianshu.library.util.ImageUtils.drawableToBitmap(
+                            TextDrawable.builder()
+                                .beginConfig()
+                                .width(100)
+                                .height(50)
+                                .endConfig()
+                                .buildRoundRect("Hi", Color.parseColor("#82D0E7"), 5)
+                        ),
+                        bubbleInfo = BubbleInfo(
+                            type = Contant.STICKER_TYPE_TEXT,
+                            paddingLeft = 10,
+                            paddingBottom = 10,
+                            paddingRight = 10,
+                            paddingTop = 10
+                        ),
+                        select = true
+                    )
+                )
+            } else {
+                shareVM.textStickerInfo.postValue(shareVM.textStickerInfo.value)
+            }
         }
         stickerView.show()
         shareVM.showTextEditView.postValue(true)
@@ -414,11 +453,15 @@ class PhotoEditActivity : BaseActivity() {
     }
 
     inner class PhotoEditClickProxy {
-
-        fun last() {
+        //取消编辑
+        fun cancel() {
             shareVM.showTextEditView.postValue(false)
             dialog.dismiss()
-            stickerView.hide()
+            if (shareVM.editState.value == Contant.WORDS) {
+                stickerView.removeAllTextStickers()
+            } else if (shareVM.editState.value == Contant.STICKER) {
+                stickerView.removeAllOthersButNoTextStickers()
+            }
             immersionBar {
                 statusBarColor(R.color.base_color)
                 statusBarDarkFont(false)
@@ -430,7 +473,13 @@ class PhotoEditActivity : BaseActivity() {
         }
 
         fun complete() {
-
+            shareVM.showTextEditView.postValue(false)
+            dialog.dismiss()
+            stickerView.hide()
+            immersionBar {
+                statusBarColor(R.color.base_color)
+                statusBarDarkFont(false)
+            }
         }
 
         fun save() {
@@ -443,8 +492,16 @@ class PhotoEditActivity : BaseActivity() {
         override fun onStickerClicked(sticker: Sticker) {
             when (sticker) {
                 is TextSticker -> {
-                    showInputDialog(sticker)
-                    stickerView.show()
+                    dialog.isShowing.let {
+                        if (it) {
+                            dialog.dismiss()
+                            stickerView.hide()
+                        } else {
+                            showInputDialog(sticker)
+                            stickerView.show()
+                        }
+                    }
+
                 }
             }
         }
@@ -486,11 +543,14 @@ class PhotoEditActivity : BaseActivity() {
      */
     private fun showInputDialog(item: StickerInfo) {
         dialog.setHint(R.string.tip_enter_content)
-            .setOnTextChangedListener(false) {
+            .setOnTextChangedListener(false,
+                object : ModifyTextContentDialog.OnTextChangedListener {
+
+                    override fun onTextChange(it: CharSequence) {
                 if (it.isEmpty()) {
-                    return@setOnTextChangedListener
+                    return
                 }
-                val sticker = TextSticker(this)
+                val sticker = TextSticker(this@PhotoEditActivity)
                 val bubbleInfo = item.bubbleInfo
                 sticker.setText(it.toString())
                     .setMaxTextSize(24f)
@@ -519,7 +579,7 @@ class PhotoEditActivity : BaseActivity() {
                 }
                 sticker.resizeText()
                 shareVM.addSticker(sticker)
-            }.show()
+            }}).show()
     }
 
     /**
@@ -527,14 +587,19 @@ class PhotoEditActivity : BaseActivity() {
      */
     fun showInputDialog(sticker: TextSticker) {
         dialog.setHint(R.string.tip_enter_content)
-            .setContent(sticker.text)
-            .setOnTextChangedListener(false) {
-                if (!TextUtils.isEmpty(it.toString())) {
-                    sticker.text = it.toString()
-                    sticker.resizeText()
-                    viewModel.refreshStickerView()
+            .setContent(sticker.text!!)
+            .setOnTextChangedListener(false,
+                object : ModifyTextContentDialog.OnTextChangedListener {
+
+                    override fun onTextChange(it: CharSequence) {
+                        if (!TextUtils.isEmpty(it.toString())) {
+                            sticker.text = it.toString()
+                            sticker.resizeText()
+                            viewModel.refreshStickerView()
+                        }
+                    }
                 }
-            }.show()
+            ).show()
     }
 
 

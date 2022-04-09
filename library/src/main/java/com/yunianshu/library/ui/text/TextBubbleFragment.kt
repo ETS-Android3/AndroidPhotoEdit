@@ -1,5 +1,6 @@
 package com.yunianshu.library.ui.text
 
+import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import com.kunminx.architecture.ui.page.DataBindingConfig
@@ -9,6 +10,7 @@ import com.yunianshu.library.bean.BubbleInfo
 import com.yunianshu.library.bean.StickerInfo
 import com.yunianshu.library.util.AssetsUtil
 import com.yunianshu.library.util.ImageUtils.drawableToBitmap
+import com.yunianshu.library.util.RecycleViewUtils
 import com.yunianshu.library.util.toBean
 import com.yunianshu.sticker.TextDrawable
 import org.json.JSONObject
@@ -19,11 +21,15 @@ class TextBubbleFragment : BaseFragment() {
     private lateinit var adapter: TextStickerAdapter
     private lateinit var shareVM: ShareViewModel
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun loadView() {
         loadBubble()
         adapter.setOnItemClickListener { _, item, position ->
+            shareVM.textStickerInfo.value!!.select = false
+            item.select = true
             shareVM.textStickerInfo.postValue(item)
-
+            adapter.notifyDataSetChanged()
+            RecycleViewUtils.toPosition(mActivity.findViewById(R.id.recyclerView3), position,viewModel.list.value!!.size,2)
         }
     }
 

@@ -49,7 +49,7 @@
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"/>
         <activity
             android:name=".PhotoEditActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:windowSoftInputMode="adjustPan"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>

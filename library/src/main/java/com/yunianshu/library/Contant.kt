@@ -6,6 +6,7 @@ package com.yunianshu.library
  */
 object Contant {
 
+    const val DEFAULT = -1
     const val ADJUST:Int = 0
     const val FILTER:Int = 1
     const val CROP:Int = 2
