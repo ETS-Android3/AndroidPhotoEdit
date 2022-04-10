@@ -35,7 +35,9 @@ class TextFontFragment : BaseFragment() {
             item.select = true
             shareViewModel.textStickerFont.postValue(item)
             adapter.notifyDataSetChanged()
-            RecycleViewUtils.toPosition(mActivity.findViewById(R.id.fontRecycleView),pos,viewModel.list.value!!.size,1)
+            mActivity?.let {
+                RecycleViewUtils.toPosition(mActivity.findViewById(R.id.fontRecycleView),pos,viewModel.list.value!!.size,1)
+            }
         }
     }
 

@@ -67,7 +67,6 @@
             android:id="@+id/linearLayout3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/base_color"
             app:layout_constraintBottom_toTopOf="@+id/viewPager22">
 
             <TextView
@@ -89,6 +88,7 @@
                 android:gravity="center"
                 android:padding="10dp"
                 android:text="@string/text_style"
+                android:onClick="@{()->click.textStyle()}"
                 android:textColor='@{vm.editType == 1?@color/base_color:@color/black_overlay}'
                 android:textSize='@{vm.editType == 1?@dimen/sp_16:@dimen/sp_14}' />
 
@@ -98,6 +98,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:padding="10dp"
+                android:onClick="@{()->click.textFont()}"
                 android:text="@string/text_font"
                 android:textColor='@{vm.editType == 2?@color/base_color:@color/black_overlay}'
                 android:textSize='@{vm.editType == 2?@dimen/sp_16:@dimen/sp_14}' />
@@ -105,9 +106,10 @@
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/textViewPager"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="120dp"
             android:layout_marginTop="10dp"
             adapter="@{adapter}"
-            useEnable="@{false}"/>
+            useEnable="@{false}"
+            visiable="@{vm.editType > 0}"/>
     </LinearLayout>
 </layout>
