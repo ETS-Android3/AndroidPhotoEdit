@@ -28,7 +28,6 @@ class TextFragment : BaseFragment() {
         adapter.addFragment(TextBubbleFragment())
         adapter.addFragment(TextStyleFragment())
         adapter.addFragment(TextFontFragment())
-        viewModel.editType.postValue(0)
     }
 
 

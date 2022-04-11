@@ -6,8 +6,12 @@ import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.MotionEvent
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputConnection
+import android.view.inputmethod.InputConnectionWrapper
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
+import com.blankj.utilcode.util.KeyboardUtils
 import com.yunianshu.library.R
 
 class ClearEditText @JvmOverloads constructor(
@@ -17,6 +21,7 @@ class ClearEditText @JvmOverloads constructor(
 ) : AppCompatEditText(context, attrs, defStyleAttr) {
     private val drawableClear: Drawable?
     private val drawableLabel: Drawable?
+    private var listener:OnFinishComposingListener? = null
 
     init {
         val arr: TypedArray =
@@ -53,6 +58,14 @@ class ClearEditText @JvmOverloads constructor(
         setIconVisible(hasFocus() && length() > 0)
     }
 
+    fun setOnFinishComposingListener(listener: OnFinishComposingListener){
+        this.listener = listener
+    }
+
+    override fun onCreateInputConnection(outAttrs: EditorInfo): InputConnection? {
+        return super.onCreateInputConnection(outAttrs)?.let { MyInputConnection(it,false) }
+    }
+
     override fun onFocusChanged(focused: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
         super.onFocusChanged(focused, direction, previouslyFocusedRect)
         setIconVisible(focused && length() > 0)
@@ -80,6 +93,22 @@ class ClearEditText @JvmOverloads constructor(
             compoundDrawables[DRAWABLE_BOTTOM]
         )
     }
+    inner class MyInputConnection(target: InputConnection,mutable:Boolean) : InputConnectionWrapper(target,mutable){
+
+        override fun finishComposingText(): Boolean {
+            var finishText = super.finishComposingText()
+            if(finishText){
+                listener?.onFinishComposing(finishText)
+            }
+            return finishText
+        }
+
+    }
+
+    interface OnFinishComposingListener{
+        fun onFinishComposing(finishText: Boolean)
+    }
+
 
     companion object {
         private const val DRAWABLE_LEFT = 0

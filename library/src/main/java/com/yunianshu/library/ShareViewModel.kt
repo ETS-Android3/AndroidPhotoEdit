@@ -28,7 +28,7 @@ class ShareViewModel : ViewModel() {
     /**
      * 图片处理缓存库
      */
-    var cacheBitmaps = UnPeekLiveData<List<Bitmap>>()
+    var cacheImagePaths = UnPeekLiveData<List<String>>()
 
     /**
      *当前显示的图片

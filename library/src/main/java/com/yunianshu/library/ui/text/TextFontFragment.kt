@@ -8,6 +8,7 @@ import com.yunianshu.library.R
 import com.yunianshu.library.ShareViewModel
 import com.yunianshu.library.adapter.FontAdapter
 import com.yunianshu.library.bean.FontInfo
+import com.yunianshu.library.bean.ScrollInfo
 import com.yunianshu.library.response.FontResponse
 import com.yunianshu.library.util.HttpUtil
 import com.yunianshu.library.util.RecycleViewUtils
@@ -34,10 +35,8 @@ class TextFontFragment : BaseFragment() {
             shareViewModel.textStickerFont.value!!.select = false
             item.select = true
             shareViewModel.textStickerFont.postValue(item)
-            adapter.notifyDataSetChanged()
-            mActivity?.let {
-                RecycleViewUtils.toPosition(mActivity.findViewById(R.id.fontRecycleView),pos,viewModel.list.value!!.size,1)
-            }
+            viewModel.fontChange.postValue(true)
+            viewModel.scrollInfo.postValue(ScrollInfo(pos = pos, step = 1))
         }
     }
 
@@ -46,7 +45,7 @@ class TextFontFragment : BaseFragment() {
         var result = HttpUtil.request("https://businessapi.hprtupgrade.com/api/bphoto.beautiful_photos/dataFontList?page=1&pageSize=0")
         var fontResponse = GsonUtils.fromJson(result, FontResponse::class.java)
         var list = mutableListOf<FontInfo>()
-        list.add(shareViewModel.textStickerFont.value!!)
+        list.add(FontInfo(name = "默认字体", url = null, filePath = null, fontImage = null, select = true))
         fontResponse.data.list.forEach {
             list.add(FontInfo(name = it.font_name,url = it.file,filePath = null, type = 2, fontImage = it.image))
         }

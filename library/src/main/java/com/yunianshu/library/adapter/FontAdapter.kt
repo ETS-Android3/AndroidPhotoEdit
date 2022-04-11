@@ -3,6 +3,7 @@ package com.yunianshu.library.adapter
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import androidx.core.graphics.alpha
@@ -45,7 +46,8 @@ FontCallBack()) {
     ) {
         binding.item = item
         if(item.type == 0){
-            var drawable:Drawable = TextDrawable.builder().beginConfig().fontSize(ConvertUtils.sp2px(20f)).align(Paint.Align.LEFT).height(40).width(100).textColor(Color.BLACK).endConfig().buildRect("默认", Color.TRANSPARENT)
+            var drawable:Drawable = TextDrawable.builder().beginConfig().fontSize(ConvertUtils.sp2px(20f)).useFont(
+                null).align(Paint.Align.LEFT).height(40).width(100).textColor(Color.BLACK).endConfig().buildRect("默认", Color.TRANSPARENT)
 //            val color = Color.parseColor("#82D0E7")
 //            var bitmap = ImageUtils.setSingleColorImageByARGB(ImageUtils.drawableToBitmap(drawable as TextDrawable),color.red,color.green,color.blue,color.alpha)
 //            if(item.select){

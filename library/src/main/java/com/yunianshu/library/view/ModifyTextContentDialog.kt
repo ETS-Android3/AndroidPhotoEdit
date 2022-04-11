@@ -5,15 +5,14 @@ import android.app.Dialog
 import android.content.Context
 import android.text.InputFilter
 import android.text.TextUtils
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.WindowManager
+import android.view.*
 import androidx.annotation.StringRes
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager2.widget.ViewPager2
 import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.LogUtils
 import com.kunminx.architecture.ui.page.DataBindingActivity
@@ -35,14 +34,19 @@ class ModifyTextContentDialog(context: Context) : Dialog(
 ) {
 
     private var mBinding: DialogEditModifyContentBinding =
-        DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.dialog_edit_modify_content,null,false)
+        DataBindingUtil.inflate(
+            LayoutInflater.from(context),
+            R.layout.dialog_edit_modify_content,
+            null,
+            false
+        )
     private val shareVM: ShareViewModel by lazy {
         ViewModelProvider(context as FragmentActivity)[ShareViewModel::class.java]
     }
     private val viewModel: TextViewModel by lazy {
         ViewModelProvider(context as FragmentActivity)[TextViewModel::class.java]
     }
-    private val adapter by lazy { RgAdapter(context as FragmentActivity) }
+    private var adapter: RgAdapter
     private var onTextChangedListener: OnTextChangedListener? = null
     private var sustained = true
 
@@ -51,6 +55,9 @@ class ModifyTextContentDialog(context: Context) : Dialog(
         mBinding.vm = viewModel
         mBinding.shareVM = shareVM
         mBinding.click = DialogTextClickProxy()
+        adapter = RgAdapter(context)
+        adapter.addFragment(TextStyleFragment())
+        adapter.addFragment(TextFontFragment())
         mBinding.adapter = adapter
         setContentView(mBinding.root)
         initView()
@@ -106,10 +113,32 @@ class ModifyTextContentDialog(context: Context) : Dialog(
                         onTextChangedListener!!.onTextChange(s)
                     }
                 }
+                //文字改变将弹出输入法
+                viewModel.editType.postValue(0)
+                KeyboardUtils.showSoftInput(mBinding.editEtInputContent)
             }
         })
-        adapter.addFragment(TextStyleFragment())
-        adapter.addFragment(TextFontFragment())
+        mBinding.editEtInputContent.setOnFocusChangeListener { v, hasFocus ->
+            //聚焦将弹出输入法
+            if (hasFocus) {
+                viewModel.editType.postValue(0)
+                KeyboardUtils.showSoftInput(mBinding.editEtInputContent)
+            }else{
+                KeyboardUtils.hideSoftInput(mBinding.editEtInputContent)
+                viewModel.editType.postValue(1)
+            }
+        }
+        mBinding.editEtInputContent.setOnFinishComposingListener(object :ClearEditText.OnFinishComposingListener{
+            override fun onFinishComposing(finish:Boolean) {
+                if(finish){
+                    if(viewModel.editType.value == 0){
+                        dismiss()
+                    }
+                }
+            }
+        })
+        //设置碎片预加载
+        mBinding.textViewPager.offscreenPageLimit = 2
     }
 
     fun setInputType(inputType: Int, inputFilters: Array<InputFilter>): ModifyTextContentDialog {
@@ -163,13 +192,11 @@ class ModifyTextContentDialog(context: Context) : Dialog(
         fun textStyle() {
             KeyboardUtils.hideSoftInput(mBinding.editEtInputContent)
             viewModel.editType.postValue(1)
-            mBinding.textViewPager.currentItem = 0
         }
 
         fun textFont() {
             KeyboardUtils.hideSoftInput(mBinding.editEtInputContent)
             viewModel.editType.postValue(2)
-            mBinding.textViewPager.currentItem = 1
         }
     }
 }

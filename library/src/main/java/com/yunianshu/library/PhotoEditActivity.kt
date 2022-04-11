@@ -6,7 +6,9 @@ import android.graphics.drawable.BitmapDrawable
 import android.text.Layout
 import android.text.TextUtils
 import android.util.Log
+import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import com.blankj.utilcode.util.*
 import com.gyf.immersionbar.ktx.immersionBar
@@ -45,11 +47,14 @@ class PhotoEditActivity : BaseActivity() {
     private lateinit var fragmentAdapter: RgAdapter
     private lateinit var dialog: ModifyTextContentDialog
     private lateinit var filePath: String
+    private var currentIndex: Int = 0
     private var rotate: Boolean = false
     private var width: Int = 0
     private var height: Int = 0
     private lateinit var typeName: String
     private val stickerView: StickerView by lazy { findViewById(R.id.sticker_view) }
+    private val imageUndo:TextView by lazy { findViewById(R.id.edit_image_undo) }
+    private val imageRedo:TextView by lazy { findViewById(R.id.edit_image_redo) }
 
     /**
      * 1.先初始化ViewModel
@@ -80,19 +85,64 @@ class PhotoEditActivity : BaseActivity() {
         immersionBar {
             statusBarColor(R.color.base_color)
         }
-        dialog = ModifyTextContentDialog(this)
         initIntent()
         loadImage()
         loadPhotoEditItems()
         initLauncher()
         initFragment()
+        dialog = ModifyTextContentDialog(this)
         stickerView.isConstrained = true
-        shareVM.textStickerInfo.observeSticky(this) {
-            if (stickerView.currentSticker == null) {
-                addTextSticker(it)
-            } else {
-                updateSticker(it)
+        imageRedo.visibility = View.GONE
+        imageUndo.visibility = View.GONE
+        imageRedo.setOnClickListener {
+            val values = shareVM.cacheImagePaths.value
+            values?.let {
+                if(currentIndex+1 < values.size){
+                    currentIndex++
+                    filePath = values[currentIndex]
+                    if(currentIndex+1 == values.size){
+                        imageRedo.visibility = View.GONE
+                    }
+                    imageUndo.visibility = View.VISIBLE
+                    findViewById<ImageView>(R.id.imageView).setImageBitmap(
+                        BitmapFactory.decodeFile(
+                           filePath
+                        )
+                    )
+                }
             }
+        }
+        imageUndo.setOnClickListener {
+            val values = shareVM.cacheImagePaths.value
+            values?.let {
+                if(currentIndex-1 >= 0){
+                    currentIndex--
+                    filePath = values[currentIndex]
+                    var bitmap = BitmapFactory.decodeFile(filePath)
+                    if(currentIndex == 0){
+                        imageUndo.visibility = View.GONE
+                        if(rotate){
+                            bitmap = ImageUtils.rotate(bitmap, 90,0f,0f)
+                        }
+                    }
+                    imageRedo.visibility = View.VISIBLE
+                    findViewById<ImageView>(R.id.imageView).setImageBitmap(bitmap)
+                }
+            }
+        }
+        shareVM.showTextEditView.observeSticky(this){
+            if(it){
+                imageRedo.visibility = View.GONE
+                imageUndo.visibility = View.GONE
+            }
+        }
+        shareVM.textStickerInfo.observeSticky(this) {
+//            if (stickerView.currentSticker == null) {
+//                addTextSticker(it)
+//            } else {
+//                updateSticker(it)
+//            }
+            addTextSticker(it)
         }
         //设置文字透明度
         shareVM.textStickerAlpha.observeSticky(this) {
@@ -212,7 +262,7 @@ class PhotoEditActivity : BaseActivity() {
                     }
                     1 -> {//本地字体
                         info.filePath?.let { path ->
-                            var file = File(path)
+                            val file = File(path)
                             if (file.exists()) {
                                 sticker.setTypeface(Typeface.createFromFile(file))
                             } else {
@@ -244,7 +294,7 @@ class PhotoEditActivity : BaseActivity() {
     private suspend fun downLoadFont(info: FontInfo) {
         val sticker = stickerView.currentSticker as TextSticker
         info.url?.let { url ->
-            var path = Utils.getApp()
+            val path = Utils.getApp()
                 .getExternalFilesDir("edit")!!.absolutePath + File.separator + url.substring(
                 url.lastIndexOf(
                     "."
@@ -252,7 +302,7 @@ class PhotoEditActivity : BaseActivity() {
             )
             File(path).let {
                 if (!it.exists()) {
-                    var response = fetchDownload(this, url, path)
+                    val response = fetchDownload(this, url, path)
                     if (response == path) {
                         sticker.setTypeface(Typeface.createFromFile(it))
                         info.type = 1
@@ -275,14 +325,14 @@ class PhotoEditActivity : BaseActivity() {
     /**
      * 添加文字气泡
      */
-    fun addTextSticker(info: StickerInfo) {
+    private fun addTextSticker(info: StickerInfo) {
         val sticker = TextSticker(this)
         sticker.setText("请输入文字")
             .setMaxTextSize(20f)
             .setTextSize(16f)
             .setAlpha(255)
         sticker.resizeText()
-        var bubbleInfo = info.bubbleInfo
+        val bubbleInfo = info.bubbleInfo
         when (bubbleInfo!!.type) {
             Contant.STICKER_TYPE_TEXT -> {
 
@@ -319,6 +369,7 @@ class PhotoEditActivity : BaseActivity() {
         width = intent.getIntExtra("width", 0)
         height = intent.getIntExtra("height", 0)
         typeName = intent.getStringExtra("typeName").toString()
+        shareVM.cacheImagePaths.postValue(mutableListOf(filePath))
     }
 
     /**
@@ -335,6 +386,11 @@ class PhotoEditActivity : BaseActivity() {
                         )
                     )
                     filePath = UriUtils.uri2File(uri.data).absolutePath
+                    var values = shareVM.cacheImagePaths.value
+                    (values as MutableList<String>).add(filePath)
+                    currentIndex = values.size - 1
+                    imageUndo.visibility = View.VISIBLE
+                    imageRedo.visibility = View.GONE
                 }
             }
         adapter.setOnItemClickListener { _, item, position ->
@@ -546,13 +602,13 @@ class PhotoEditActivity : BaseActivity() {
             .setOnTextChangedListener(false,
                 object : ModifyTextContentDialog.OnTextChangedListener {
 
-                    override fun onTextChange(it: CharSequence) {
-                if (it.isEmpty()) {
+                    override fun onTextChange(charSequence: CharSequence) {
+                if (charSequence.isEmpty()) {
                     return
                 }
                 val sticker = TextSticker(this@PhotoEditActivity)
                 val bubbleInfo = item.bubbleInfo
-                sticker.setText(it.toString())
+                sticker.setText(charSequence.toString())
                     .setMaxTextSize(24f)
                     .setAlpha(255)
                 when (item.bubbleInfo!!.type) {

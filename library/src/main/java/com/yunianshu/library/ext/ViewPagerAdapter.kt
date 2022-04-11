@@ -9,7 +9,9 @@ import androidx.viewpager2.widget.ViewPager2
  */
 @BindingAdapter("current")
 fun ViewPager2.setCurrent(paper:Int){
-    this.currentItem = paper
+    if(paper>=0){
+        currentItem = paper
+    }
 }
 
 @BindingAdapter("useEnable")
