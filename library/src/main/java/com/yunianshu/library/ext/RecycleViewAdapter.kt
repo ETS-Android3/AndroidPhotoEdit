@@ -19,7 +19,6 @@ fun RecyclerView.anim(anim: DefaultItemAnimator) {
 /**
  * 偏移步数
  */
-var lastPos = 0
 @BindingAdapter("scrollToPositionByStep", requireAll = false)
 fun scrollToPosition(
     recyclerView: RecyclerView, info: ScrollInfo?
@@ -27,7 +26,7 @@ fun scrollToPosition(
     info?.let {
         recyclerView?.adapter?.let {
             var count = recyclerView.adapter!!.itemCount
-            val scrollToPosition: Int = if (info.pos - lastPos > 0) { //右边
+            val scrollToPosition: Int = if (info.pos - info.lastPos > 0) { //右边
                 if (info.pos + info.step < recyclerView.adapter!!.itemCount) { //保证在数据长度内
                     info.pos + info.step
                 } else {

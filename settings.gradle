@@ -21,4 +21,3 @@ rootProject.name = "AndroidPhotoEdit"
 include ':app'
 include ':library'
 include ':sticker'
-include ':keyboard'

@@ -2,6 +2,9 @@ package com.yunianshu.library.util
 
 import android.content.Context
 import android.graphics.*
+import androidx.core.graphics.blue
+import androidx.core.graphics.green
+import androidx.core.graphics.red
 import com.blankj.utilcode.util.FileUtils
 import com.yunianshu.sticker.TextDrawable
 
@@ -87,9 +90,9 @@ object ImageUtils {
         var paint = Paint()
         // 根据SeekBar定义RGBA的矩阵, 通过修改矩阵第五列颜色的偏移量改变图片的颜色
         val src = floatArrayOf(
-            1f, 0f, 0f, 0f, rValue.toFloat(),
-            0f, 1f, 0f, 0f, gValue.toFloat(),
-            0f, 0f, 1f, 0f, bValue.toFloat(),
+            0f, 0f, 0f, 0f, rValue.toFloat(),
+            0f, 0f, 0f, 0f, gValue.toFloat(),
+            0f, 0f, 0f, 0f, bValue.toFloat(),
             0f, 0f, 0f, 1f, 0f
         )
 
@@ -101,6 +104,17 @@ object ImageUtils {
         // 5.通过指定了RGBA矩阵的Paint把原图画到空白图片上
         canvas.drawBitmap(baseBitmap, Matrix(), paint)
         return afterBitmap
+    }
+
+    /**
+     * 纯色图片改变颜色
+     */
+    fun setSingleColorImageByARGB(
+        baseBitmap: Bitmap,
+        colorStr: String
+    ): Bitmap {
+        val color =  Color.parseColor(colorStr)
+        return setSingleColorImageByARGB(baseBitmap, color.red, color.green, color.blue, 255)
     }
 
     /**

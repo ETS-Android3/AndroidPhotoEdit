@@ -91,7 +91,7 @@ public class TextDrawable extends ShapeDrawable {
         int fontSize = this.fontSize < 0 ? (Math.min(width, height) / 2) : this.fontSize;
         textPaint.setTextSize(fontSize);
         if(textPaint.getTextAlign() == Paint.Align.LEFT) {
-            canvas.drawText(text, 0, height-((textPaint.descent() + textPaint.ascent()) / 2), textPaint);
+            canvas.drawText(text, 0, height/2-((textPaint.descent() + textPaint.ascent()) / 2), textPaint);
         }else{
             canvas.drawText(text, width / 2, height / 2 - ((textPaint.descent() + textPaint.ascent()) / 2), textPaint);
         }

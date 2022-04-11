@@ -35,7 +35,7 @@ public class TextSticker extends Sticker {
    */
   private static final String mEllipsis = "\u2026";
 
-  private static final Drawable defaultDrawable = TextDrawable.builder().beginConfig().width(100).height(50).endConfig().buildRoundRect("",Color.TRANSPARENT,5);
+  private static final Drawable defaultDrawable = TextDrawable.builder().beginConfig().width(100).useFont(null).height(50).endConfig().buildRoundRect("",Color.TRANSPARENT,5);
 
   private final Context context;
   private Rect realBounds;

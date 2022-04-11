@@ -14,6 +14,7 @@ import com.yunianshu.library.util.HttpUtil
 import com.yunianshu.library.util.RecycleViewUtils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlin.properties.Delegates
 
 class TextFontFragment : BaseFragment() {
 
@@ -21,6 +22,7 @@ class TextFontFragment : BaseFragment() {
     private lateinit var viewModel: TextFontViewModel
     private lateinit var shareViewModel: ShareViewModel
     private lateinit var adapter: FontAdapter
+    private var lastSelectPos: Int = 0
 
     override fun loadView() {
         GlobalScope.launch {
@@ -32,11 +34,16 @@ class TextFontFragment : BaseFragment() {
           }
         }
         adapter.setOnItemClickListener { view, item, pos ->
-            shareViewModel.textStickerFont.value!!.select = false
+            if(lastSelectPos == 0 && pos != 0){
+                viewModel.list.value?.get(lastSelectPos)?.select = false
+            }else{
+                shareViewModel.textStickerFont.value!!.select = false
+            }
             item.select = true
             shareViewModel.textStickerFont.postValue(item)
             viewModel.fontChange.postValue(true)
-            viewModel.scrollInfo.postValue(ScrollInfo(pos = pos, step = 1))
+            viewModel.scrollInfo.postValue(ScrollInfo(pos = pos, step = 1, lastPos = lastSelectPos))
+            lastSelectPos = pos
         }
     }
 
@@ -45,7 +52,9 @@ class TextFontFragment : BaseFragment() {
         var result = HttpUtil.request("https://businessapi.hprtupgrade.com/api/bphoto.beautiful_photos/dataFontList?page=1&pageSize=0")
         var fontResponse = GsonUtils.fromJson(result, FontResponse::class.java)
         var list = mutableListOf<FontInfo>()
-        list.add(FontInfo(name = "默认字体", url = null, filePath = null, fontImage = null, select = true))
+        val element =
+            FontInfo(name = "默认字体", url = null, filePath = null, fontImage = null, select = true)
+        list.add(element)
         fontResponse.data.list.forEach {
             list.add(FontInfo(name = it.font_name,url = it.file,filePath = null, type = 2, fontImage = it.image))
         }
