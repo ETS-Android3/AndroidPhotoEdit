@@ -7,9 +7,12 @@ import android.text.Layout
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
+import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
+import androidx.viewpager2.widget.ViewPager2
 import com.blankj.utilcode.util.*
 import com.gyf.immersionbar.ktx.immersionBar
 import com.kunminx.architecture.ui.page.DataBindingConfig
@@ -23,14 +26,12 @@ import com.yunianshu.library.ui.crop.CropActivity
 import com.yunianshu.library.ui.fillter.FilterActivity
 import com.yunianshu.library.ui.frame.FrameActivity
 import com.yunianshu.library.ui.sticker.StickerActivity
+import com.yunianshu.library.ui.sticker.StickerFragment
 import com.yunianshu.library.ui.text.TextFragment
 import com.yunianshu.library.util.HttpUtil.fetchDownload
 import com.yunianshu.library.view.ModifyTextContentDialog
 import com.yunianshu.library.view.StickerListener
-import com.yunianshu.sticker.Sticker
-import com.yunianshu.sticker.StickerView
-import com.yunianshu.sticker.TextDrawable
-import com.yunianshu.sticker.TextSticker
+import com.yunianshu.sticker.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
@@ -42,19 +43,24 @@ import java.io.File
 class PhotoEditActivity : BaseActivity() {
 
     private lateinit var viewModel: PhotoViewModel
-    private lateinit var shareVM: ShareViewModel//fragment共享
+
+    //fragment共享
+    private lateinit var shareVM: ShareViewModel
     private lateinit var adapter: PhotoEditAdapter
     private lateinit var fragmentAdapter: RgAdapter
     private lateinit var dialog: ModifyTextContentDialog
     private lateinit var filePath: String
+    private lateinit var fragmentList: MutableList<Fragment>
+
+    //图片位置
     private var currentIndex: Int = 0
     private var rotate: Boolean = false
     private var width: Int = 0
     private var height: Int = 0
     private lateinit var typeName: String
     private val stickerView: StickerView by lazy { findViewById(R.id.sticker_view) }
-    private val imageUndo:TextView by lazy { findViewById(R.id.edit_image_undo) }
-    private val imageRedo:TextView by lazy { findViewById(R.id.edit_image_redo) }
+    private val imageUndo: TextView by lazy { findViewById(R.id.edit_image_undo) }
+    private val imageRedo: TextView by lazy { findViewById(R.id.edit_image_redo) }
 
     /**
      * 1.先初始化ViewModel
@@ -90,23 +96,35 @@ class PhotoEditActivity : BaseActivity() {
         loadPhotoEditItems()
         initLauncher()
         initFragment()
+        initStickerView()
+        addListener()
+        addObserve()
+    }
+
+    private fun initStickerView() {
         dialog = ModifyTextContentDialog(this)
         stickerView.isConstrained = true
         imageRedo.visibility = View.GONE
         imageUndo.visibility = View.GONE
+    }
+
+    /**
+     * 添加监听
+     */
+    private fun addListener() {
         imageRedo.setOnClickListener {
             val values = shareVM.cacheImagePaths.value
             values?.let {
-                if(currentIndex+1 < values.size){
+                if (currentIndex + 1 < values.size) {
                     currentIndex++
                     filePath = values[currentIndex]
-                    if(currentIndex+1 == values.size){
+                    if (currentIndex + 1 == values.size) {
                         imageRedo.visibility = View.GONE
                     }
                     imageUndo.visibility = View.VISIBLE
                     findViewById<ImageView>(R.id.imageView).setImageBitmap(
                         BitmapFactory.decodeFile(
-                           filePath
+                            filePath
                         )
                     )
                 }
@@ -115,14 +133,14 @@ class PhotoEditActivity : BaseActivity() {
         imageUndo.setOnClickListener {
             val values = shareVM.cacheImagePaths.value
             values?.let {
-                if(currentIndex-1 >= 0){
+                if (currentIndex - 1 >= 0) {
                     currentIndex--
                     filePath = values[currentIndex]
                     var bitmap = BitmapFactory.decodeFile(filePath)
-                    if(currentIndex == 0){
+                    if (currentIndex == 0) {
                         imageUndo.visibility = View.GONE
-                        if(rotate){
-                            bitmap = ImageUtils.rotate(bitmap, 90,0f,0f)
+                        if (rotate) {
+                            bitmap = ImageUtils.rotate(bitmap, 90, 0f, 0f)
                         }
                     }
                     imageRedo.visibility = View.VISIBLE
@@ -130,8 +148,14 @@ class PhotoEditActivity : BaseActivity() {
                 }
             }
         }
-        shareVM.showTextEditView.observeSticky(this){
-            if(it){
+    }
+
+    /**
+     * 添加viewModel的观察者
+     */
+    private fun addObserve() {
+        shareVM.showTextEditView.observeSticky(this) {
+            if (it) {
                 imageRedo.visibility = View.GONE
                 imageUndo.visibility = View.GONE
             }
@@ -142,11 +166,13 @@ class PhotoEditActivity : BaseActivity() {
 //            } else {
 //                updateSticker(it)
 //            }
-            addTextSticker(it)
+            if(shareVM.showTextEditView.value == true){
+                addTextSticker(it)
+            }
         }
         //设置文字透明度
         shareVM.textStickerAlpha.observeSticky(this) {
-            if (stickerView.currentSticker != null) {
+            if (stickerView.currentSticker != null && stickerView.currentSticker is TextSticker) {
                 val sticker = stickerView.currentSticker as TextSticker
                 sticker.setAlpha(it.toInt())
                 viewModel.refreshStickerView()
@@ -154,7 +180,7 @@ class PhotoEditActivity : BaseActivity() {
         }
         //设置排列方式
         shareVM.textStickerAlign.observeSticky(this) {
-            if (stickerView.currentSticker != null) {
+            if (stickerView.currentSticker != null && stickerView.currentSticker is TextSticker) {
                 val sticker = stickerView.currentSticker as TextSticker
                 when (it) {
                     0 -> sticker.setTextAlign(Layout.Alignment.ALIGN_NORMAL)
@@ -167,7 +193,7 @@ class PhotoEditActivity : BaseActivity() {
         }
         //设置文字粗细
         shareVM.textStickerBold.observeSticky(this) {
-            if (stickerView.currentSticker != null) {
+            if (stickerView.currentSticker != null && stickerView.currentSticker is TextSticker) {
                 val sticker = stickerView.currentSticker as TextSticker
                 if (shareVM.textStickerItalic.value == true) {
                     if (it) {
@@ -208,7 +234,7 @@ class PhotoEditActivity : BaseActivity() {
         }
         //文字颜色
         shareVM.textStickerColor.observeSticky(this) {
-            if (stickerView.currentSticker != null) {
+            if (stickerView.currentSticker != null && stickerView.currentSticker is TextSticker) {
                 val sticker = stickerView.currentSticker as TextSticker
                 sticker.setTextColor(it.color)
                 viewModel.refreshStickerView()
@@ -216,7 +242,7 @@ class PhotoEditActivity : BaseActivity() {
         }
         //设置字体斜体
         shareVM.textStickerItalic.observeSticky(this) {
-            if (stickerView.currentSticker != null) {
+            if (stickerView.currentSticker != null && stickerView.currentSticker is TextSticker) {
                 val sticker = stickerView.currentSticker as TextSticker
                 if (shareVM.textStickerBold.value == true) {
                     if (it) {
@@ -246,15 +272,30 @@ class PhotoEditActivity : BaseActivity() {
         }
         //设置下划线
         shareVM.textStickerUnderline.observeSticky(this) {
-            if (stickerView.currentSticker != null) {
+            if (stickerView.currentSticker != null && stickerView.currentSticker is TextSticker) {
                 val sticker = stickerView.currentSticker as TextSticker
                 sticker.setTextUnderLine(it)
                 viewModel.refreshStickerView()
             }
         }
+
+        //设置文字阴影
+        shareVM.textStickerShadow.observeSticky(this) {
+            if (stickerView.currentSticker != null && stickerView.currentSticker is TextSticker) {
+                val sticker = stickerView.currentSticker as TextSticker
+                if(it){
+                    sticker.setShadowLayer(Color.BLUE)
+                }else{
+                    sticker.setShadowLayer(Color.TRANSPARENT)
+                }
+                viewModel.refreshStickerView()
+            }
+        }
+
+
         //设置字体
         shareVM.textStickerFont.observeSticky(this) { info ->
-            if (stickerView.currentSticker != null) {
+            if (stickerView.currentSticker != null && stickerView.currentSticker is TextSticker) {
                 val sticker = stickerView.currentSticker as TextSticker
                 when (info.type) {
                     0 -> {//默认字体
@@ -326,18 +367,26 @@ class PhotoEditActivity : BaseActivity() {
      * 添加文字气泡
      */
     private fun addTextSticker(info: StickerInfo) {
-        val sticker = TextSticker(this)
-        sticker.setText("请输入文字")
-            .setMaxTextSize(20f)
-            .setTextSize(16f)
-            .setAlpha(255)
-        sticker.resizeText()
+        var sticker: Sticker? = null
         val bubbleInfo = info.bubbleInfo
         when (bubbleInfo!!.type) {
+            Contant.STICKER_TYPE_DEFAULT -> {
+                sticker = DrawableSticker(BitmapDrawable(resources, info.bitmap))
+            }
             Contant.STICKER_TYPE_TEXT -> {
-
+                sticker = TextSticker(this)
+                sticker.setText("请输入文字")
+                    .setMaxTextSize(20f)
+                    .setTextSize(16f)
+                    .setAlpha(255)
+                sticker.resizeText()
             }
             Contant.STICKER_TYPE_TEXT_BUBBLE -> {
+                sticker = TextSticker(this)
+                sticker.setText("请输入文字")
+                    .setMaxTextSize(20f)
+                    .setTextSize(16f)
+                    .setAlpha(255)
                 //获取assets图片
                 val drawable = BitmapDrawable(
                     resources,
@@ -353,10 +402,10 @@ class PhotoEditActivity : BaseActivity() {
                         drawable.intrinsicHeight - ConvertUtils.px2dp(bubbleInfo.paddingBottom.toFloat())
                     )
                 )
+                sticker.resizeText()
             }
         }
-        sticker.resizeText()
-        shareVM.addSticker(sticker)
+        shareVM.addSticker(sticker!!)
         viewModel.refreshStickerView()
     }
 
@@ -400,7 +449,6 @@ class PhotoEditActivity : BaseActivity() {
             when (position) {
                 Contant.ADJUST -> {
                     intent = Intent(this, AdjustmentActivity::class.java)
-
                 }
                 Contant.FILTER -> {
                     intent = Intent(this, FilterActivity::class.java)
@@ -412,7 +460,9 @@ class PhotoEditActivity : BaseActivity() {
                     intent = Intent(this, FrameActivity::class.java)
                 }
                 Contant.STICKER -> {
-                    intent = Intent(this, StickerActivity::class.java)
+                    viewModel.currentText.postValue(item.text)
+                    onStickerClick()
+                    return@setOnItemClickListener
                 }
                 Contant.WORDS -> {
                     startText(item.text)
@@ -426,35 +476,44 @@ class PhotoEditActivity : BaseActivity() {
     }
 
     /**
-     * 点击文字
+     * 点击 5-贴图
+     */
+    private fun onStickerClick() {
+        stickerView.isLocked = false
+        stickerView.show()
+        shareVM.showTextEditView.postValue(true)
+        viewModel.currentPaper.postValue(1)
+        immersionBar {
+            statusBarColor(com.yunianshu.sticker.R.color.white)
+            statusBarDarkFont(true)
+        }
+    }
+
+    /**
+     * 点击 6-文字
      */
     private fun startText(name: String) {
-        if (stickerView.currentSticker == null) {
-            if (shareVM.textStickerInfo.value == null) {
-                shareVM.textStickerInfo.postValue(
-                    StickerInfo(
-                        bitmap = com.yunianshu.library.util.ImageUtils.drawableToBitmap(
-                            TextDrawable.builder()
-                                .beginConfig()
-                                .width(100)
-                                .height(50)
-                                .endConfig()
-                                .buildRoundRect("Hi", Color.parseColor("#82D0E7"), 5)
-                        ),
-                        bubbleInfo = BubbleInfo(
-                            type = Contant.STICKER_TYPE_TEXT,
-                            paddingLeft = 10,
-                            paddingBottom = 10,
-                            paddingRight = 10,
-                            paddingTop = 10
-                        ),
-                        select = true
-                    )
-                )
-            } else {
-                shareVM.textStickerInfo.postValue(shareVM.textStickerInfo.value)
-            }
-        }
+        stickerView.isLocked = false
+        shareVM.textStickerInfo.postValue(
+            StickerInfo(
+                bitmap = com.yunianshu.library.util.ImageUtils.drawableToBitmap(
+                    TextDrawable.builder()
+                        .beginConfig()
+                        .width(100)
+                        .height(50)
+                        .endConfig()
+                        .buildRoundRect("Hi", Color.parseColor("#82D0E7"), 5)
+                ),
+                bubbleInfo = BubbleInfo(
+                    type = Contant.STICKER_TYPE_TEXT,
+                    paddingLeft = 10,
+                    paddingBottom = 10,
+                    paddingRight = 10,
+                    paddingTop = 10
+                ),
+                select = true
+            )
+        )
         stickerView.show()
         shareVM.showTextEditView.postValue(true)
         viewModel.currentPaper.postValue(0)
@@ -463,11 +522,17 @@ class PhotoEditActivity : BaseActivity() {
             statusBarColor(com.yunianshu.sticker.R.color.white)
             statusBarDarkFont(true)
         }
-
     }
 
     private fun initFragment() {
-        fragmentAdapter.addFragment(TextFragment())
+        fragmentList = mutableListOf()
+        val textFragment = TextFragment()
+        val stickerFragment = StickerFragment()
+        fragmentList.add(0, textFragment)
+        fragmentList.add(1, stickerFragment)
+        fragmentAdapter.addFragment(textFragment)
+        fragmentAdapter.addFragment(stickerFragment)
+        findViewById<ViewPager2>(R.id.viewPager2).offscreenPageLimit = 2
     }
 
     private fun tempPath(): String {
@@ -522,6 +587,7 @@ class PhotoEditActivity : BaseActivity() {
                 statusBarColor(R.color.base_color)
                 statusBarDarkFont(false)
             }
+            stickerView.isLocked = true
         }
 
         fun back() {
@@ -536,6 +602,7 @@ class PhotoEditActivity : BaseActivity() {
                 statusBarColor(R.color.base_color)
                 statusBarDarkFont(false)
             }
+            stickerView.isLocked = true
         }
 
         fun save() {
@@ -557,10 +624,26 @@ class PhotoEditActivity : BaseActivity() {
                             stickerView.show()
                         }
                     }
-
+                }
+                is DrawableSticker -> {
+                    if (stickerView.isShow) {
+                        stickerView.hide()
+                    } else {
+                        stickerView.show()
+                    }
                 }
             }
         }
+
+        override fun onStickerDeleted(sticker: Sticker) {
+            shareVM.removeSticker(sticker)
+            dialog.isShowing.let {
+                if (it) {
+                    dialog.dismiss()
+                }
+            }
+        }
+
     }
 
     /**
@@ -603,39 +686,40 @@ class PhotoEditActivity : BaseActivity() {
                 object : ModifyTextContentDialog.OnTextChangedListener {
 
                     override fun onTextChange(charSequence: CharSequence) {
-                if (charSequence.isEmpty()) {
-                    return
-                }
-                val sticker = TextSticker(this@PhotoEditActivity)
-                val bubbleInfo = item.bubbleInfo
-                sticker.setText(charSequence.toString())
-                    .setMaxTextSize(24f)
-                    .setAlpha(255)
-                when (item.bubbleInfo!!.type) {
-                    Contant.STICKER_TYPE_TEXT -> {
+                        if (charSequence.isEmpty()) {
+                            return
+                        }
+                        val sticker = TextSticker(this@PhotoEditActivity)
+                        val bubbleInfo = item.bubbleInfo
+                        sticker.setText(charSequence.toString())
+                            .setMaxTextSize(24f)
+                            .setAlpha(255)
+                        when (item.bubbleInfo!!.type) {
+                            Contant.STICKER_TYPE_TEXT -> {
 
+                            }
+                            Contant.STICKER_TYPE_TEXT_BUBBLE -> {
+                                //获取assets图片
+                                val drawable = BitmapDrawable(
+                                    resources,
+                                    assets.open(item.bubbleInfo!!.path)
+                                )
+                                //设置文字的有效范围
+                                sticker.setDrawable(
+                                    drawable,
+                                    Rect(
+                                        ConvertUtils.px2dp(bubbleInfo!!.paddingLeft.toFloat()),
+                                        ConvertUtils.px2dp(bubbleInfo.paddingTop.toFloat()),
+                                        drawable.intrinsicWidth - ConvertUtils.px2dp(bubbleInfo.paddingRight.toFloat()),
+                                        drawable.intrinsicHeight - ConvertUtils.px2dp(bubbleInfo.paddingBottom.toFloat())
+                                    )
+                                )
+                            }
+                        }
+                        sticker.resizeText()
+                        shareVM.addSticker(sticker)
                     }
-                    Contant.STICKER_TYPE_TEXT_BUBBLE -> {
-                        //获取assets图片
-                        val drawable = BitmapDrawable(
-                            resources,
-                            assets.open(item.bubbleInfo!!.path)
-                        )
-                        //设置文字的有效范围
-                        sticker.setDrawable(
-                            drawable,
-                            Rect(
-                                ConvertUtils.px2dp(bubbleInfo!!.paddingLeft.toFloat()),
-                                ConvertUtils.px2dp(bubbleInfo.paddingTop.toFloat()),
-                                drawable.intrinsicWidth - ConvertUtils.px2dp(bubbleInfo.paddingRight.toFloat()),
-                                drawable.intrinsicHeight - ConvertUtils.px2dp(bubbleInfo.paddingBottom.toFloat())
-                            )
-                        )
-                    }
-                }
-                sticker.resizeText()
-                shareVM.addSticker(sticker)
-            }}).show()
+                }).show()
     }
 
     /**

@@ -32,8 +32,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="10dp"
-        android:paddingEnd="10dp"
         android:paddingTop="10dp"
+        android:paddingEnd="10dp"
         tools:context=".ui.text.TextStyleFragment">
 
         <LinearLayout
@@ -58,14 +58,14 @@
                 android:textSize="12sp" />
 
             <androidx.recyclerview.widget.RecyclerView
+                adapter="@{adapter}"
+                submitList="@{vm.list}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                submitList="@{vm.list}"
-                adapter="@{adapter}"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                tools:listitem="@layout/item_text_color"
-                app:spanCount="9" />
+                app:spanCount="9"
+                tools:listitem="@layout/item_text_color" />
 
         </LinearLayout>
 
@@ -73,7 +73,7 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:text="透明度"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout5" />
@@ -97,6 +97,7 @@
             app:layout_constraintTop_toTopOf="@+id/textView" />
 
         <LinearLayout
+            android:id="@+id/linearLayout6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -109,61 +110,90 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:drawableTop='@{sharevm.textStickerBold?@drawable/ic_text_bold_select:@drawable/ic_text_bold}'
+                android:gravity="center_horizontal"
+                android:textColor='@{sharevm.textStickerBold?@color/base_color:@color/black_overlay}'
                 android:onClick="@{() -> click.clickBold()}"
-                android:drawableTop="@drawable/ic_text_bold"
-                android:gravity="center_horizontal"
-                android:textSize="@dimen/sp_14"
-                android:text="粗体" />
+                android:text="粗体"
+                android:textSize="@dimen/sp_14" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:drawableTop="@drawable/ic_text_italic"
+                android:drawableTop='@{sharevm.textStickerItalic?@drawable/ic_text_italic_select:@drawable/ic_text_italic}'
                 android:gravity="center_horizontal"
+                android:textColor='@{sharevm.textStickerItalic?@color/base_color:@color/black_overlay}'
                 android:onClick="@{() -> click.clickItalic()}"
-                android:textSize="@dimen/sp_14"
-                android:text="斜体" />
+                android:text="斜体"
+                android:textSize="@dimen/sp_14" />
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_weight="1"
-                android:drawableTop="@drawable/ic_text_underlined"
+                android:drawableTop='@{sharevm.textStickerUnderline?@drawable/ic_text_underlined_select:@drawable/ic_text_underlined}'
                 android:gravity="center_horizontal"
-                android:textSize="@dimen/sp_14"
                 android:onClick="@{() -> click.clickUnderline()}"
-                android:text="下滑线" />
+                android:textColor='@{sharevm.textStickerUnderline?@color/base_color:@color/black_overlay}'
+                android:text="下滑线"
+                android:textSize="@dimen/sp_14" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="@dimen/sp_14"
-                android:drawableTop="@drawable/ic_text_align_left"
+                android:drawableTop='@{sharevm.textStickerShadow?@drawable/ic_text_shadow_select:@drawable/ic_text_shadow}'
+                android:textColor='@{sharevm.textStickerShadow?@color/base_color:@color/black_overlay}'
+                android:gravity="center_horizontal"
+                android:onClick="@{() -> click.clickShadow()}"
+                android:text="阴影"
+                android:textSize="@dimen/sp_14" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop='@{sharevm.textStickerAlignLeft?@drawable/ic_text_align_left_select:@drawable/ic_text_align_left}'
                 android:gravity="center_horizontal"
                 android:onClick="@{() -> click.clickAlignLeft()}"
-                android:text="居左" />
+                android:textColor='@{sharevm.textStickerAlignLeft?@color/base_color:@color/black_overlay}'
+                android:text="居左"
+                android:textSize="@dimen/sp_14" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:drawableTop="@drawable/ic_text_align_right"
-                android:gravity="center_horizontal"
-                android:onClick="@{() -> click.clickAlignRight()}"
-                android:textSize="@dimen/sp_14"
-                android:text="居右" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawableTop="@drawable/ic_text_align_center"
+                android:drawableTop='@{sharevm.textStickerAlignCenter?@drawable/ic_text_align_center_select:@drawable/ic_text_align_center}'
                 android:gravity="center_horizontal"
                 android:onClick="@{() -> click.clickAlignCenter()}"
-                android:textSize="@dimen/sp_14"
-                android:text="居中" />
+                android:textColor='@{sharevm.textStickerAlignCenter?@color/base_color:@color/black_overlay}'
+                android:text="居中"
+                android:textSize="@dimen/sp_14" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop='@{sharevm.textStickerAlignRight?@drawable/ic_text_align_right_select:@drawable/ic_text_align_right}'
+                android:gravity="center_horizontal"
+                android:onClick="@{() -> click.clickAlignRight()}"
+                android:text="居右"
+                android:textColor='@{sharevm.textStickerAlignRight?@color/base_color:@color/black_overlay}'
+                android:textSize="@dimen/sp_14" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

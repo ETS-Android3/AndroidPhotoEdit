@@ -180,6 +180,14 @@ public class TextSticker extends Sticker {
   }
 
   /**
+   * 文字阴影
+   */
+  @NonNull public TextSticker setShadowLayer(int color) {
+    textPaint.setShadowLayer(3, 2, 0, color);
+    return this;
+  }
+
+  /**
    * Set the text to be displayed.
    *
    * @param show 是否显示下划线

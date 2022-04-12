@@ -56,6 +56,11 @@ class ShareViewModel : ViewModel() {
     var textStickerInfo = UnPeekLiveData<StickerInfo>()
 
     /**
+     * 当前贴纸集合
+     */
+    var stickerInfos = UnPeekLiveData<List<Sticker>>()
+
+    /**
      * 文字alpha
      */
     var textStickerAlpha = UnPeekLiveData<Float>()
@@ -77,6 +82,21 @@ class ShareViewModel : ViewModel() {
     var textStickerAlign = UnPeekLiveData<Int>()
 
     /**
+     * 文字居左
+     */
+    var textStickerAlignLeft = UnPeekLiveData<Boolean>()
+
+    /**
+     * 文字居中
+     */
+    var textStickerAlignCenter = UnPeekLiveData<Boolean>()
+
+    /**
+     * 文字居右
+     */
+    var textStickerAlignRight = UnPeekLiveData<Boolean>()
+
+    /**
      * 文字斜体
      */
     var textStickerItalic = UnPeekLiveData<Boolean>()
@@ -85,6 +105,11 @@ class ShareViewModel : ViewModel() {
      * 文字下划线
      */
     var textStickerUnderline = UnPeekLiveData<Boolean>()
+
+    /**
+     * 文字阴影
+     */
+    var textStickerShadow = UnPeekLiveData<Boolean>()
 
     /**
      * 文字字体
@@ -100,8 +125,30 @@ class ShareViewModel : ViewModel() {
         textStickerAlign.value = 0
         textStickerItalic.value = false
         textStickerUnderline.value = false
+        textStickerShadow.value = false
+        textStickerAlignLeft.value = true
+        textStickerAlignCenter.value = false
+        textStickerAlignRight.value = false
         textStickerFont.value =
             FontInfo(name = "默认字体", url = null, filePath = null, fontImage = null, select = true)
+        textStickerInfo.value = StickerInfo(
+            bitmap = com.yunianshu.library.util.ImageUtils.drawableToBitmap(
+                TextDrawable.builder()
+                    .beginConfig()
+                    .width(100)
+                    .height(50)
+                    .endConfig()
+                    .buildRoundRect("Hi", Color.parseColor("#82D0E7"), 5)
+            ),
+            bubbleInfo = BubbleInfo(
+                type = Contant.STICKER_TYPE_TEXT,
+                paddingLeft = 10,
+                paddingBottom = 10,
+                paddingRight = 10,
+                paddingTop = 10
+            ),
+            select = true
+        )
     }
 
     /**
@@ -113,6 +160,16 @@ class ShareViewModel : ViewModel() {
         list.add(sticker)
         stickers.postValue(list)
         currentSticker.postValue(sticker)
+    }
+
+    /**
+     * 删除贴纸
+     */
+    fun removeSticker(sticker: Sticker) {
+        val list = mutableListOf<Sticker>()
+        stickers.value?.let { list.addAll(it) }
+        list.remove(sticker)
+        stickers.postValue(list)
     }
 
     /**

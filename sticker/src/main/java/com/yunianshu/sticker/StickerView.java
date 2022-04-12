@@ -771,10 +771,20 @@ public class StickerView extends FrameLayout {
         invalidate();
     }
 
+    /**
+     * 隐藏编辑
+     */
     public void hide() {
         this.showBorder = false;
         this.showIcons = false;
         invalidate();
+    }
+
+    /**
+     * 是否显示编辑
+     */
+    public boolean isShow() {
+        return showIcons;
     }
 
 

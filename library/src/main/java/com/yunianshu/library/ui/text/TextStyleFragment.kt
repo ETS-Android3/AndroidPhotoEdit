@@ -21,12 +21,12 @@ class TextStyleFragment : BaseFragment() {
 
     private lateinit var viewModel: TextStyleViewModel
     private lateinit var shareViewModel: ShareViewModel
-    private lateinit var adapter:TextColorAdapter
+    private lateinit var adapter: TextColorAdapter
 
     override fun loadView() {
         initColor()
         adapter.setOnItemClickListener { _, item, pos ->
-            if(pos == 0){
+            if (pos == 0) {
                 val bubbleFlag = BubbleFlag(mActivity)
                 bubbleFlag.flagMode = FlagMode.FADE
                 var colorPickerDialog = ColorPickerDialog.Builder(mActivity)
@@ -43,10 +43,10 @@ class TextStyleFragment : BaseFragment() {
                     ) { dialogInterface, i -> dialogInterface.dismiss() }
                     .attachAlphaSlideBar(true) // the default value is true.
                     .attachBrightnessSlideBar(true) // the default value is true.
-                    colorPickerDialog.colorPickerView.flagView = bubbleFlag
-                    colorPickerDialog.setBottomSpace(12) // set a bottom space between the last slidebar and buttons.
+                colorPickerDialog.colorPickerView.flagView = bubbleFlag
+                colorPickerDialog.setBottomSpace(12) // set a bottom space between the last slidebar and buttons.
                     .show()
-            }else{
+            } else {
                 shareViewModel.textStickerColor.postValue(item)
             }
         }
@@ -68,14 +68,14 @@ class TextStyleFragment : BaseFragment() {
 
     override fun getDataBindingConfig(): DataBindingConfig {
         adapter = TextColorAdapter(mActivity)
-        return DataBindingConfig(R.layout.fragment_text_style,BR.vm,viewModel)
-            .addBindingParam(BR.sharevm,shareViewModel)
-            .addBindingParam(BR.listener,TextStyleColorSeekBarListener())
-            .addBindingParam(BR.click,TextStyleClickProxy())
-            .addBindingParam(BR.adapter,adapter)
+        return DataBindingConfig(R.layout.fragment_text_style, BR.vm, viewModel)
+            .addBindingParam(BR.sharevm, shareViewModel)
+            .addBindingParam(BR.listener, TextStyleColorSeekBarListener())
+            .addBindingParam(BR.click, TextStyleClickProxy())
+            .addBindingParam(BR.adapter, adapter)
     }
 
-    inner class TextStyleColorSeekBarListener: OnSeekChangeListener {
+    inner class TextStyleColorSeekBarListener : OnSeekChangeListener {
 
         override fun onSeeking(seekParams: SeekParams?) {
             shareViewModel.textStickerAlpha.postValue(seekParams?.progress?.toFloat())
@@ -90,47 +90,83 @@ class TextStyleFragment : BaseFragment() {
 
     }
 
-    inner class TextStyleClickProxy{
+    inner class TextStyleClickProxy {
 
         /**
          * 文字大小
          */
-        fun clickBold(){
+        fun clickBold() {
             shareViewModel.textStickerBold.postValue(!shareViewModel.textStickerBold.value!!)
         }
+
         /**
          * 文字斜体
          */
-        fun clickItalic(){
+        fun clickItalic() {
             shareViewModel.textStickerItalic.postValue(!shareViewModel.textStickerItalic.value!!)
         }
+
         /**
          * 文字下划线
          */
-        fun clickUnderline(){
+        fun clickUnderline() {
             shareViewModel.textStickerUnderline.postValue(!shareViewModel.textStickerUnderline.value!!)
         }
+
+        /**
+         * 文字阴影
+         */
+        fun clickShadow() {
+            shareViewModel.textStickerShadow.postValue(!shareViewModel.textStickerShadow.value!!)
+        }
+
         /**
          * 文字居左
          */
-        fun clickAlignLeft(){
-           shareViewModel.textStickerAlign.postValue(0)
+        fun clickAlignLeft() {
+            shareViewModel.textStickerAlign.postValue(0)
+            val value = shareViewModel.textStickerAlignLeft.value!!
+            if (value) {
+                shareViewModel.textStickerAlignLeft.postValue(false)
+                shareViewModel.textStickerAlignCenter.postValue(true)
+            } else {
+                shareViewModel.textStickerAlignLeft.postValue(true)
+                shareViewModel.textStickerAlignCenter.postValue(false)
+            }
+            shareViewModel.textStickerAlignRight.postValue(false)
         }
+
         /**
          * 文字居右
          */
-        fun clickAlignRight(){
+        fun clickAlignRight() {
             shareViewModel.textStickerAlign.postValue(1)
+            val value = shareViewModel.textStickerAlignRight.value!!
+            if (value) {
+                shareViewModel.textStickerAlignRight.postValue(false)
+                shareViewModel.textStickerAlignCenter.postValue(true)
+            } else {
+                shareViewModel.textStickerAlignRight.postValue(true)
+                shareViewModel.textStickerAlignCenter.postValue(false)
+            }
+            shareViewModel.textStickerAlignLeft.postValue(false)
         }
+
         /**
          * 文字居中
          */
-        fun clickAlignCenter(){
+        fun clickAlignCenter() {
             shareViewModel.textStickerAlign.postValue(2)
+            val value = shareViewModel.textStickerAlignCenter.value!!
+            if (value) {
+                shareViewModel.textStickerAlignCenter.postValue(false)
+                shareViewModel.textStickerAlignLeft.postValue(true)
+            } else {
+                shareViewModel.textStickerAlignCenter.postValue(true)
+                shareViewModel.textStickerAlignLeft.postValue(false)
+            }
+            shareViewModel.textStickerAlignRight.postValue(false)
         }
-
-
-
     }
 
 }
