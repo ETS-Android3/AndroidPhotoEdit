@@ -4,11 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import coil.load
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.interfaces.OnResultCallbackListener
 import com.yunianshu.library.PhotoEditActivity
+import com.yunianshu.library.ext.load
 import com.yunianshu.photoedit.databinding.ActivityMainBinding
 
 
@@ -49,11 +51,11 @@ class MainActivity : AppCompatActivity() {
         if(localMedia.width>localMedia.height){
             intent.putExtra("rotate",true)
         }
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-            val stringExtra = it.data?.getStringExtra("url")
-            when(it.resultCode == RESULT_OK && stringExtra != null){
-
-            }
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
+            val url = result.data?.getStringExtra("url")
+           url?.let {
+               binding.imageView2.load(it)
+           }
         }.launch(intent)
     }
 }

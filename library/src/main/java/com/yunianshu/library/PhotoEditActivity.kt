@@ -1,5 +1,6 @@
 package com.yunianshu.library
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
@@ -61,6 +62,7 @@ class PhotoEditActivity : BaseActivity() {
     private val stickerView: StickerView by lazy { findViewById(R.id.sticker_view) }
     private val imageUndo: TextView by lazy { findViewById(R.id.edit_image_undo) }
     private val imageRedo: TextView by lazy { findViewById(R.id.edit_image_redo) }
+    private val title: TextView by lazy { findViewById(R.id.title) }
 
     /**
      * 1.先初始化ViewModel
@@ -106,6 +108,7 @@ class PhotoEditActivity : BaseActivity() {
         stickerView.isConstrained = true
         imageRedo.visibility = View.GONE
         imageUndo.visibility = View.GONE
+        title.text = getString(R.string.text_print_preview)
     }
 
     /**
@@ -316,7 +319,7 @@ class PhotoEditActivity : BaseActivity() {
                             try {
                                 downLoadFont(info)
                             } catch (e: Exception) {
-                                ToastUtils.showShort("下载字体不成功")
+                                ToastUtils.showShort("下载字体失败,请重试")
                             }
                         }
 
@@ -440,6 +443,7 @@ class PhotoEditActivity : BaseActivity() {
                     currentIndex = values.size - 1
                     imageUndo.visibility = View.VISIBLE
                     imageRedo.visibility = View.GONE
+                    title.text = ""
                 }
             }
         adapter.setOnItemClickListener { _, item, position ->
@@ -525,11 +529,8 @@ class PhotoEditActivity : BaseActivity() {
     }
 
     private fun initFragment() {
-        fragmentList = mutableListOf()
         val textFragment = TextFragment()
         val stickerFragment = StickerFragment()
-        fragmentList.add(0, textFragment)
-        fragmentList.add(1, stickerFragment)
         fragmentAdapter.addFragment(textFragment)
         fragmentAdapter.addFragment(stickerFragment)
         findViewById<ViewPager2>(R.id.viewPager2).offscreenPageLimit = 2
@@ -578,11 +579,6 @@ class PhotoEditActivity : BaseActivity() {
         fun cancel() {
             shareVM.showTextEditView.postValue(false)
             dialog.dismiss()
-            if (shareVM.editState.value == Contant.WORDS) {
-                stickerView.removeAllTextStickers()
-            } else if (shareVM.editState.value == Contant.STICKER) {
-                stickerView.removeAllOthersButNoTextStickers()
-            }
             immersionBar {
                 statusBarColor(R.color.base_color)
                 statusBarDarkFont(false)
@@ -606,7 +602,12 @@ class PhotoEditActivity : BaseActivity() {
         }
 
         fun save() {
-
+            var path = Utils.getApp()
+                .getExternalFilesDir("edit")!!.absolutePath + File.separator + "result_" + System.currentTimeMillis() + ".jpg"
+            FileUtils.createOrExistsFile(path)
+            stickerView.save(File(path))
+            setResult(Activity.RESULT_OK, Intent().putExtra("url", path))
+            finish()
         }
     }
 

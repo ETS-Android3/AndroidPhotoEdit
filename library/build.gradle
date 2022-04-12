@@ -63,7 +63,7 @@ dependencies {
     implementation 'com.geyifeng.immersionbar:immersionbar:3.2.1'
     implementation 'com.geyifeng.immersionbar:immersionbar-ktx:3.2.1'
     //拉动条
-    implementation 'com.github.yunianshu:IndicatorSeekBarNew:1.0.8'
+    implementation 'com.github.yunianshu:IndicatorSeekBarNew:1.0.9'
     //裁剪
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
     //工具类

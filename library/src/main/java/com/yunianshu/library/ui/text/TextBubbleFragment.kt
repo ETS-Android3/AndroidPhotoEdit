@@ -20,16 +20,18 @@ class TextBubbleFragment : BaseFragment() {
     private lateinit var viewModel: TextBubbleViewModel
     private lateinit var adapter: TextStickerAdapter
     private lateinit var shareVM: ShareViewModel
+    private var lastSelect:Int = 0
 
     @SuppressLint("NotifyDataSetChanged")
     override fun loadView() {
         loadBubble()
         adapter.setOnItemClickListener { _, item, position ->
-            shareVM.textStickerInfo.value!!.select = false
+            viewModel.list.value?.get(lastSelect)?.select = false
             item.select = true
             shareVM.textStickerInfo.postValue(item)
             adapter.notifyDataSetChanged()
             RecycleViewUtils.toPosition(mActivity.findViewById(R.id.recyclerView3), position,viewModel.list.value!!.size,2)
+            lastSelect = position
         }
     }
 

@@ -124,14 +124,15 @@ class TextStyleFragment : BaseFragment() {
          * 文字居左
          */
         fun clickAlignLeft() {
-            shareViewModel.textStickerAlign.postValue(0)
             val value = shareViewModel.textStickerAlignLeft.value!!
             if (value) {
                 shareViewModel.textStickerAlignLeft.postValue(false)
                 shareViewModel.textStickerAlignCenter.postValue(true)
+                shareViewModel.textStickerAlign.postValue(2)
             } else {
                 shareViewModel.textStickerAlignLeft.postValue(true)
                 shareViewModel.textStickerAlignCenter.postValue(false)
+                shareViewModel.textStickerAlign.postValue(0)
             }
             shareViewModel.textStickerAlignRight.postValue(false)
         }
@@ -140,14 +141,15 @@ class TextStyleFragment : BaseFragment() {
          * 文字居右
          */
         fun clickAlignRight() {
-            shareViewModel.textStickerAlign.postValue(1)
             val value = shareViewModel.textStickerAlignRight.value!!
             if (value) {
+                shareViewModel.textStickerAlign.postValue(2)
                 shareViewModel.textStickerAlignRight.postValue(false)
                 shareViewModel.textStickerAlignCenter.postValue(true)
             } else {
                 shareViewModel.textStickerAlignRight.postValue(true)
                 shareViewModel.textStickerAlignCenter.postValue(false)
+                shareViewModel.textStickerAlign.postValue(1)
             }
             shareViewModel.textStickerAlignLeft.postValue(false)
         }
@@ -156,12 +158,13 @@ class TextStyleFragment : BaseFragment() {
          * 文字居中
          */
         fun clickAlignCenter() {
-            shareViewModel.textStickerAlign.postValue(2)
             val value = shareViewModel.textStickerAlignCenter.value!!
             if (value) {
                 shareViewModel.textStickerAlignCenter.postValue(false)
                 shareViewModel.textStickerAlignLeft.postValue(true)
+                shareViewModel.textStickerAlign.postValue(0)
             } else {
+                shareViewModel.textStickerAlign.postValue(2)
                 shareViewModel.textStickerAlignCenter.postValue(true)
                 shareViewModel.textStickerAlignLeft.postValue(false)
             }
