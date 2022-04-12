@@ -130,7 +130,7 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:drawableTop='@{sharevm.textStickerUnderline?@drawable/ic_text_underlined_select:@drawable/ic_text_underlined}'
                 android:gravity="center_horizontal"
@@ -149,19 +149,6 @@
                 android:onClick="@{() -> click.clickShadow()}"
                 android:text="阴影"
                 android:textSize="@dimen/sp_14" />
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -194,7 +181,9 @@
                 android:text="居右"
                 android:textColor='@{sharevm.textStickerAlignRight?@color/base_color:@color/black_overlay}'
                 android:textSize="@dimen/sp_14" />
+
         </LinearLayout>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

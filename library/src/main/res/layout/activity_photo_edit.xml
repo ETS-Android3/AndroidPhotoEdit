@@ -113,8 +113,8 @@
 
             <com.yunianshu.sticker.StickerView
                 android:id="@+id/sticker_view"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
                 android:background="@color/white"
                 android:padding="@dimen/padding_4dp"
                 android:translationZ="5dp"
@@ -133,11 +133,11 @@
 
                 <ImageView
                     android:id="@+id/imageView"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clickable="false"
                     android:adjustViewBounds="true"
-                    android:scaleType="fitXY"/>
+                    android:scaleType="centerInside"/>
             </com.yunianshu.sticker.StickerView>
 
 

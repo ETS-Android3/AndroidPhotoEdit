@@ -106,7 +106,7 @@
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/textViewPager"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="120dp"
             current="@{vm.editType-1}"
             adapter="@{adapter}"
             useEnable="@{false}"

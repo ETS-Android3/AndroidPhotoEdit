@@ -8,10 +8,10 @@ import android.text.Layout
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
-import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.blankj.utilcode.util.*
@@ -26,7 +26,6 @@ import com.yunianshu.library.ui.adjust.AdjustmentActivity
 import com.yunianshu.library.ui.crop.CropActivity
 import com.yunianshu.library.ui.fillter.FilterActivity
 import com.yunianshu.library.ui.frame.FrameActivity
-import com.yunianshu.library.ui.sticker.StickerActivity
 import com.yunianshu.library.ui.sticker.StickerFragment
 import com.yunianshu.library.ui.text.TextFragment
 import com.yunianshu.library.util.HttpUtil.fetchDownload
@@ -360,6 +359,7 @@ class PhotoEditActivity : BaseActivity() {
                     info.filePath = path
                     sticker.setTypeface(Typeface.createFromFile(File(path)))
                 }
+                sticker.resizeText()
                 viewModel.refreshStickerView()
             }
 
@@ -377,7 +377,7 @@ class PhotoEditActivity : BaseActivity() {
                 sticker = DrawableSticker(BitmapDrawable(resources, info.bitmap))
             }
             Contant.STICKER_TYPE_TEXT -> {
-                sticker = TextSticker(this)
+                sticker = TextSticker(applicationContext)
                 sticker.setText("请输入文字")
                     .setMaxTextSize(20f)
                     .setTextSize(16f)
@@ -385,7 +385,7 @@ class PhotoEditActivity : BaseActivity() {
                 sticker.resizeText()
             }
             Contant.STICKER_TYPE_TEXT_BUBBLE -> {
-                sticker = TextSticker(this)
+                sticker = TextSticker(applicationContext)
                 sticker.setText("请输入文字")
                     .setMaxTextSize(20f)
                     .setTextSize(16f)
@@ -735,6 +735,9 @@ class PhotoEditActivity : BaseActivity() {
                     override fun onTextChange(it: CharSequence) {
                         if (!TextUtils.isEmpty(it.toString())) {
                             sticker.text = it.toString()
+                            sticker.drawable = TextDrawable.builder().beginConfig().width(200).height(50)
+                                .endConfig()
+                                .buildRoundRect("", Color.argb(255, 131, 131, 131), 5)
                             sticker.resizeText()
                             viewModel.refreshStickerView()
                         }
