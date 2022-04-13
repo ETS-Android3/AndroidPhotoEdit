@@ -4,6 +4,7 @@ pluginManagement {
         google()
         mavenCentral()
         maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
 }
 dependencyResolutionManagement {
@@ -15,6 +16,7 @@ dependencyResolutionManagement {
             url "https://jitpack.io"
         }
         maven { url 'https://maven.aliyun.com/repository/jcenter' }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
 }
 rootProject.name = "AndroidPhotoEdit"

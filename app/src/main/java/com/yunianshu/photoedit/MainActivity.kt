@@ -5,6 +5,9 @@ import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import coil.load
+import com.blankj.utilcode.util.FileUtils
+import com.blankj.utilcode.util.ToastUtils
+import com.blankj.utilcode.util.Utils
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.entity.LocalMedia
@@ -23,6 +26,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         binding.text.setOnClickListener {
             open()
+        }
+        binding.clear.setOnClickListener {
+            var path = Utils.getApp()
+                .getExternalFilesDir("edit")?.absolutePath
+            path?.let {
+                var delete = FileUtils.deleteAllInDir(it)
+                if (delete) {
+                   ToastUtils.showShort("清除成功")
+                }
+            }
+
         }
     }
 
@@ -48,8 +62,10 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this@MainActivity, PhotoEditActivity::class.java)
         intent.putExtra("url",localMedia.availablePath)
         intent.putExtra("typeName","CP4000")
+        intent.putExtra("width",400)
+        intent.putExtra("height",400)
         if(localMedia.width>localMedia.height){
-            intent.putExtra("rotate",true)
+            intent.putExtra("rotate",false)
         }
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
             val url = result.data?.getStringExtra("url")

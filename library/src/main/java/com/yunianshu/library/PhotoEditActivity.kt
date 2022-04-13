@@ -12,7 +12,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.blankj.utilcode.util.*
 import com.gyf.immersionbar.ktx.immersionBar
@@ -28,7 +27,7 @@ import com.yunianshu.library.ui.fillter.FilterActivity
 import com.yunianshu.library.ui.frame.FrameActivity
 import com.yunianshu.library.ui.sticker.StickerFragment
 import com.yunianshu.library.ui.text.TextFragment
-import com.yunianshu.library.util.HttpUtil.fetchDownload
+import com.yunianshu.library.util.HttpUtil
 import com.yunianshu.library.view.ModifyTextContentDialog
 import com.yunianshu.library.view.StickerListener
 import com.yunianshu.sticker.*
@@ -50,7 +49,6 @@ class PhotoEditActivity : BaseActivity() {
     private lateinit var fragmentAdapter: RgAdapter
     private lateinit var dialog: ModifyTextContentDialog
     private lateinit var filePath: String
-    private lateinit var fragmentList: MutableList<Fragment>
 
     //图片位置
     private var currentIndex: Int = 0
@@ -61,6 +59,7 @@ class PhotoEditActivity : BaseActivity() {
     private val stickerView: StickerView by lazy { findViewById(R.id.sticker_view) }
     private val imageUndo: TextView by lazy { findViewById(R.id.edit_image_undo) }
     private val imageRedo: TextView by lazy { findViewById(R.id.edit_image_redo) }
+    private val image: ImageView by lazy { findViewById(R.id.imageView) }
     private val title: TextView by lazy { findViewById(R.id.title) }
 
     /**
@@ -121,9 +120,16 @@ class PhotoEditActivity : BaseActivity() {
                     currentIndex++
                     filePath = values[currentIndex]
                     if (currentIndex + 1 == values.size) {
-                        imageRedo.visibility = View.GONE
+                        imageRedo.isEnabled = false
+                        imageRedo.background =
+                            ContextCompat.getDrawable(this, R.drawable.ic_temp_redo_enable)
+                    }else{
+                        imageRedo.background =
+                            ContextCompat.getDrawable(this, R.drawable.ic_temp_redo)
                     }
-                    imageUndo.visibility = View.VISIBLE
+                    imageUndo.background =
+                        ContextCompat.getDrawable(this, R.drawable.ic_temp_undo)
+                    imageUndo.isEnabled = true
                     findViewById<ImageView>(R.id.imageView).setImageBitmap(
                         BitmapFactory.decodeFile(
                             filePath
@@ -140,12 +146,19 @@ class PhotoEditActivity : BaseActivity() {
                     filePath = values[currentIndex]
                     var bitmap = BitmapFactory.decodeFile(filePath)
                     if (currentIndex == 0) {
-                        imageUndo.visibility = View.GONE
+                        imageUndo.isEnabled = false
+                        imageUndo.background =
+                            ContextCompat.getDrawable(this, R.drawable.ic_temp_undo_enable)
                         if (rotate) {
                             bitmap = ImageUtils.rotate(bitmap, 90, 0f, 0f)
                         }
+                    }else{
+                        imageUndo.background =
+                            ContextCompat.getDrawable(this, R.drawable.ic_temp_undo)
                     }
-                    imageRedo.visibility = View.VISIBLE
+                    imageRedo.isEnabled = true
+                    imageRedo.background =
+                        ContextCompat.getDrawable(this, R.drawable.ic_temp_redo)
                     findViewById<ImageView>(R.id.imageView).setImageBitmap(bitmap)
                 }
             }
@@ -168,7 +181,7 @@ class PhotoEditActivity : BaseActivity() {
 //            } else {
 //                updateSticker(it)
 //            }
-            if(shareVM.showTextEditView.value == true){
+            if (shareVM.showTextEditView.value == true) {
                 addTextSticker(it)
             }
         }
@@ -285,11 +298,7 @@ class PhotoEditActivity : BaseActivity() {
         shareVM.textStickerShadow.observeSticky(this) {
             if (stickerView.currentSticker != null && stickerView.currentSticker is TextSticker) {
                 val sticker = stickerView.currentSticker as TextSticker
-                if(it){
-                    sticker.setShadowLayer(Color.BLUE)
-                }else{
-                    sticker.setShadowLayer(Color.TRANSPARENT)
-                }
+                sticker.setShadowLayer(it)
                 viewModel.refreshStickerView()
             }
         }
@@ -345,12 +354,14 @@ class PhotoEditActivity : BaseActivity() {
             )
             File(path).let {
                 if (!it.exists()) {
-                    val response = fetchDownload(this, url, path)
-                    if (response == path) {
+                    val address = Utils.getApp().getExternalFilesDir("edit")!!.absolutePath
+                    val fileName = url.substring(url.lastIndexOf(".") - 8)
+                    val response = HttpUtil.downloadByOKDownload(url, address, fileName)
+                    if(response == path){
                         sticker.setTypeface(Typeface.createFromFile(it))
                         info.type = 1
                         info.filePath = path
-                    } else {
+                    }else{
                         ToastUtils.showShort("下载失败")
                     }
                 } else {
@@ -378,7 +389,7 @@ class PhotoEditActivity : BaseActivity() {
             }
             Contant.STICKER_TYPE_TEXT -> {
                 sticker = TextSticker(applicationContext)
-                sticker.setText("请输入文字")
+                sticker.setText(getString(R.string.tip_enter_content))
                     .setMaxTextSize(20f)
                     .setTextSize(16f)
                     .setAlpha(255)
@@ -386,7 +397,7 @@ class PhotoEditActivity : BaseActivity() {
             }
             Contant.STICKER_TYPE_TEXT_BUBBLE -> {
                 sticker = TextSticker(applicationContext)
-                sticker.setText("请输入文字")
+                sticker.setText(getString(R.string.tip_enter_content))
                     .setMaxTextSize(20f)
                     .setTextSize(16f)
                     .setAlpha(255)
@@ -422,6 +433,19 @@ class PhotoEditActivity : BaseActivity() {
         height = intent.getIntExtra("height", 0)
         typeName = intent.getStringExtra("typeName").toString()
         shareVM.cacheImagePaths.postValue(mutableListOf(filePath))
+        if(width != 0 || height != 0) {
+            val lp = image.layoutParams
+            if(ConvertUtils.dp2px(width.toFloat()) > ScreenUtils.getScreenWidth()) {
+                lp.width = ScreenUtils.getScreenWidth()-40
+                lp.height = ConvertUtils.dp2px(height.toFloat())*lp.width/ConvertUtils.dp2px(width.toFloat())
+            }else{
+                lp.width = ConvertUtils.dp2px(width.toFloat())
+                lp.height = ConvertUtils.dp2px(height.toFloat())
+            }
+            image.layoutParams = lp
+            stickerView.layoutParams.width = lp.width
+            stickerView.layoutParams.height = lp.height
+        }
     }
 
     /**
@@ -438,11 +462,14 @@ class PhotoEditActivity : BaseActivity() {
                         )
                     )
                     filePath = UriUtils.uri2File(uri.data).absolutePath
-                    var values = shareVM.cacheImagePaths.value
+                    val values = shareVM.cacheImagePaths.value
                     (values as MutableList<String>).add(filePath)
                     currentIndex = values.size - 1
                     imageUndo.visibility = View.VISIBLE
-                    imageRedo.visibility = View.GONE
+                    imageRedo.visibility = View.VISIBLE
+                    imageRedo.background =
+                        ContextCompat.getDrawable(this, R.drawable.ic_temp_redo_enable)
+                    imageRedo.isEnabled = false
                     title.text = ""
                 }
             }
@@ -473,8 +500,10 @@ class PhotoEditActivity : BaseActivity() {
                     return@setOnItemClickListener
                 }
             }
-            intent?.putExtra("url", filePath)
-            intent?.putExtra("typeName", typeName)
+            intent?.putExtra(Contant.KEY_WIDTH, width)
+            intent?.putExtra(Contant.KEY_HEIGHT, height)
+            intent?.putExtra(Contant.KEY_URL, filePath)
+            intent?.putExtra(Contant.KEY_TYPENAME, typeName)
             activityResultLauncher.launch(intent)
         }
     }
@@ -483,7 +512,6 @@ class PhotoEditActivity : BaseActivity() {
      * 点击 5-贴图
      */
     private fun onStickerClick() {
-        stickerView.isLocked = false
         stickerView.show()
         shareVM.showTextEditView.postValue(true)
         viewModel.currentPaper.postValue(1)
@@ -497,7 +525,6 @@ class PhotoEditActivity : BaseActivity() {
      * 点击 6-文字
      */
     private fun startText(name: String) {
-        stickerView.isLocked = false
         shareVM.textStickerInfo.postValue(
             StickerInfo(
                 bitmap = com.yunianshu.library.util.ImageUtils.drawableToBitmap(
@@ -583,7 +610,6 @@ class PhotoEditActivity : BaseActivity() {
                 statusBarColor(R.color.base_color)
                 statusBarDarkFont(false)
             }
-            stickerView.isLocked = true
         }
 
         fun back() {
@@ -598,15 +624,14 @@ class PhotoEditActivity : BaseActivity() {
                 statusBarColor(R.color.base_color)
                 statusBarDarkFont(false)
             }
-            stickerView.isLocked = true
         }
 
         fun save() {
-            var path = Utils.getApp()
+            val path = Utils.getApp()
                 .getExternalFilesDir("edit")!!.absolutePath + File.separator + "result_" + System.currentTimeMillis() + ".jpg"
             FileUtils.createOrExistsFile(path)
             stickerView.save(File(path))
-            setResult(Activity.RESULT_OK, Intent().putExtra("url", path))
+            setResult(Activity.RESULT_OK, Intent().putExtra(Contant.KEY_URL, path))
             finish()
         }
     }
@@ -732,12 +757,9 @@ class PhotoEditActivity : BaseActivity() {
             .setOnTextChangedListener(false,
                 object : ModifyTextContentDialog.OnTextChangedListener {
 
-                    override fun onTextChange(it: CharSequence) {
-                        if (!TextUtils.isEmpty(it.toString())) {
-                            sticker.text = it.toString()
-                            sticker.drawable = TextDrawable.builder().beginConfig().width(200).height(50)
-                                .endConfig()
-                                .buildRoundRect("", Color.argb(255, 131, 131, 131), 5)
+                    override fun onTextChange(charSequence: CharSequence) {
+                        if (!TextUtils.isEmpty(charSequence.toString())) {
+                            sticker.text = charSequence.toString()
                             sticker.resizeText()
                             viewModel.refreshStickerView()
                         }

@@ -79,11 +79,16 @@ dependencies {
     //颜色选择器
     implementation "com.github.skydoves:colorpickerview:2.2.4"
 
-    //文件下载
-    implementation "androidx.tonyodev.fetch2:xfetch2:3.1.6"
-
     //glide
     implementation 'com.github.bumptech.glide:glide:4.13.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
+
+    // okdownload核心库
+    implementation 'com.liulishuo.okdownload:okdownload:1.0.7'
+    //存储断点信息的数据库
+    implementation 'com.liulishuo.okdownload:sqlite:1.0.7'
+    //提供okhttp连接，如果使用的话，需要引入okhttp网络请求库
+    implementation 'com.liulishuo.okdownload:okhttp:1.0.7'
+    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.2'
 
 }

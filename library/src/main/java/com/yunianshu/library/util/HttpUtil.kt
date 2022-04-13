@@ -1,9 +1,8 @@
 package com.yunianshu.library.util
 
-import android.content.Context
-import com.tonyodev.fetch2.*
-import com.tonyodev.fetch2.Fetch.Impl.getInstance
-import com.tonyodev.fetch2core.DownloadBlock
+import com.liulishuo.okdownload.DownloadTask
+import com.liulishuo.okdownload.core.cause.ResumeFailedCause
+import com.liulishuo.okdownload.core.listener.DownloadListener3
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
@@ -43,7 +42,7 @@ object HttpUtil {
         }
     }
 
-    private fun sendHttpRequest(address: String,path:String, listener: HttpCallbackListener) {
+    private fun sendHttpRequest(address: String, path: String, listener: HttpCallbackListener) {
         thread {
             var connection: HttpURLConnection? = null
             try {
@@ -56,9 +55,14 @@ object HttpUtil {
                 connection.setRequestProperty("Content-Type", "application/octet-stream")
                 connection.setRequestProperty("Connection", "Keep-Alive")
                 val input = connection.inputStream
+                val fileOutputStream = FileOutputStream(path)
+                val out = BufferedOutputStream(fileOutputStream)
                 BufferedInputStream(input).use {
-                    it.copyTo(BufferedOutputStream(FileOutputStream(path)))
+                    it.copyTo(out)
                 }
+                fileOutputStream.flush()
+                fileOutputStream.close()
+                input.close()
                 // 回调onFinish()方法
                 listener.onFinish(path)
             } catch (e: Exception) {
@@ -89,9 +93,9 @@ object HttpUtil {
      * 下载文件
      * 注意：下载字体文件会出现问题,保存的文件有些可以使用，有些不行，待查原因
      */
-    suspend fun download(address: String,path: String): String {
+    suspend fun download(address: String, path: String): String {
         return suspendCoroutine { continuation ->
-           sendHttpRequest(address,path, object : HttpCallbackListener {
+            sendHttpRequest(address, path, object : HttpCallbackListener {
                 override fun onFinish(response: String) {
                     continuation.resume(response)
                 }
@@ -103,95 +107,64 @@ object HttpUtil {
         }
     }
 
-    private fun getFetchDownload(context: Context, address: String, path: String, listener: HttpCallbackListener) {
-        val fetchConfiguration: FetchConfiguration = FetchConfiguration.Builder(context)
-            .setDownloadConcurrentLimit(3)
-            .build()
-        var fetch = getInstance(fetchConfiguration)
-        val request = Request(address, path)
-        request.priority = Priority.HIGH
-        request.networkType=NetworkType.ALL
-        fetch.addListener(object : DownloadFetchListener() {
-
-            override fun onCompleted(download: Download) {
-                listener.onFinish(path)
-                fetch.close()
-            }
-
-            override fun onError(download: Download, error: Error, throwable: Throwable?) {
-                listener.onError(IOException(throwable!!.message))
-            }
-
-        })
-        fetch.enqueue(request,{},{})
-
-    }
-
-    suspend fun fetchDownload(context: Context,address: String,path: String):String{
+    /**
+     * 下载文件
+     */
+    suspend fun downloadByOKDownload(address: String, path: String, filename: String): String {
         return suspendCoroutine { continuation ->
-            getFetchDownload(context,address,path, object : HttpCallbackListener {
-                override fun onFinish(response: String) {
-                    continuation.resume(response)
-                }
+            try {
+                val task: DownloadTask = DownloadTask.Builder(address, File(path))
+                    .setFilename(filename)
+                    .setMinIntervalMillisCallbackProcess(30) // 下载进度回调的间隔时间（毫秒）
+                    .setPassIfAlreadyCompleted(false) // 任务过去已完成是否要重新下载
+                    .setPriority(10)
+                    .build()
+                task.enqueue(object : OkDownloadListener() {
+                    override fun completed(task: DownloadTask) {
+                        task.file?.let {
+                            continuation.resume(it.absolutePath)
+                        }
+                    }
 
-                override fun onError(e: Exception) {
-                    continuation.resumeWithException(e)
-                }
-            })
+                    override fun error(task: DownloadTask, e: java.lang.Exception) {
+                        continuation.resumeWithException(e)
+                    }
+                })
+            } catch (e: Exception) {
+                e.printStackTrace()
+                continuation.resumeWithException(e)
+            }
         }
     }
 
-    open class DownloadFetchListener:FetchListener{
-
-        override fun onAdded(download: Download) {
+    open class OkDownloadListener : DownloadListener3() {
+        override fun retry(task: DownloadTask, cause: ResumeFailedCause) {
         }
 
-        override fun onCancelled(download: Download) {
-        }
-
-        override fun onCompleted(download: Download) {
-        }
-
-        override fun onDeleted(download: Download) {
-        }
-
-        override fun onDownloadBlockUpdated(
-            download: Download,
-            downloadBlock: DownloadBlock,
-            totalBlocks: Int
+        override fun connected(
+            task: DownloadTask,
+            blockCount: Int,
+            currentOffset: Long,
+            totalLength: Long
         ) {
         }
 
-        override fun onError(download: Download, error: Error, throwable: Throwable?) {
+        override fun progress(task: DownloadTask, currentOffset: Long, totalLength: Long) {
         }
 
-        override fun onPaused(download: Download) {
+        override fun started(task: DownloadTask) {
         }
 
-        override fun onProgress(
-            download: Download,
-            etaInMilliSeconds: Long,
-            downloadedBytesPerSecond: Long
-        ) {
+        override fun completed(task: DownloadTask) {
         }
 
-        override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
+        override fun canceled(task: DownloadTask) {
         }
 
-        override fun onRemoved(download: Download) {
+        override fun error(task: DownloadTask, e: java.lang.Exception) {
         }
 
-        override fun onResumed(download: Download) {
-        }
-
-        override fun onStarted(
-            download: Download,
-            downloadBlocks: List<DownloadBlock>,
-            totalBlocks: Int
-        ) {
-        }
-
-        override fun onWaitingNetwork(download: Download) {
+        override fun warn(task: DownloadTask) {
         }
 
     }
