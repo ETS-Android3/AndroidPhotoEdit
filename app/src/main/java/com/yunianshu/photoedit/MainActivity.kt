@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra("url",localMedia.availablePath)
         intent.putExtra("typeName","CP4000")
         intent.putExtra("width",400)
-        intent.putExtra("height",400)
+        intent.putExtra("height",600)
         if(localMedia.width>localMedia.height){
             intent.putExtra("rotate",false)
         }

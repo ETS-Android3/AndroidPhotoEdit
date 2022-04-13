@@ -154,12 +154,15 @@ class FrameActivity : BaseActivity() {
          */
         fun complete() {
             val bitmap = view.result
-            var path = Utils.getApp()
-                .getExternalFilesDir("edit")!!.absolutePath + File.separator + "frame_" + System.currentTimeMillis() + ".jpg"
-            FileUtils.createOrExistsFile(path)
-            ImageUtils.save(bitmap,path,Bitmap.CompressFormat.JPEG)
-            setResult(Contant.ADJUST, intent.setData(Uri.fromFile(File(path))))
-            finish()
+            bitmap?.let {
+                var path = Utils.getApp()
+                    .getExternalFilesDir("edit")!!.absolutePath + File.separator + "frame_" + System.currentTimeMillis() + ".jpg"
+                FileUtils.createOrExistsFile(path)
+                ImageUtils.save(bitmap,path,Bitmap.CompressFormat.JPEG)
+                setResult(Contant.ADJUST, intent.setData(Uri.fromFile(File(path))))
+                finish()
+            }
+
         }
     }
 
