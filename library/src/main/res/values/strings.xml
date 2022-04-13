@@ -24,6 +24,8 @@
     <string name="base_close">关闭</string>
     <string name="tip_enter_content">点击输入文字</string>
     <string name="text_bubble">气泡</string>
+    <string name="text_color_type_default">文</string>
+    <string name="text_color_type_shadow">阴</string>
 
     <string-array name="filters">
         <item>原始</item>

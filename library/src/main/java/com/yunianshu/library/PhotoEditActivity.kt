@@ -305,6 +305,17 @@ class PhotoEditActivity : BaseActivity() {
             }
         }
 
+        //设置文字阴影颜色
+        shareVM.textStickerShadowColor.observeSticky(this) {
+            if (stickerView.currentSticker != null && stickerView.currentSticker is TextSticker) {
+                val sticker = stickerView.currentSticker as TextSticker
+                shareVM.textStickerShadow.value?.let {
+                        show -> sticker.setShadowLayer(show, it)
+                }
+                viewModel.refreshStickerView()
+            }
+        }
+
 
         //设置字体
         shareVM.textStickerFont.observeSticky(this) { info ->

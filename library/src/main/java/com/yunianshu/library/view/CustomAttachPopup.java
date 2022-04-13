@@ -10,12 +10,12 @@ import com.yunianshu.library.R;
 
 public class CustomAttachPopup extends HorizontalAttachPopupView {
 
-    public Base setListener(OnItemClickListener listener) {
+    public CustomAttachPopup setListener(OnPopupItemClickListener listener) {
         this.listener = listener;
-
+        return this;
     }
 
-    private OnItemClickListener listener;
+    private OnPopupItemClickListener listener;
 
     public CustomAttachPopup(@NonNull Context context) {
         super(context);
@@ -49,7 +49,7 @@ public class CustomAttachPopup extends HorizontalAttachPopupView {
         });
     }
 
-    interface OnItemClickListener{
+    public interface OnPopupItemClickListener{
 
         void onItemClick(int pos);
     }

@@ -193,6 +193,18 @@ public class TextSticker extends Sticker {
   }
 
   /**
+   * 文字阴影
+   */
+  @NonNull public TextSticker setShadowLayer(boolean show,int color) {
+    if(show){
+      textPaint.setShadowLayer(1, 2, 0, color);
+    }else{
+      textPaint.setShadowLayer(1, 2, 0, Color.TRANSPARENT);
+    }
+    return this;
+  }
+
+  /**
    * Set the text to be displayed.
    *
    * @param show 是否显示下划线

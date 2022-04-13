@@ -113,6 +113,11 @@ class ShareViewModel : ViewModel() {
     var textStickerShadow = UnPeekLiveData<Boolean>()
 
     /**
+     * 文字阴影颜色
+     */
+    var textStickerShadowColor = UnPeekLiveData<Int>()
+
+    /**
      * 文字字体
      */
     var textStickerFont = UnPeekLiveData<FontInfo>()
@@ -132,6 +137,7 @@ class ShareViewModel : ViewModel() {
         textStickerItalic.value = false
         textStickerUnderline.value = false
         textStickerShadow.value = false
+        textStickerShadowColor.value = Color.BLUE
         textStickerAlignLeft.value = true
         textStickerAlignCenter.value = false
         textStickerAlignRight.value = false
@@ -155,6 +161,7 @@ class ShareViewModel : ViewModel() {
             ),
             select = true
         )
+        textColorType.value = TextColorType.TEXT
     }
 
     /**

@@ -16,6 +16,7 @@ import com.yunianshu.library.R
 import com.yunianshu.library.ShareViewModel
 import com.yunianshu.library.adapter.TextColorAdapter
 import com.yunianshu.library.bean.TextColorInfo
+import com.yunianshu.library.util.TextColorType
 import com.yunianshu.library.view.CustomAttachPopup
 
 
@@ -40,7 +41,12 @@ class TextStyleFragment : BaseFragment() {
                         ColorEnvelopeListener { envelope, _ ->
 //                            item.colorString = "#${envelope.hexCode}"
                             adapter.notifyDataSetChanged()
-                            shareViewModel.textStickerColor.postValue(TextColorInfo(envelope.color))
+                            if(shareViewModel.textColorType.value == TextColorType.TEXT){
+                                shareViewModel.textStickerColor.postValue(TextColorInfo(envelope.color))
+                            }else if(shareViewModel.textColorType.value == TextColorType.SHADOW){
+                                shareViewModel.textStickerShadowColor.postValue(envelope.color)
+                            }
+
                             viewModel.list.value?.get(1)?.color = envelope.color
                         })
                     .setNegativeButton(
@@ -54,7 +60,12 @@ class TextStyleFragment : BaseFragment() {
                 colorPickerDialog.setBottomSpace(12) // set a bottom space between the last slidebar and buttons.
                     .show()
             } else {
-                shareViewModel.textStickerColor.postValue(item)
+                if(shareViewModel.textColorType.value == TextColorType.TEXT){
+                    shareViewModel.textStickerColor.postValue(item)
+                }else if(shareViewModel.textColorType.value == TextColorType.SHADOW){
+                    shareViewModel.textStickerShadowColor.postValue(item.color)
+                }
+
             }
         }
     }
@@ -97,7 +108,7 @@ class TextStyleFragment : BaseFragment() {
 
     }
 
-    inner class TextStyleClickProxy {
+    inner class TextStyleClickProxy{
 
         /**
          * 文字大小
@@ -130,14 +141,20 @@ class TextStyleFragment : BaseFragment() {
         /**
          * 文字颜色类型
          */
-        fun clickTextType(){
-//            XPopup.Builder(mActivity)
-//                .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
-//                .hasShadowBg(false) // 去掉半透明背景
-//                .isViewMode(true)
-//                .atView(mActivity.findViewById(R.id.textColorType))
-//                .asCustom(CustomAttachPopup(mActivity))
-//                .show()
+        fun clickTextType() {
+            XPopup.Builder(mActivity)
+                .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
+                .hasShadowBg(false) // 去掉半透明背景
+                .isViewMode(true)
+                .atView(mActivity.findViewById(R.id.textColorType))
+                .asCustom(CustomAttachPopup(mActivity).setListener {
+                    when (it) {
+                        0 -> shareViewModel.textColorType.postValue(TextColorType.TEXT)
+                        1 -> shareViewModel.textColorType.postValue(TextColorType.SHADOW)
+                    }
+
+                })
+                .show()
         }
 
         /**

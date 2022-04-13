@@ -25,6 +25,7 @@
         <variable
             name="click"
             type="com.yunianshu.library.ui.text.TextStyleFragment.TextStyleClickProxy" />
+        <import type="com.yunianshu.library.util.TextColorType"/>
 
     </data>
 
@@ -54,7 +55,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:gravity="center"
-                android:text="文"
+                android:text='@{sharevm.textColorType == TextColorType.TEXT?@string/text_color_type_default:@string/text_color_type_shadow}'
                 android:onClick="@{()->click.clickTextType()}"
                 android:textColor="@color/black"
                 android:textSize="12sp" />
