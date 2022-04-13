@@ -1,6 +1,8 @@
 package com.yunianshu.library.ui.text
 
+import android.annotation.SuppressLint
 import com.kunminx.architecture.ui.page.DataBindingConfig
+import com.lxj.xpopup.XPopup
 import com.skydoves.colorpickerview.ColorPickerDialog
 import com.skydoves.colorpickerview.flag.BubbleFlag
 import com.skydoves.colorpickerview.flag.FlagMode
@@ -14,6 +16,7 @@ import com.yunianshu.library.R
 import com.yunianshu.library.ShareViewModel
 import com.yunianshu.library.adapter.TextColorAdapter
 import com.yunianshu.library.bean.TextColorInfo
+import com.yunianshu.library.view.CustomAttachPopup
 
 
 class TextStyleFragment : BaseFragment() {
@@ -23,24 +26,28 @@ class TextStyleFragment : BaseFragment() {
     private lateinit var shareViewModel: ShareViewModel
     private lateinit var adapter: TextColorAdapter
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun loadView() {
         initColor()
         adapter.setOnItemClickListener { _, item, pos ->
             if (pos == 0) {
                 val bubbleFlag = BubbleFlag(mActivity)
                 bubbleFlag.flagMode = FlagMode.FADE
-                var colorPickerDialog = ColorPickerDialog.Builder(mActivity)
-                    .setTitle("ColorPicker Dialog")
+                val colorPickerDialog = ColorPickerDialog.Builder(mActivity)
+                    .setTitle("颜色选择器")
                     .setPreferenceName("MyColorPickerDialog")
                     .setPositiveButton(getString(R.string.base_sure),
                         ColorEnvelopeListener { envelope, _ ->
-                            item.colorString = "#${envelope.hexCode}"
+//                            item.colorString = "#${envelope.hexCode}"
                             adapter.notifyDataSetChanged()
                             shareViewModel.textStickerColor.postValue(TextColorInfo(envelope.color))
+                            viewModel.list.value?.get(1)?.color = envelope.color
                         })
                     .setNegativeButton(
                         getString(R.string.text_back)
-                    ) { dialogInterface, i -> dialogInterface.dismiss() }
+                    ) { dialogInterface, _ ->
+                        dialogInterface.dismiss()
+                    }
                     .attachAlphaSlideBar(true) // the default value is true.
                     .attachBrightnessSlideBar(true) // the default value is true.
                 colorPickerDialog.colorPickerView.flagView = bubbleFlag
@@ -118,6 +125,19 @@ class TextStyleFragment : BaseFragment() {
          */
         fun clickShadow() {
             shareViewModel.textStickerShadow.postValue(!shareViewModel.textStickerShadow.value!!)
+        }
+
+        /**
+         * 文字颜色类型
+         */
+        fun clickTextType(){
+//            XPopup.Builder(mActivity)
+//                .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
+//                .hasShadowBg(false) // 去掉半透明背景
+//                .isViewMode(true)
+//                .atView(mActivity.findViewById(R.id.textColorType))
+//                .asCustom(CustomAttachPopup(mActivity))
+//                .show()
         }
 
         /**

@@ -47,6 +47,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
+                android:id="@+id/textColorType"
                 drawable_radius="@{3}"
                 drawable_strokeColor='@{0xff000000}'
                 drawable_strokeWidth="@{1}"
@@ -54,6 +55,7 @@
                 android:layout_height="20dp"
                 android:gravity="center"
                 android:text="文"
+                android:onClick="@{()->click.clickTextType()}"
                 android:textColor="@color/black"
                 android:textSize="12sp" />
 

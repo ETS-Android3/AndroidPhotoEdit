@@ -26,7 +26,7 @@ import java.io.File
 class CropActivity : BaseActivity(), CropImageView.OnCropImageCompleteListener {
 
     private lateinit var viewModel: CropViewModel
-    private val cropImageView:CropImageView by lazy { findViewById(R.id.cropImageView) }
+    private val cropImageView: CropImageView by lazy { findViewById(R.id.cropImageView) }
     private var width: Int = 0
     private var height: Int = 0
     private var rotate: Boolean = false
@@ -61,7 +61,8 @@ class CropActivity : BaseActivity(), CropImageView.OnCropImageCompleteListener {
     }
 
     private fun initCropView() {
-        findViewById<CropImageView>(R.id.cropImageView).setOnCropImageCompleteListener(this)
+        cropImageView.setOnCropImageCompleteListener(this)
+        cropImageView.isAutoZoomEnabled = true
         viewModel.cropViewBase.postValue(CropViewBase(width, height, Uri.parse(url)))
     }
 
@@ -108,22 +109,20 @@ class CropActivity : BaseActivity(), CropImageView.OnCropImageCompleteListener {
          * 镜像
          */
         fun image() {
-            val bitmap = findViewById<CropImageView>(R.id.cropImageView).croppedImage
-            findViewById<CropImageView>(R.id.cropImageView).setAspectRatio(bitmap.width,bitmap.height)
-            findViewById<CropImageView>(R.id.cropImageView).setFixedAspectRatio(true)
-            findViewById<CropImageView>(R.id.cropImageView).setImageBitmap(convertBitmap(bitmap))
+            cropImageView.isFlippedHorizontally =
+                !cropImageView.isFlippedHorizontally
         }
 
         fun rotate90() {
-            var degrees = findViewById<CropImageView>(R.id.cropImageView).rotatedDegrees
-            findViewById<CropImageView>(R.id.cropImageView).rotatedDegrees = degrees + 90
+            var degrees = cropImageView.rotatedDegrees
+            cropImageView.rotatedDegrees = degrees + 90
         }
     }
 
     inner class CropSeekBarListener : OnSeekChangeListener {
 
         override fun onSeeking(seekParams: SeekParams) {
-            findViewById<CropImageView>(R.id.cropImageView).rotatedDegrees =
+            cropImageView.rotatedDegrees =
                 180 + seekParams.progress
         }
 

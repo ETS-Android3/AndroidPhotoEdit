@@ -367,6 +367,9 @@ public class StickerView extends FrameLayout {
         }
 
         if (currentIcon == null && handlingSticker == null) {
+            if (onStickerOperationListener != null) {
+                onStickerOperationListener.onStickerNoTouchedDown();
+            }
             return false;
         }
         invalidate();
@@ -957,6 +960,8 @@ public class StickerView extends FrameLayout {
         void onStickerDragFinished(@NonNull Sticker sticker);
 
         void onStickerTouchedDown(@NonNull Sticker sticker);
+
+        void onStickerNoTouchedDown();
 
         void onStickerZoomFinished(@NonNull Sticker sticker);
 

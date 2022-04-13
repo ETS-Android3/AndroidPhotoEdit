@@ -9,6 +9,10 @@ import com.kunminx.architecture.ui.page.DataBindingFragment
 /**
  * Create by WingGL
  * createTime: 2022/4/1
+ * 说明:继承子类方法调用顺序
+ * 1.initViewModel->getFragmentScopeViewModel、getActivityScopeViewModel
+ * 2.getDataBindingConfig
+ * 3.loadView
  */
 abstract class BaseFragment : DataBindingFragment() {
 

@@ -9,6 +9,7 @@ import com.yunianshu.library.bean.FontInfo
 import com.yunianshu.library.bean.StickerInfo
 import com.yunianshu.library.bean.TextColorInfo
 import com.yunianshu.library.util.ImageUtils
+import com.yunianshu.library.util.TextColorType
 import com.yunianshu.sticker.Sticker
 import com.yunianshu.sticker.TextDrawable
 
@@ -115,6 +116,11 @@ class ShareViewModel : ViewModel() {
      * 文字字体
      */
     var textStickerFont = UnPeekLiveData<FontInfo>()
+
+    /**
+     * 文字颜色类型 0-文字颜色 1-文字背景色 2-文字阴影色 3-文字下滑线颜色
+     */
+    var textColorType = UnPeekLiveData<TextColorType>()
 
 
     init {

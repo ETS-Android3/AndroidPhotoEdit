@@ -6,10 +6,7 @@ import android.graphics.Canvas
 import android.net.Uri
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import com.blankj.utilcode.util.FileUtils
-import com.blankj.utilcode.util.GsonUtils
-import com.blankj.utilcode.util.ImageUtils
-import com.blankj.utilcode.util.Utils
+import com.blankj.utilcode.util.*
 import com.gyf.immersionbar.ktx.immersionBar
 import com.kunminx.architecture.ui.page.DataBindingConfig
 import com.yunianshu.library.BR
@@ -80,7 +77,7 @@ class FrameActivity : BaseActivity() {
             try {
                 getHttpData()
             } catch (e: Exception) {
-                e.printStackTrace()
+                ToastUtils.showShort("获取相框资源失败")
             }
         }
     }

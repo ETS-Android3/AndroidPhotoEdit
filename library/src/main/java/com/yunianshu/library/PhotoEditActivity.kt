@@ -61,6 +61,7 @@ class PhotoEditActivity : BaseActivity() {
     private val imageRedo: TextView by lazy { findViewById(R.id.edit_image_redo) }
     private val image: ImageView by lazy { findViewById(R.id.imageView) }
     private val title: TextView by lazy { findViewById(R.id.title) }
+    private lateinit var lastSticker: Sticker
 
     /**
      * 1.先初始化ViewModel
@@ -92,6 +93,7 @@ class PhotoEditActivity : BaseActivity() {
             statusBarColor(R.color.base_color)
         }
         initIntent()
+        changeImageViewSize()
         loadImage()
         loadPhotoEditItems()
         initLauncher()
@@ -123,7 +125,7 @@ class PhotoEditActivity : BaseActivity() {
                         imageRedo.isEnabled = false
                         imageRedo.background =
                             ContextCompat.getDrawable(this, R.drawable.ic_temp_redo_enable)
-                    }else{
+                    } else {
                         imageRedo.background =
                             ContextCompat.getDrawable(this, R.drawable.ic_temp_redo)
                     }
@@ -152,7 +154,7 @@ class PhotoEditActivity : BaseActivity() {
                         if (rotate) {
                             bitmap = ImageUtils.rotate(bitmap, 90, 0f, 0f)
                         }
-                    }else{
+                    } else {
                         imageUndo.background =
                             ContextCompat.getDrawable(this, R.drawable.ic_temp_undo)
                     }
@@ -327,6 +329,7 @@ class PhotoEditActivity : BaseActivity() {
                             try {
                                 downLoadFont(info)
                             } catch (e: Exception) {
+
                                 ToastUtils.showShort("下载字体失败,请重试")
                             }
                         }
@@ -357,11 +360,11 @@ class PhotoEditActivity : BaseActivity() {
                     val address = Utils.getApp().getExternalFilesDir("edit")!!.absolutePath
                     val fileName = url.substring(url.lastIndexOf(".") - 8)
                     val response = HttpUtil.downloadByOKDownload(url, address, fileName)
-                    if(response == path){
+                    if (response == path) {
                         sticker.setTypeface(Typeface.createFromFile(it))
                         info.type = 1
                         info.filePath = path
-                    }else{
+                    } else {
                         ToastUtils.showShort("下载失败")
                     }
                 } else {
@@ -433,12 +436,24 @@ class PhotoEditActivity : BaseActivity() {
         height = intent.getIntExtra("height", 0)
         typeName = intent.getStringExtra("typeName").toString()
         shareVM.cacheImagePaths.postValue(mutableListOf(filePath))
-        if(width != 0 || height != 0) {
+    }
+
+    /**
+     * 改变图片的大小
+     */
+    private fun changeImageViewSize() {
+        if (width != 0 || height != 0) {
             val lp = image.layoutParams
-            if(ConvertUtils.dp2px(width.toFloat()) > ScreenUtils.getScreenWidth()) {
-                lp.width = ScreenUtils.getScreenWidth()-40
-                lp.height = ConvertUtils.dp2px(height.toFloat())*lp.width/ConvertUtils.dp2px(width.toFloat())
-            }else{
+            if (ConvertUtils.dp2px(width.toFloat()) > ScreenUtils.getScreenWidth()) {
+                lp.width = ScreenUtils.getScreenWidth() - 40
+                lp.height =
+                    ConvertUtils.dp2px(height.toFloat()) * lp.width / ConvertUtils.dp2px(width.toFloat())
+                //width与height为dp值
+                if (height > 400 && height > width) {
+                    lp.width = ConvertUtils.dp2px((lp.width * 400 / lp.height).toFloat())
+                    lp.height = ConvertUtils.dp2px(400f)
+                }
+            } else {
                 lp.width = ConvertUtils.dp2px(width.toFloat())
                 lp.height = ConvertUtils.dp2px(height.toFloat())
             }
@@ -519,6 +534,8 @@ class PhotoEditActivity : BaseActivity() {
             statusBarColor(com.yunianshu.sticker.R.color.white)
             statusBarDarkFont(true)
         }
+        var viewPager2 = findViewById<ViewPager2>(R.id.viewPager2)
+        viewPager2.layoutParams.height = ConvertUtils.dp2px(80f)
     }
 
     /**
@@ -553,6 +570,8 @@ class PhotoEditActivity : BaseActivity() {
             statusBarColor(com.yunianshu.sticker.R.color.white)
             statusBarDarkFont(true)
         }
+        var viewPager2 = findViewById<ViewPager2>(R.id.viewPager2)
+        viewPager2.layoutParams.height = ConvertUtils.dp2px(150f)
     }
 
     private fun initFragment() {
@@ -642,7 +661,7 @@ class PhotoEditActivity : BaseActivity() {
             when (sticker) {
                 is TextSticker -> {
                     dialog.isShowing.let {
-                        if (it) {
+                        if (it && lastSticker != null && lastSticker == sticker) {
                             dialog.dismiss()
                             stickerView.hide()
                         } else {
@@ -659,6 +678,12 @@ class PhotoEditActivity : BaseActivity() {
                     }
                 }
             }
+            lastSticker = sticker
+        }
+
+        override fun onStickerNoTouchedDown() {
+            dialog.dismiss()
+            stickerView.hide()
         }
 
         override fun onStickerDeleted(sticker: Sticker) {
@@ -701,51 +726,6 @@ class PhotoEditActivity : BaseActivity() {
         }
         sticker.resizeText()
         viewModel.refreshStickerView()
-    }
-
-    /**
-     * 添加文字气泡
-     */
-    private fun showInputDialog(item: StickerInfo) {
-        dialog.setHint(R.string.tip_enter_content)
-            .setOnTextChangedListener(false,
-                object : ModifyTextContentDialog.OnTextChangedListener {
-
-                    override fun onTextChange(charSequence: CharSequence) {
-                        if (charSequence.isEmpty()) {
-                            return
-                        }
-                        val sticker = TextSticker(this@PhotoEditActivity)
-                        val bubbleInfo = item.bubbleInfo
-                        sticker.setText(charSequence.toString())
-                            .setMaxTextSize(24f)
-                            .setAlpha(255)
-                        when (item.bubbleInfo!!.type) {
-                            Contant.STICKER_TYPE_TEXT -> {
-
-                            }
-                            Contant.STICKER_TYPE_TEXT_BUBBLE -> {
-                                //获取assets图片
-                                val drawable = BitmapDrawable(
-                                    resources,
-                                    assets.open(item.bubbleInfo!!.path)
-                                )
-                                //设置文字的有效范围
-                                sticker.setDrawable(
-                                    drawable,
-                                    Rect(
-                                        ConvertUtils.px2dp(bubbleInfo!!.paddingLeft.toFloat()),
-                                        ConvertUtils.px2dp(bubbleInfo.paddingTop.toFloat()),
-                                        drawable.intrinsicWidth - ConvertUtils.px2dp(bubbleInfo.paddingRight.toFloat()),
-                                        drawable.intrinsicHeight - ConvertUtils.px2dp(bubbleInfo.paddingBottom.toFloat())
-                                    )
-                                )
-                            }
-                        }
-                        sticker.resizeText()
-                        shareVM.addSticker(sticker)
-                    }
-                }).show()
     }
 
     /**

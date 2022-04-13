@@ -7,7 +7,7 @@ import com.yunianshu.sticker.StickerView
  * Create by WingGL
  * createTime: 2022/4/2
  */
-open class StickerListener:StickerView.OnStickerOperationListener {
+open class StickerListener : StickerView.OnStickerOperationListener {
 
     override fun onStickerAdded(sticker: Sticker) {
 
@@ -20,9 +20,14 @@ open class StickerListener:StickerView.OnStickerOperationListener {
     }
 
     override fun onStickerDragFinished(sticker: Sticker) {
+
     }
 
     override fun onStickerTouchedDown(sticker: Sticker) {
+    }
+
+    override fun onStickerNoTouchedDown() {
+
     }
 
     override fun onStickerZoomFinished(sticker: Sticker) {

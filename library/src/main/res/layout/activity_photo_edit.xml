@@ -120,8 +120,8 @@
                 addSticker="@{sharevm.currentSticker}"
                 listener="@{stickerClick}"
                 refresh="@{vm.refreshStickerView}"
-                android:layout_width="6dp"
-                android:layout_height="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
                 android:background="@color/white"
@@ -168,8 +168,9 @@
                     visiable="@{!sharevm.showTextEditView}"
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
-                    android:orientation="horizontal"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    android:orientation="vertical"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:spanCount="6"
                     tools:listitem="@layout/item_photo_edit" />
 
                 <androidx.viewpager2.widget.ViewPager2

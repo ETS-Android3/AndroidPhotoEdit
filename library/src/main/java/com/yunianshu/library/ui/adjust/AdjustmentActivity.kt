@@ -16,7 +16,10 @@ import com.yunianshu.library.Contant.KEY_ROTATE
 import com.yunianshu.library.Contant.KEY_URL
 import com.yunianshu.library.bean.AdjustBaseInfo
 import com.yunianshu.library.bean.PhotoEditItem
+import com.yunianshu.library.bean.ScrollInfo
+import com.yunianshu.library.ext.scrollToPosition
 import com.yunianshu.library.util.GPUImageFilterTools
+import com.yunianshu.library.util.RecycleViewUtils
 import jp.co.cyberagent.android.gpuimage.GLTextureView
 import jp.co.cyberagent.android.gpuimage.GPUImage
 import jp.co.cyberagent.android.gpuimage.filter.GPUImageFilter
@@ -55,6 +58,7 @@ class AdjustmentActivity : BaseActivity() {
     private lateinit var gpuImage: GPUImage
     private var filterAdjuster: GPUImageFilterTools.FilterAdjuster? = null
     private lateinit var group: GPUImageFilterGroup
+    private var lastIdx = 0
 
 
     override fun initViewModel() {
@@ -103,6 +107,7 @@ class AdjustmentActivity : BaseActivity() {
             viewModel.selectAdjust(item.text)
             viewModel.select(position)
             switchFilterTo(group.filters[position])
+            RecycleViewUtils.toPosition(findViewById(R.id.recyclerView),position,viewModel.getList().value!!.size,2)
         }
     }
 

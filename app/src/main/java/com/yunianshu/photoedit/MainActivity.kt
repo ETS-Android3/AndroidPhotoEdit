@@ -61,11 +61,11 @@ class MainActivity : AppCompatActivity() {
     fun startActivity(localMedia: LocalMedia){
         val intent = Intent(this@MainActivity, PhotoEditActivity::class.java)
         intent.putExtra("url",localMedia.availablePath)
-        intent.putExtra("typeName","CP4000")
-        intent.putExtra("width",400)
+        intent.putExtra("typeName","Z1")
+        intent.putExtra("width",800)
         intent.putExtra("height",600)
         if(localMedia.width>localMedia.height){
-            intent.putExtra("rotate",false)
+            intent.putExtra("rotate",true)
         }
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
             val url = result.data?.getStringExtra("url")

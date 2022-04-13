@@ -185,9 +185,9 @@ public class TextSticker extends Sticker {
   @NonNull public TextSticker setShadowLayer(boolean show) {
     if(show){
       int color = textPaint.getColor();
-      textPaint.setShadowLayer(1, 0, 0, Color.BLUE);
+      textPaint.setShadowLayer(1, 2, 0, Color.BLUE);
     }else{
-      textPaint.setShadowLayer(3, 2, 0, Color.TRANSPARENT);
+      textPaint.setShadowLayer(1, 2, 0, Color.TRANSPARENT);
     }
     return this;
   }
