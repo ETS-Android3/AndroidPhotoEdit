@@ -142,18 +142,26 @@ class TextStyleFragment : BaseFragment() {
          * 文字颜色类型
          */
         fun clickTextType() {
-            XPopup.Builder(mActivity)
+            var idx = 0
+            val value = shareViewModel.textColorType.value
+            if(value == TextColorType.SHADOW){
+                idx = 1
+            }
+            XPopup.Builder(context)
+                .isDarkTheme(false)
                 .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
-                .hasShadowBg(false) // 去掉半透明背景
-                .isViewMode(true)
-                .atView(mActivity.findViewById(R.id.textColorType))
-                .asCustom(CustomAttachPopup(mActivity).setListener {
-                    when (it) {
+                .asCenterList(
+                    "请选择颜色类型", arrayOf("文字颜色", "文字阴影"),
+                    null, idx
+                ) { position, _ ->
+                    when (position) {
                         0 -> shareViewModel.textColorType.postValue(TextColorType.TEXT)
-                        1 -> shareViewModel.textColorType.postValue(TextColorType.SHADOW)
+                        1 -> {
+                            shareViewModel.textColorType.postValue(TextColorType.SHADOW)
+                            shareViewModel.textStickerShadow.postValue(true)
+                        }
                     }
-
-                })
+                }
                 .show()
         }
 

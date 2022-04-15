@@ -28,6 +28,7 @@ import com.yunianshu.library.ui.frame.FrameActivity
 import com.yunianshu.library.ui.sticker.StickerFragment
 import com.yunianshu.library.ui.text.TextFragment
 import com.yunianshu.library.util.HttpUtil
+import com.yunianshu.library.util.TextColorType
 import com.yunianshu.library.view.ModifyTextContentDialog
 import com.yunianshu.library.view.StickerListener
 import com.yunianshu.sticker.*
@@ -151,9 +152,6 @@ class PhotoEditActivity : BaseActivity() {
                         imageUndo.isEnabled = false
                         imageUndo.background =
                             ContextCompat.getDrawable(this, R.drawable.ic_temp_undo_enable)
-                        if (rotate) {
-                            bitmap = ImageUtils.rotate(bitmap, 90, 0f, 0f)
-                        }
                     } else {
                         imageUndo.background =
                             ContextCompat.getDrawable(this, R.drawable.ic_temp_undo)
@@ -175,6 +173,11 @@ class PhotoEditActivity : BaseActivity() {
             if (it) {
                 imageRedo.visibility = View.GONE
                 imageUndo.visibility = View.GONE
+            }else{
+                if(shareVM.cacheImagePaths.value?.size ?: 1 > 1){
+                    imageRedo.visibility = View.VISIBLE
+                    imageUndo.visibility = View.VISIBLE
+                }
             }
         }
         shareVM.textStickerInfo.observeSticky(this) {
@@ -302,6 +305,11 @@ class PhotoEditActivity : BaseActivity() {
                 val sticker = stickerView.currentSticker as TextSticker
                 sticker.setShadowLayer(it)
                 viewModel.refreshStickerView()
+                if(!it){
+                    shareVM.textColorType.postValue(TextColorType.TEXT)
+                }else{
+                    shareVM.textColorType.postValue(TextColorType.SHADOW)
+                }
             }
         }
 

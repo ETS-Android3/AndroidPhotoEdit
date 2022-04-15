@@ -1,7 +1,7 @@
 package com.yunianshu.library.bean
 
 import android.net.Uri
-import com.theartofdev.edmodo.cropper.CropImageView
+import com.canhub.cropper.CropImageView
 
 /**
  * Create by WingGL

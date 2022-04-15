@@ -184,10 +184,9 @@ public class TextSticker extends Sticker {
    */
   @NonNull public TextSticker setShadowLayer(boolean show) {
     if(show){
-      int color = textPaint.getColor();
-      textPaint.setShadowLayer(1, 2, 0, Color.BLUE);
+      setShadowLayer(true, Color.BLUE);
     }else{
-      textPaint.setShadowLayer(1, 2, 0, Color.TRANSPARENT);
+      setShadowLayer(false, Color.TRANSPARENT);
     }
     return this;
   }
@@ -197,9 +196,9 @@ public class TextSticker extends Sticker {
    */
   @NonNull public TextSticker setShadowLayer(boolean show,int color) {
     if(show){
-      textPaint.setShadowLayer(1, 2, 0, color);
+      textPaint.setShadowLayer(0.5f, 0, 0, color);
     }else{
-      textPaint.setShadowLayer(1, 2, 0, Color.TRANSPARENT);
+      textPaint.setShadowLayer(0.5f, 0, 0, Color.TRANSPARENT);
     }
     return this;
   }

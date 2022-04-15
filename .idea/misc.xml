@@ -7,6 +7,7 @@
         <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/drawable-anydpi/ic_text_font_select.xml" value="0.2405" />
         <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/drawable/base_selector_black_corners_pressed.xml" value="0.194" />
         <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/drawable/ic_btn_back.xml" value="0.246" />
+        <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/drawable/ic_btn_back_dark.xml" value="0.1955" />
         <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/drawable/ic_close.xml" value="0.1765" />
         <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/drawable/ic_square.xml" value="0.1855" />
         <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/drawable/ic_text_align_center.xml" value="0.16" />
@@ -46,6 +47,18 @@
         <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/layout/item_text_color.xml" value="0.82625" />
         <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/layout/item_text_font.xml" value="0.6217851739788199" />
         <entry key="..\:/android/AndroidPhotoEdit/library/src/main/res/layout/view_custom_bubbleflag.xml" value="0.6425" />
+        <entry key="..\:/android/AndroidPhotoEdit/ucrop/src/main/res/drawable/ic_btn_back_dark.xml" value="0.1955" />
+        <entry key="..\:/android/AndroidPhotoEdit/ucrop/src/main/res/drawable/ic_close.xml" value="0.221" />
+        <entry key="..\:/android/AndroidPhotoEdit/ucrop/src/main/res/drawable/ucrop_scale.xml" value="0.277" />
+        <entry key="..\:/android/AndroidPhotoEdit/ucrop/src/main/res/drawable/ucrop_wrapper_controls_shape.xml" value="0.19" />
+        <entry key="..\:/android/AndroidPhotoEdit/ucrop/src/main/res/layout/ucrop_activity_photobox.xml" value="0.5" />
+        <entry key="..\:/android/AndroidPhotoEdit/ucrop/src/main/res/layout/ucrop_aspect_ratio.xml" value="0.67" />
+        <entry key="..\:/android/AndroidPhotoEdit/ucrop/src/main/res/layout/ucrop_controls.xml" value="0.743073047858942" />
+        <entry key="..\:/android/AndroidPhotoEdit/ucrop/src/main/res/layout/ucrop_controls_hprt.xml" value="0.7732997481108312" />
+        <entry key="..\:/android/AndroidPhotoEdit/ucrop/src/main/res/layout/ucrop_fragment_photobox.xml" value="0.48625" />
+        <entry key="..\:/android/AndroidPhotoEdit/ucrop/src/main/res/layout/ucrop_layout_rotate_wheel.xml" value="0.566839378238342" />
+        <entry key="..\:/android/AndroidPhotoEdit/ucrop/src/main/res/layout/ucrop_layout_scale_wheel.xml" value="0.50375" />
+        <entry key="..\:/android/AndroidPhotoEdit/ucrop/src/main/res/layout/ucrop_view.xml" value="0.50375" />
         <entry key="..\:/android/PhotoEdit/app/src/main/res/layout/activity_main.xml" value="0.328125" />
         <entry key="..\:/android/PhotoEdit/library/src/main/res/drawable/base_radius.xml" value="0.1995" />
         <entry key="..\:/android/PhotoEdit/library/src/main/res/drawable/bg_seekbar_border.xml" value="0.2075" />

@@ -3,7 +3,7 @@ package com.yunianshu.library.ext
 import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.databinding.BindingAdapter
-import com.theartofdev.edmodo.cropper.CropImageView
+import com.canhub.cropper.CropImageView
 import com.yunianshu.library.bean.CropViewBase
 import java.io.File
 
@@ -22,5 +22,11 @@ fun CropImageView.setConfig(base: CropViewBase?) {
         if(it.width > 0 && it.height > 0)
         this.setAspectRatio(it.width,it.height)
         this.setImageBitmap(BitmapFactory.decodeFile(it.uri.encodedPath))
+    }
+}
+@BindingAdapter("setRotatedDegrees")
+fun CropImageView.setRotatedDegrees(degrees: Int?) {
+    degrees?.let {
+        this.rotateImage(degrees)
     }
 }

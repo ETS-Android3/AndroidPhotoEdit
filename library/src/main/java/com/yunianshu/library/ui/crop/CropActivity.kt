@@ -3,12 +3,12 @@ package com.yunianshu.library.ui.crop
 import android.graphics.*
 import android.net.Uri
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.blankj.utilcode.util.FileUtils
+import com.blankj.utilcode.util.ImageUtils
 import com.blankj.utilcode.util.Utils
+import com.canhub.cropper.CropImageView
 import com.gyf.immersionbar.ktx.immersionBar
 import com.kunminx.architecture.ui.page.DataBindingConfig
-import com.theartofdev.edmodo.cropper.CropImageView
 import com.yunianshu.indicatorseekbar.widget.IndicatorSeekBar
 import com.yunianshu.indicatorseekbar.widget.OnSeekChangeListener
 import com.yunianshu.indicatorseekbar.widget.SeekParams
@@ -31,6 +31,7 @@ class CropActivity : BaseActivity(), CropImageView.OnCropImageCompleteListener {
     private var height: Int = 0
     private var rotate: Boolean = false
     private lateinit var url: String
+    private lateinit var bitmap: Bitmap
 
     override fun initViewModel() {
         viewModel = getActivityScopeViewModel(CropViewModel::class.java)
@@ -50,7 +51,7 @@ class CropActivity : BaseActivity(), CropImageView.OnCropImageCompleteListener {
         width = intent.getIntExtra(Contant.KEY_WIDTH, -1)
         height = intent.getIntExtra(Contant.KEY_HEIGHT, -1)
         rotate = intent.getBooleanExtra(Contant.KEY_ROTATE, false)
-        val bitmap = BitmapFactory.decodeFile(url)
+        bitmap = BitmapFactory.decodeFile(url)
 //        val layoutParams = cropImageView.layoutParams as ConstraintLayout.LayoutParams
 //        layoutParams.dimensionRatio = "${bitmap.width}:${bitmap.height}"
         if (bitmap == null) {
@@ -96,8 +97,8 @@ class CropActivity : BaseActivity(), CropImageView.OnCropImageCompleteListener {
             var path = Utils.getApp()
                 .getExternalFilesDir("edit")!!.absolutePath + File.separator + "crop_" + System.currentTimeMillis() + ".jpg"
             FileUtils.createOrExistsFile(path)
-            cropImageView.saveCroppedImageAsync(
-                Uri.fromFile(
+            cropImageView.croppedImageAsync(
+                customOutputUri = Uri.fromFile(
                     File(
                         path
                     )
@@ -122,8 +123,7 @@ class CropActivity : BaseActivity(), CropImageView.OnCropImageCompleteListener {
     inner class CropSeekBarListener : OnSeekChangeListener {
 
         override fun onSeeking(seekParams: SeekParams) {
-            cropImageView.rotatedDegrees =
-                180 + seekParams.progress
+            cropImageView.setImageBitmap(ImageUtils.rotate(bitmap, seekParams.progress,0f,0f))
         }
 
         override fun onStartTrackingTouch(seekBar: IndicatorSeekBar) {
@@ -136,9 +136,10 @@ class CropActivity : BaseActivity(), CropImageView.OnCropImageCompleteListener {
 
     }
 
-    override fun onCropImageComplete(view: CropImageView?, result: CropImageView.CropResult?) {
+
+    override fun onCropImageComplete(view: CropImageView, result: CropImageView.CropResult) {
         result?.let {
-            setResult(Contant.CROP, intent.setData(result.uri))
+            setResult(Contant.CROP, intent.setData(result.uriContent))
             finish()
         }
     }

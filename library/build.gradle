@@ -25,7 +25,15 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+        }
+        beta {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+        }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
         }
     }
     compileOptions {
@@ -65,7 +73,7 @@ dependencies {
     //拉动条
     implementation 'com.github.yunianshu:IndicatorSeekBarNew:1.0.9'
     //裁剪
-    implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
+    implementation 'com.github.yunianshu:Android-Image-Cropper:4.2.3'
     //工具类
     implementation 'com.blankj:utilcode:1.30.0'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
