@@ -17,6 +17,10 @@ dependencyResolutionManagement {
         }
         maven { url 'https://maven.aliyun.com/repository/jcenter' }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven {
+            url "http://10.10.2.2:9999/repository/color_public/"
+            allowInsecureProtocol true
+        }
     }
 }
 rootProject.name = "AndroidPhotoEdit"

@@ -23,6 +23,7 @@ import java.io.File
 /**
  * 3.裁剪界面
  */
+@Deprecated("替换为UCrop实现 参考 implementation 'com.hprt.sdk:crop:1.0.0@aar'")
 class CropActivity : BaseActivity(), CropImageView.OnCropImageCompleteListener {
 
     private lateinit var viewModel: CropViewModel

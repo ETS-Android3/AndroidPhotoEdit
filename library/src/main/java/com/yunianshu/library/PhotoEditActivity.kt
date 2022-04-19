@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.text.Layout
 import android.text.TextUtils
 import android.util.Log
@@ -15,6 +16,8 @@ import androidx.core.content.ContextCompat
 import androidx.viewpager2.widget.ViewPager2
 import com.blankj.utilcode.util.*
 import com.gyf.immersionbar.ktx.immersionBar
+import com.hprt.ucrop.UCrop
+import com.hprt.ucrop.UCropActivity
 import com.kunminx.architecture.ui.page.DataBindingConfig
 import com.yunianshu.library.adapter.RgAdapter
 import com.yunianshu.library.bean.BubbleInfo
@@ -22,7 +25,6 @@ import com.yunianshu.library.bean.FontInfo
 import com.yunianshu.library.bean.PhotoEditItem
 import com.yunianshu.library.bean.StickerInfo
 import com.yunianshu.library.ui.adjust.AdjustmentActivity
-import com.yunianshu.library.ui.crop.CropActivity
 import com.yunianshu.library.ui.fillter.FilterActivity
 import com.yunianshu.library.ui.frame.FrameActivity
 import com.yunianshu.library.ui.sticker.StickerFragment
@@ -519,7 +521,8 @@ class PhotoEditActivity : BaseActivity() {
                     intent = Intent(this, FilterActivity::class.java)
                 }
                 Contant.CROP -> {
-                    intent = Intent(this, CropActivity::class.java)
+                    openCropActivity()
+                    return@setOnItemClickListener
                 }
                 Contant.FRAME -> {
                     intent = Intent(this, FrameActivity::class.java)
@@ -539,6 +542,47 @@ class PhotoEditActivity : BaseActivity() {
             intent?.putExtra(Contant.KEY_URL, filePath)
             intent?.putExtra(Contant.KEY_TYPENAME, typeName)
             activityResultLauncher.launch(intent)
+        }
+    }
+
+    /**
+     * 3.开启裁剪功能
+     */
+    private fun openCropActivity(){
+        var uri = Uri.fromFile(File(filePath))
+        var destinationUri = Uri.fromFile(File(cacheDir, "cropimage.png"))
+        val uCrop = UCrop.of(uri, destinationUri)
+        uCrop.withAspectRatio(width.toFloat(), height.toFloat())
+        val options = UCrop.Options()
+        options.setCompressionQuality(100)
+        options.setRootViewBackgroundColor(Color.WHITE)
+        uCrop.withOptions(options)
+        uCrop.start(this)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        data?.let {
+            if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+                val uri =UCrop.getOutput(it)
+                findViewById<ImageView>(R.id.imageView).setImageBitmap(
+                    BitmapFactory.decodeFile(
+                        UriUtils.uri2File(uri).toString()
+                    )
+                )
+                filePath = UriUtils.uri2File(uri).absolutePath
+                val values = shareVM.cacheImagePaths.value
+                (values as MutableList<String>).add(filePath)
+                currentIndex = values.size - 1
+                imageUndo.visibility = View.VISIBLE
+                imageRedo.visibility = View.VISIBLE
+                imageRedo.background =
+                    ContextCompat.getDrawable(this, R.drawable.ic_temp_redo_enable)
+                imageRedo.isEnabled = false
+                title.text = ""
+            } else if (resultCode == UCrop.RESULT_ERROR) {
+                var cropError = UCrop.getError(it)
+            }
         }
     }
 
