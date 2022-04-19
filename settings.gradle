@@ -25,5 +25,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "AndroidPhotoEdit"
 include ':app'
-include ':library'
+include ':photoedit'
 include ':sticker'
