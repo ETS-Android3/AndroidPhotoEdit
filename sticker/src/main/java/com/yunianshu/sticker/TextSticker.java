@@ -45,6 +45,7 @@ public class TextSticker extends Sticker {
   private StaticLayout staticLayout;
   private Layout.Alignment alignment;
   private String text;
+  private int shadowColor = -1;
 
   /**
    * Upper bounds for text size.
@@ -184,7 +185,10 @@ public class TextSticker extends Sticker {
    */
   @NonNull public TextSticker setShadowLayer(boolean show) {
     if(show){
-      setShadowLayer(true, Color.BLUE);
+      if(shadowColor == -1){
+        shadowColor = textPaint.getColor();
+      }
+      setShadowLayer(true, shadowColor);
     }else{
       setShadowLayer(false, Color.TRANSPARENT);
     }
@@ -196,9 +200,10 @@ public class TextSticker extends Sticker {
    */
   @NonNull public TextSticker setShadowLayer(boolean show,int color) {
     if(show){
-      textPaint.setShadowLayer(0.5f, 0, 0, color);
+      textPaint.setShadowLayer(0.5f, 0.5f, 0, color);
+      shadowColor = color;
     }else{
-      textPaint.setShadowLayer(0.5f, 0, 0, Color.TRANSPARENT);
+      textPaint.setShadowLayer(0.5f, 0.5f, 0, Color.TRANSPARENT);
     }
     return this;
   }
