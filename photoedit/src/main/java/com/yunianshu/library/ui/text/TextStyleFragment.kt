@@ -41,9 +41,9 @@ class TextStyleFragment : BaseFragment() {
                         ColorEnvelopeListener { envelope, _ ->
 //                            item.colorString = "#${envelope.hexCode}"
                             adapter.notifyDataSetChanged()
-                            if(shareViewModel.textColorType.value == TextColorType.TEXT){
+                            if (shareViewModel.textColorType.value == TextColorType.TEXT) {
                                 shareViewModel.textStickerColor.postValue(TextColorInfo(envelope.color))
-                            }else if(shareViewModel.textColorType.value == TextColorType.SHADOW){
+                            } else if (shareViewModel.textColorType.value == TextColorType.SHADOW) {
                                 shareViewModel.textStickerShadowColor.postValue(envelope.color)
                             }
 
@@ -60,9 +60,9 @@ class TextStyleFragment : BaseFragment() {
                 colorPickerDialog.setBottomSpace(12) // set a bottom space between the last slidebar and buttons.
                     .show()
             } else {
-                if(shareViewModel.textColorType.value == TextColorType.TEXT){
+                if (shareViewModel.textColorType.value == TextColorType.TEXT) {
                     shareViewModel.textStickerColor.postValue(item)
-                }else if(shareViewModel.textColorType.value == TextColorType.SHADOW){
+                } else if (shareViewModel.textColorType.value == TextColorType.SHADOW) {
                     shareViewModel.textStickerShadowColor.postValue(item.color)
                 }
 
@@ -108,7 +108,7 @@ class TextStyleFragment : BaseFragment() {
 
     }
 
-    inner class TextStyleClickProxy{
+    inner class TextStyleClickProxy {
 
         /**
          * 文字大小
@@ -142,27 +142,13 @@ class TextStyleFragment : BaseFragment() {
          * 文字颜色类型
          */
         fun clickTextType() {
-            var idx = 0
-            val value = shareViewModel.textColorType.value
-            if(value == TextColorType.SHADOW){
-                idx = 1
+            if (shareViewModel.textColorType.value == TextColorType.SHADOW) {
+                shareViewModel.textColorType.postValue(TextColorType.TEXT)
+                shareViewModel.textStickerShadow.postValue(false)
+            } else {
+                shareViewModel.textColorType.postValue(TextColorType.SHADOW)
+                shareViewModel.textStickerShadow.postValue(true)
             }
-            XPopup.Builder(context)
-                .isDarkTheme(false)
-                .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
-                .asCenterList(
-                    "请选择颜色类型", arrayOf("文字颜色", "文字阴影"),
-                    null, idx
-                ) { position, _ ->
-                    when (position) {
-                        0 -> shareViewModel.textColorType.postValue(TextColorType.TEXT)
-                        1 -> {
-                            shareViewModel.textColorType.postValue(TextColorType.SHADOW)
-                            shareViewModel.textStickerShadow.postValue(true)
-                        }
-                    }
-                }
-                .show()
         }
 
         /**

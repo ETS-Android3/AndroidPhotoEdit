@@ -9,7 +9,5 @@ class TextFontViewModel : ViewModel() {
 
     var list = UnPeekLiveData<List<FontInfo>>()
 
-    var fontChange = UnPeekLiveData<Boolean>()
-
     val scrollInfo = UnPeekLiveData<ScrollInfo>()
 }

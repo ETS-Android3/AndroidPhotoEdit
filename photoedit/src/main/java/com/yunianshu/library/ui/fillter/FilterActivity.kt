@@ -15,6 +15,7 @@ import com.blankj.utilcode.util.ToastUtils
 import com.blankj.utilcode.util.Utils
 import com.gyf.immersionbar.ktx.immersionBar
 import com.kunminx.architecture.ui.page.DataBindingConfig
+import com.lxj.xpopup.XPopup
 import com.xinlan.imageeditlibrary.editimage.fliter.PhotoProcessing
 import com.yunianshu.library.*
 import com.yunianshu.library.adapter.FilterAdapter
@@ -71,6 +72,13 @@ class FilterActivity : BaseActivity() {
             val layoutParams = imageView.layoutParams as ConstraintLayout.LayoutParams
             layoutParams.dimensionRatio = "${bitmap.width}:${bitmap.height}"
             val arrFilters = resources.getStringArray(R.array.filters)
+            val loading = XPopup.Builder(this@FilterActivity)
+                .dismissOnBackPressed(false)
+                .isDarkTheme(false)
+                .isLightNavigationBar(true)
+                .isViewMode(true)
+                .asLoading()
+            loading.show()
             thread {
                 for (i in 0..12){
                     filterList.add(FilterItem(bitmap = PhotoProcessing.filterPhoto(
@@ -79,6 +87,9 @@ class FilterActivity : BaseActivity() {
                                 Bitmap.Config.ARGB_8888, true
                             )
                         ),i), text = arrFilters[i]))
+                }
+                runOnUiThread {
+                    loading.dismiss()
                 }
                 viewModel.currentItem.postValue(filterList[0])
                 val endTime = System.currentTimeMillis()

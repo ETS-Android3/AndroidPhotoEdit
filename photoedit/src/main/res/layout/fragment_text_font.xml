@@ -23,7 +23,7 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         adapter="@{adapter}"
         submitList="@{vm.list}"
-        notifyCurrentListChanged="@{vm.fontChange}"
+        notifyCurrentListChanged="@{sharevm.fontChange}"
         scrollToPositionByStep="@{vm.scrollInfo}"
         tools:listitem="@layout/item_text_font"
         tools:context=".ui.text.TextFontFragment"/>

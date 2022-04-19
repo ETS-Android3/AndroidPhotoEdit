@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import com.blankj.utilcode.util.*
 import com.gyf.immersionbar.ktx.immersionBar
 import com.kunminx.architecture.ui.page.DataBindingConfig
+import com.lxj.xpopup.XPopup
 import com.yunianshu.library.BR
 import com.yunianshu.library.BaseActivity
 import com.yunianshu.library.Contant
@@ -22,9 +23,6 @@ import com.yunianshu.library.view.AlbumImageView
 import com.yunianshu.library.view.AlbumImageView.ALBUM_IMAGE_SHAPE
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import okhttp3.FormBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -32,6 +30,7 @@ import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
 import kotlin.concurrent.thread
+
 
 /**
  * 4.相框调整
@@ -41,6 +40,8 @@ class FrameActivity : BaseActivity() {
     private lateinit var viewModel: FrameViewModel
     private lateinit var adapter: FrameAdapter
     private lateinit var url: String
+    private var width: Int = 0
+    private var height: Int = 0
     private lateinit var typeName: String
     private lateinit var view: AlbumImageView
     private val binding: ActivityFrameBinding by lazy { ActivityFrameBinding.inflate(layoutInflater) }
@@ -63,6 +64,8 @@ class FrameActivity : BaseActivity() {
         }
         url = intent.getStringExtra(Contant.KEY_URL).toString()
         typeName = intent.getStringExtra(Contant.KEY_TYPENAME).toString()
+        width = intent.getIntExtra(Contant.KEY_WIDTH, 0)
+        height = intent.getIntExtra(Contant.KEY_HEIGHT, 0)
         viewModel.url.postValue(url)
         val source = BitmapFactory.decodeFile(url)
         val bitmap = Bitmap.createBitmap(source.width, source.height, Bitmap.Config.ARGB_8888)
@@ -73,11 +76,24 @@ class FrameActivity : BaseActivity() {
         adapter.setOnItemClickListener { _, item, _ ->
             addFrameView(item.image)
         }
+        val loading = XPopup.Builder(this@FrameActivity)
+            .dismissOnBackPressed(false)
+            .isLightNavigationBar(true)
+            .isViewMode(true)
+            .isDarkTheme(false)
+            .asLoading()
+        loading.show()
         GlobalScope.launch {
             try {
                 getHttpData()
+                runOnUiThread {
+                    loading.dismiss()
+                }
             } catch (e: Exception) {
                 ToastUtils.showShort("获取相框资源失败")
+                runOnUiThread {
+                    loading.dismiss()
+                }
             }
         }
     }

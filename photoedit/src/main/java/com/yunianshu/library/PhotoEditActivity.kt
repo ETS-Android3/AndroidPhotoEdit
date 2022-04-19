@@ -19,6 +19,7 @@ import com.gyf.immersionbar.ktx.immersionBar
 import com.hprt.ucrop.UCrop
 import com.hprt.ucrop.UCropActivity
 import com.kunminx.architecture.ui.page.DataBindingConfig
+import com.lxj.xpopup.XPopup
 import com.yunianshu.library.adapter.RgAdapter
 import com.yunianshu.library.bean.BubbleInfo
 import com.yunianshu.library.bean.FontInfo
@@ -175,8 +176,8 @@ class PhotoEditActivity : BaseActivity() {
             if (it) {
                 imageRedo.visibility = View.GONE
                 imageUndo.visibility = View.GONE
-            }else{
-                if(shareVM.cacheImagePaths.value?.size ?: 1 > 1){
+            } else {
+                if (shareVM.cacheImagePaths.value?.size ?: 1 > 1) {
                     imageRedo.visibility = View.VISIBLE
                     imageUndo.visibility = View.VISIBLE
                 }
@@ -307,9 +308,9 @@ class PhotoEditActivity : BaseActivity() {
                 val sticker = stickerView.currentSticker as TextSticker
                 sticker.setShadowLayer(it)
                 viewModel.refreshStickerView()
-                if(!it){
+                if (!it) {
                     shareVM.textColorType.postValue(TextColorType.TEXT)
-                }else{
+                } else {
                     shareVM.textColorType.postValue(TextColorType.SHADOW)
                 }
             }
@@ -319,8 +320,8 @@ class PhotoEditActivity : BaseActivity() {
         shareVM.textStickerShadowColor.observeSticky(this) {
             if (stickerView.currentSticker != null && stickerView.currentSticker is TextSticker) {
                 val sticker = stickerView.currentSticker as TextSticker
-                shareVM.textStickerShadow.value?.let {
-                        show -> sticker.setShadowLayer(show, it)
+                shareVM.textStickerShadow.value?.let { show ->
+                    sticker.setShadowLayer(show, it)
                 }
                 viewModel.refreshStickerView()
             }
@@ -346,12 +347,22 @@ class PhotoEditActivity : BaseActivity() {
                         }
                     }
                     2 -> {//网路字体
+                        val loading = XPopup.Builder(this@PhotoEditActivity)
+                            .dismissOnBackPressed(false)
+                            .isDarkTheme(false)
+                            .isLightNavigationBar(true)
+                            .isViewMode(true)
+                            .asLoading()
+                        loading.show()
+                        loading.dismiss()
                         GlobalScope.launch {
                             try {
                                 downLoadFont(info)
                             } catch (e: Exception) {
-
                                 ToastUtils.showShort("下载字体失败,请重试")
+                                runOnUiThread {
+                                    loading.dismiss()
+                                }
                             }
                         }
 
@@ -385,6 +396,7 @@ class PhotoEditActivity : BaseActivity() {
                         sticker.setTypeface(Typeface.createFromFile(it))
                         info.type = 1
                         info.filePath = path
+                        shareVM.fontChange.postValue(true)
                     } else {
                         ToastUtils.showShort("下载失败")
                     }
@@ -548,7 +560,7 @@ class PhotoEditActivity : BaseActivity() {
     /**
      * 3.开启裁剪功能
      */
-    private fun openCropActivity(){
+    private fun openCropActivity() {
         var uri = Uri.fromFile(File(filePath))
         var destinationUri = Uri.fromFile(File(cacheDir, "cropimage.png"))
         val uCrop = UCrop.of(uri, destinationUri)
@@ -564,7 +576,7 @@ class PhotoEditActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         data?.let {
             if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
-                val uri =UCrop.getOutput(it)
+                val uri = UCrop.getOutput(it)
                 findViewById<ImageView>(R.id.imageView).setImageBitmap(
                     BitmapFactory.decodeFile(
                         UriUtils.uri2File(uri).toString()

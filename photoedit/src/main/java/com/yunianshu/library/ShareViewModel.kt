@@ -123,6 +123,11 @@ class ShareViewModel : ViewModel() {
     var textStickerFont = UnPeekLiveData<FontInfo>()
 
     /**
+     * 文字字体状态改变
+     */
+    var fontChange = UnPeekLiveData<Boolean>()
+
+    /**
      * 文字颜色类型 0-文字颜色 1-文字背景色 2-文字阴影色 3-文字下滑线颜色
      */
     var textColorType = UnPeekLiveData<TextColorType>()
