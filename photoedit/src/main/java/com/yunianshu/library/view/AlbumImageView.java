@@ -2,12 +2,16 @@ package com.yunianshu.library.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -33,9 +37,9 @@ public class AlbumImageView extends AppCompatImageView {
     private float xOffset = 0.f;
     //y轴偏移
     private float yOffset = 0.f;
-    //手指所在x坐标
+    // 手指所在x坐标
     private float downX = 0.0f;
-    //手指所在y坐标
+    // 手指所在y坐标
     private float downY = 0.0f;
 
     private float previousDistance = 0.0f;

@@ -68,7 +68,7 @@ class FrameActivity : BaseActivity() {
         height = intent.getIntExtra(Contant.KEY_HEIGHT, 0)
         viewModel.url.postValue(url)
         val source = BitmapFactory.decodeFile(url)
-        val bitmap = Bitmap.createBitmap(source.width, source.height, Bitmap.Config.ARGB_8888)
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val view = AlbumImageView(this, ALBUM_IMAGE_SHAPE, source, arrayOf(bitmap), 0F, 0F)
         val layoutParams = view.layoutParams
         view.layoutParams = ViewGroup.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT)
@@ -112,7 +112,8 @@ class FrameActivity : BaseActivity() {
                 conn.doInput = true
                 conn.connect()
                 val input:InputStream  = conn.inputStream;
-                val bitmap = BitmapFactory.decodeStream(input);
+                var bitmap = BitmapFactory.decodeStream(input);
+                bitmap = Bitmap.createScaledBitmap(bitmap,width,height,true)
                 input.close();
                 if (bitmap != null) {
                     view = AlbumImageView(this@FrameActivity, ALBUM_IMAGE_SHAPE, source, arrayOf(bitmap), 0F, 0F)

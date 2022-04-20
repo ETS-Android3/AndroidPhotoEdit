@@ -11,6 +11,7 @@ import com.yunianshu.library.bean.TextColorInfo
 import com.yunianshu.library.util.ImageUtils
 import com.yunianshu.library.util.TextColorType
 import com.yunianshu.sticker.Sticker
+import com.yunianshu.sticker.StickerView
 import com.yunianshu.sticker.TextDrawable
 
 /**
@@ -50,6 +51,11 @@ class ShareViewModel : ViewModel() {
      * 当前气泡
      */
     var currentSticker = UnPeekLiveData<Sticker>()
+
+    /**
+     * 气泡指针
+     */
+    var currentStickerIndex = UnPeekLiveData<Int>()
 
     /**
      * 当前文字气泡参数
@@ -167,6 +173,7 @@ class ShareViewModel : ViewModel() {
             select = true
         )
         textColorType.value = TextColorType.TEXT
+        currentStickerIndex.value = -1
     }
 
     /**
@@ -189,6 +196,30 @@ class ShareViewModel : ViewModel() {
         list.remove(sticker)
         stickers.postValue(list)
     }
+
+    /**
+     * 删除贴纸
+     */
+    fun removeStickerToIndex(stickerView: StickerView) {
+        val list = mutableListOf<Sticker>()
+        stickers.value?.let { list.addAll(it) }
+        for (i in list.size-1 downTo currentStickerIndex.value!! + 1) {
+            var sticker = list[i]
+            stickerView.remove(sticker)
+            list.remove(sticker)
+        }
+        stickers.postValue(list)
+    }
+
+    /**
+     * 更新贴纸指针
+     */
+    fun updateStickerIndex() {
+        stickers.value?.let {
+            currentStickerIndex.postValue(it.size-1)
+        }
+    }
+
 
     /**
      * 改变文字的透明度

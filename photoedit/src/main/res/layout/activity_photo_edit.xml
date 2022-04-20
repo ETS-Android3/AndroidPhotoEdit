@@ -127,6 +127,7 @@
                 android:background="@color/white"
                 android:padding="@dimen/padding_4dp"
                 app:borderAlpha="255"
+                android:translationZ="2dp"
                 app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -140,6 +141,7 @@
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:clickable="false"
+                    android:background="@color/white"
                     android:scaleType="centerCrop" />
             </com.yunianshu.sticker.StickerView>
 

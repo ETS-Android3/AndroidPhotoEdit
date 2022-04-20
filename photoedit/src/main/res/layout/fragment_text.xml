@@ -20,8 +20,10 @@
     </data>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
             android:background="@color/white"
+            android:translationZ="1dp"
             android:fitsSystemWindows="true"
             tools:context=".ui.crop.FilterActivity">
 
@@ -72,22 +74,12 @@
                 useEnable="@{false}"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
+                android:background="@color/base_center_color_dark"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="match_parent"
-                android:layout_height="8dp"
-                android:background="@drawable/ucrop_shadow_upside"
-                app:layout_constraintBottom_toBottomOf="parent" />
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="8dp"
-                android:background="@drawable/ucrop_shadow_belowside"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -646,7 +646,7 @@ class PhotoEditActivity : BaseActivity() {
             statusBarDarkFont(true)
         }
         var viewPager2 = findViewById<ViewPager2>(R.id.viewPager2)
-        viewPager2.layoutParams.height = ConvertUtils.dp2px(150f)
+        viewPager2.layoutParams.height = ConvertUtils.dp2px(170f)
     }
 
     private fun initFragment() {
@@ -704,6 +704,7 @@ class PhotoEditActivity : BaseActivity() {
                 statusBarColor(R.color.base_color)
                 statusBarDarkFont(false)
             }
+            shareVM.removeStickerToIndex(stickerView)
         }
 
         fun back() {
@@ -718,6 +719,7 @@ class PhotoEditActivity : BaseActivity() {
                 statusBarColor(R.color.base_color)
                 statusBarDarkFont(false)
             }
+            shareVM.updateStickerIndex()
         }
 
         fun save() {
@@ -763,6 +765,9 @@ class PhotoEditActivity : BaseActivity() {
 
         override fun onStickerDeleted(sticker: Sticker) {
             shareVM.removeSticker(sticker)
+            if(shareVM.showTextEditView.value == false){
+                shareVM.updateStickerIndex()
+            }
             dialog.isShowing.let {
                 if (it) {
                     dialog.dismiss()
