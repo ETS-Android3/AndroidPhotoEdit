@@ -1,14 +1,9 @@
 package com.yunianshu.library
 
-import android.graphics.Bitmap
 import android.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.kunminx.architecture.ui.callback.UnPeekLiveData
-import com.yunianshu.library.bean.BubbleInfo
-import com.yunianshu.library.bean.FontInfo
-import com.yunianshu.library.bean.StickerInfo
-import com.yunianshu.library.bean.TextColorInfo
-import com.yunianshu.library.util.ImageUtils
+import com.yunianshu.library.bean.*
 import com.yunianshu.library.util.TextColorType
 import com.yunianshu.sticker.Sticker
 import com.yunianshu.sticker.StickerView
@@ -30,12 +25,7 @@ class ShareViewModel : ViewModel() {
     /**
      * 图片处理缓存库
      */
-    var cacheImagePaths = UnPeekLiveData<List<String>>()
-
-    /**
-     *当前显示的图片
-     */
-    var currentBitmap = UnPeekLiveData<List<Bitmap>>()
+    var caches = UnPeekLiveData<List<PhotoEditStep>>()
 
     /**
      * 是否在编辑中
@@ -55,17 +45,12 @@ class ShareViewModel : ViewModel() {
     /**
      * 气泡指针
      */
-    var currentStickerIndex = UnPeekLiveData<Int>()
+    private var currentStickerIndex = UnPeekLiveData<Int>()
 
     /**
      * 当前文字气泡参数
      */
     var textStickerInfo = UnPeekLiveData<StickerInfo>()
-
-    /**
-     * 当前贴纸集合
-     */
-    var stickerInfos = UnPeekLiveData<List<Sticker>>()
 
     /**
      * 文字alpha
@@ -195,6 +180,17 @@ class ShareViewModel : ViewModel() {
         stickers.value?.let { list.addAll(it) }
         list.remove(sticker)
         stickers.postValue(list)
+        //删除操作
+        val value = caches.value as MutableList<PhotoEditStep>
+        value?.let {
+            for (i in it.indices){
+                if(value[i].sticker == sticker){
+                    value.removeAt(i)
+                    break
+                }
+
+            }
+        }
     }
 
     /**
@@ -204,7 +200,7 @@ class ShareViewModel : ViewModel() {
         val list = mutableListOf<Sticker>()
         stickers.value?.let { list.addAll(it) }
         for (i in list.size-1 downTo currentStickerIndex.value!! + 1) {
-            var sticker = list[i]
+            val sticker = list[i]
             stickerView.remove(sticker)
             list.remove(sticker)
         }
@@ -220,12 +216,26 @@ class ShareViewModel : ViewModel() {
         }
     }
 
-
     /**
-     * 改变文字的透明度
+     * 添加贴纸缓存
      */
-    fun changeTextStickerAlpha() {
-        textStickerAlpha.value = textStickerAlpha.value?.plus(0.1f)
+    fun addStickerCache() {
+        val value = caches.value as MutableList<PhotoEditStep>
+        stickers.value?.let {
+            for (i in it.indices){
+                if(i > currentStickerIndex.value!!){
+                    val value1 = editState.value!!
+                    when(value1){
+                        Contant.STICKER->
+                            value.add(PhotoEditStep(type = Contant.STICKER, sticker = it[i], url = null))
+                        Contant.WORDS->
+                            value.add(PhotoEditStep(type = Contant.WORDS, sticker = it[i], url = null))
+                    }
 
+                }
+            }
+        }
+        editState.postValue(Contant.DEFAULT)
     }
+
 }

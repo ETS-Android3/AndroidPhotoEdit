@@ -246,5 +246,6 @@ public abstract class Sticker {
   }
 
   public void release() {
+
   }
 }

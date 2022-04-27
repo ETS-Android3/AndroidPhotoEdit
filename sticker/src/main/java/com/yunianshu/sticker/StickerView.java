@@ -103,6 +103,7 @@ public class StickerView extends FrameLayout {
 
     private boolean locked;
     private boolean constrained;//受约束的
+    private float minWidth = 100f;//最小宽度
 
     private OnStickerOperationListener onStickerOperationListener;
 
@@ -454,10 +455,15 @@ public class StickerView extends FrameLayout {
             float newDistance = calculateDistance(midPoint.x, midPoint.y, event.getX(), event.getY());
             float newRotation = calculateRotation(midPoint.x, midPoint.y, event.getX(), event.getY());
 
-            moveMatrix.set(downMatrix);
-            moveMatrix.postScale(newDistance / oldDistance, newDistance / oldDistance, midPoint.x,
-                    midPoint.y);
-            moveMatrix.postRotate(newRotation - oldRotation, midPoint.x, midPoint.y);
+            float currentWidth = handlingSticker.getCurrentWidth() * newDistance / oldDistance;
+            float width = handlingSticker.getWidth();
+            //限制最小宽度和最大宽度
+            if (currentWidth > minWidth) {
+                moveMatrix.set(downMatrix);
+                moveMatrix.postScale(newDistance / oldDistance, newDistance / oldDistance, midPoint.x,
+                        midPoint.y);
+                moveMatrix.postRotate(newRotation - oldRotation, midPoint.x, midPoint.y);
+            }
             handlingSticker.setMatrix(moveMatrix);
         }
     }
@@ -796,12 +802,7 @@ public class StickerView extends FrameLayout {
         if (ViewCompat.isLaidOut(this)) {
             addStickerImmediately(sticker, position);
         } else {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    addStickerImmediately(sticker, position);
-                }
-            });
+            post(() -> addStickerImmediately(sticker, position));
         }
         return this;
     }
@@ -812,11 +813,15 @@ public class StickerView extends FrameLayout {
 
         float scaleFactor, widthScaleFactor, heightScaleFactor;
 
-        widthScaleFactor = (float) getWidth() / sticker.getDrawable().getIntrinsicWidth();
-        heightScaleFactor = (float) getHeight() / sticker.getDrawable().getIntrinsicHeight();
+        int width = getWidth();
+        int height = getHeight();
+        int intrinsicWidth = sticker.getDrawable().getIntrinsicWidth();
+        int intrinsicHeight = sticker.getDrawable().getIntrinsicHeight();
+        widthScaleFactor = (float) width / intrinsicWidth;
+        heightScaleFactor = (float) height / intrinsicHeight;
         scaleFactor = widthScaleFactor > heightScaleFactor ? heightScaleFactor : widthScaleFactor;
 
-        sticker.getMatrix().postScale(scaleFactor / 2, scaleFactor / 2, getWidth() / 2, getHeight() / 2);
+        sticker.getMatrix().postScale(scaleFactor / 4, scaleFactor / 4, getWidth() / 4, getHeight() / 4);
 
         handlingSticker = sticker;
         stickers.add(sticker);
@@ -949,6 +954,14 @@ public class StickerView extends FrameLayout {
         this.icons.addAll(icons);
         invalidate();
     }
+
+    /**
+     * 设置最小缩放宽度
+     */
+    public void setMinWidth(float minWidth) {
+        this.minWidth = minWidth;
+    }
+
 
     public interface OnStickerOperationListener {
         void onStickerAdded(@NonNull Sticker sticker);

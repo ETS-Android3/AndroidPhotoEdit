@@ -1,8 +1,6 @@
 package com.yunianshu.library
 
-import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
-import com.kunminx.architecture.ui.callback.ProtectedUnPeekLiveData
 import com.kunminx.architecture.ui.callback.UnPeekLiveData
 import com.yunianshu.library.bean.PhotoEditItem
 

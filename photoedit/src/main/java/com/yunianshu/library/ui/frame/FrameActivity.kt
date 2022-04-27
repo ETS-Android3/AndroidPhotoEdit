@@ -15,7 +15,6 @@ import com.yunianshu.library.BaseActivity
 import com.yunianshu.library.Contant
 import com.yunianshu.library.R
 import com.yunianshu.library.adapter.FrameAdapter
-import com.yunianshu.library.databinding.ActivityFrameBinding
 import com.yunianshu.library.response.Frame
 import com.yunianshu.library.response.FrameResponse
 import com.yunianshu.library.util.HttpUtil.request
@@ -35,6 +34,7 @@ import kotlin.concurrent.thread
 /**
  * 4.相框调整
  */
+@Deprecated("替换为UCrop实现  link-> FrameNewActivity'")
 class FrameActivity : BaseActivity() {
 
     private lateinit var viewModel: FrameViewModel
@@ -44,7 +44,6 @@ class FrameActivity : BaseActivity() {
     private var height: Int = 0
     private lateinit var typeName: String
     private lateinit var view: AlbumImageView
-    private val binding: ActivityFrameBinding by lazy { ActivityFrameBinding.inflate(layoutInflater) }
 
 
     override fun initViewModel() {
@@ -69,7 +68,7 @@ class FrameActivity : BaseActivity() {
         viewModel.url.postValue(url)
         val source = BitmapFactory.decodeFile(url)
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        val view = AlbumImageView(this, ALBUM_IMAGE_SHAPE, source, arrayOf(bitmap), 0F, 0F)
+        view = AlbumImageView(this, ALBUM_IMAGE_SHAPE, source, arrayOf(bitmap), 0F, 0F)
         val layoutParams = view.layoutParams
         view.layoutParams = ViewGroup.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT)
         findViewById<LinearLayout>(R.id.frame_layout).addView(view)

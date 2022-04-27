@@ -1,7 +1,7 @@
 package com.yunianshu.library.util
 
-import android.content.Context
 import android.graphics.*
+import android.graphics.drawable.Drawable
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
@@ -130,6 +130,71 @@ object ImageUtils {
         drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
         drawable.draw(canvas)
         return createBitmap
+    }
+
+    fun getBitmapFromDrawable(drawable: Drawable): Bitmap {
+        val width = drawable.intrinsicWidth
+        val height = drawable.intrinsicHeight
+        val bitmap = Bitmap.createBitmap(
+            width, height, if (drawable
+                    .opacity != PixelFormat.OPAQUE
+            ) Bitmap.Config.ARGB_8888 else Bitmap.Config.RGB_565
+        )
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, width, height)
+        drawable.draw(canvas)
+        return bitmap
+    }
+
+    /**
+     * 合并
+     *
+     * @param bgd 后景Bitmap
+     * @param fg  前景Bitmap
+     * @return 合成后Bitmap
+     */
+    fun combineImagesToSameSize(bgd: Bitmap, fg: Bitmap): Bitmap? {
+        var bgd = bgd
+        var fg = fg
+        val bmp: Bitmap
+        val width = if (bgd.width < fg.width) bgd.width else fg
+            .width
+        val height = if (bgd.height < fg.height) bgd.height else fg
+            .height
+        if (fg.width != width && fg.height != height) {
+            fg = zoom(fg, width, height)
+        }
+        if (bgd.width != width && bgd.height != height) {
+            bgd = zoom(bgd, width, height)
+        }
+        bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val paint = Paint()
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_ATOP)
+        val canvas = Canvas(bmp)
+        canvas.drawBitmap(bgd, 0f, 0f, null)
+        canvas.drawBitmap(fg, 0f, 0f, paint)
+        return bmp
+    }
+
+    /**
+     * 放大缩小图片
+     *
+     * @param bitmap 源Bitmap
+     * @param w      宽
+     * @param h      高
+     * @return 目标Bitmap
+     */
+    fun zoom(bitmap: Bitmap, w: Int, h: Int): Bitmap {
+        val width = bitmap.width
+        val height = bitmap.height
+        val matrix = Matrix()
+        val scaleWidht = w.toFloat() / width
+        val scaleHeight = h.toFloat() / height
+        matrix.postScale(scaleWidht, scaleHeight)
+        return Bitmap.createBitmap(
+            bitmap, 0, 0, width, height,
+            matrix, true
+        )
     }
 
 }

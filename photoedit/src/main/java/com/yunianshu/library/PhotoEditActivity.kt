@@ -17,17 +17,13 @@ import androidx.viewpager2.widget.ViewPager2
 import com.blankj.utilcode.util.*
 import com.gyf.immersionbar.ktx.immersionBar
 import com.hprt.ucrop.UCrop
-import com.hprt.ucrop.UCropActivity
 import com.kunminx.architecture.ui.page.DataBindingConfig
 import com.lxj.xpopup.XPopup
 import com.yunianshu.library.adapter.RgAdapter
-import com.yunianshu.library.bean.BubbleInfo
-import com.yunianshu.library.bean.FontInfo
-import com.yunianshu.library.bean.PhotoEditItem
-import com.yunianshu.library.bean.StickerInfo
+import com.yunianshu.library.bean.*
 import com.yunianshu.library.ui.adjust.AdjustmentActivity
 import com.yunianshu.library.ui.fillter.FilterActivity
-import com.yunianshu.library.ui.frame.FrameActivity
+import com.yunianshu.library.ui.frame.FrameNewActivity
 import com.yunianshu.library.ui.sticker.StickerFragment
 import com.yunianshu.library.ui.text.TextFragment
 import com.yunianshu.library.util.HttpUtil
@@ -120,50 +116,84 @@ class PhotoEditActivity : BaseActivity() {
      */
     private fun addListener() {
         imageRedo.setOnClickListener {
-            val values = shareVM.cacheImagePaths.value
+            val values = shareVM.caches.value
             values?.let {
-                if (currentIndex + 1 < values.size) {
-                    currentIndex++
-                    filePath = values[currentIndex]
-                    if (currentIndex + 1 == values.size) {
-                        imageRedo.isEnabled = false
-                        imageRedo.background =
-                            ContextCompat.getDrawable(this, R.drawable.ic_temp_redo_enable)
-                    } else {
-                        imageRedo.background =
-                            ContextCompat.getDrawable(this, R.drawable.ic_temp_redo)
+                currentIndex++
+                val item = values[currentIndex]
+                when (item.type) {
+                    Contant.STICKER -> {
+                        item.sticker!!.setAlpha(255)
+                        viewModel.refreshStickerView()
                     }
-                    imageUndo.background =
-                        ContextCompat.getDrawable(this, R.drawable.ic_temp_undo)
-                    imageUndo.isEnabled = true
-                    findViewById<ImageView>(R.id.imageView).setImageBitmap(
-                        BitmapFactory.decodeFile(
-                            filePath
+                    Contant.WORDS -> {
+                        item.sticker!!.setAlpha(255)
+                        (item.sticker!! as TextSticker).setDrawableAlpha(255)
+                        viewModel.refreshStickerView()
+                    }
+                    Contant.ADJUST, Contant.FILTER, Contant.CROP, Contant.FRAME -> {
+                        filePath = item.url!!
+                        findViewById<ImageView>(R.id.imageView).setImageBitmap(
+                            BitmapFactory.decodeFile(
+                                filePath
+                            )
                         )
-                    )
+                    }
                 }
+                if (currentIndex + 1 == values.size) {
+                    imageRedo.isEnabled = false
+                    imageRedo.background =
+                        ContextCompat.getDrawable(this, R.drawable.ic_temp_redo_enable)
+                } else {
+                    imageRedo.background =
+                        ContextCompat.getDrawable(this, R.drawable.ic_temp_redo)
+                }
+                imageUndo.background =
+                    ContextCompat.getDrawable(this, R.drawable.ic_temp_undo)
+                imageUndo.isEnabled = true
             }
         }
         imageUndo.setOnClickListener {
-            val values = shareVM.cacheImagePaths.value
+            val values = shareVM.caches.value
             values?.let {
-                if (currentIndex - 1 >= 0) {
-                    currentIndex--
-                    filePath = values[currentIndex]
-                    var bitmap = BitmapFactory.decodeFile(filePath)
-                    if (currentIndex == 0) {
-                        imageUndo.isEnabled = false
-                        imageUndo.background =
-                            ContextCompat.getDrawable(this, R.drawable.ic_temp_undo_enable)
-                    } else {
-                        imageUndo.background =
-                            ContextCompat.getDrawable(this, R.drawable.ic_temp_undo)
+                var item = values[currentIndex]
+                when (item.type) {
+                    Contant.STICKER->{
+                        item.sticker!!.setAlpha(0)
+                        viewModel.refreshStickerView()
+                        if (shareVM.showTextEditView.value == false) {
+                            shareVM.updateStickerIndex()
+                        }
+                        currentIndex--
                     }
-                    imageRedo.isEnabled = true
-                    imageRedo.background =
-                        ContextCompat.getDrawable(this, R.drawable.ic_temp_redo)
-                    findViewById<ImageView>(R.id.imageView).setImageBitmap(bitmap)
+                    Contant.WORDS -> {
+//                        stickerView.remove(item.sticker!!)
+                        item.sticker!!.setAlpha(0)
+                        (item.sticker!! as TextSticker).setDrawableAlpha(0)
+                        viewModel.refreshStickerView()
+                        if (shareVM.showTextEditView.value == false) {
+                            shareVM.updateStickerIndex()
+                        }
+                        currentIndex--
+                    }
+                    Contant.ADJUST, Contant.FILTER, Contant.CROP, Contant.FRAME -> {
+                        currentIndex--
+                        item = values[currentIndex]
+                        filePath = item.url!!
+                        val bitmap = BitmapFactory.decodeFile(filePath)
+                        findViewById<ImageView>(R.id.imageView).setImageBitmap(bitmap)
+                    }
                 }
+                if (currentIndex == 0) {
+                    imageUndo.isEnabled = false
+                    imageUndo.background =
+                        ContextCompat.getDrawable(this, R.drawable.ic_temp_undo_enable)
+                } else {
+                    imageUndo.background =
+                        ContextCompat.getDrawable(this, R.drawable.ic_temp_undo)
+                }
+                imageRedo.isEnabled = true
+                imageRedo.background =
+                    ContextCompat.getDrawable(this, R.drawable.ic_temp_redo)
             }
         }
     }
@@ -177,18 +207,21 @@ class PhotoEditActivity : BaseActivity() {
                 imageRedo.visibility = View.GONE
                 imageUndo.visibility = View.GONE
             } else {
-                if (shareVM.cacheImagePaths.value?.size ?: 1 > 1) {
+                if (shareVM.caches.value?.size ?: 1 > 1) {
                     imageRedo.visibility = View.VISIBLE
                     imageUndo.visibility = View.VISIBLE
+                    imageRedo.background =
+                        ContextCompat.getDrawable(this, R.drawable.ic_temp_redo_enable)
+                    imageRedo.isEnabled = false
+                    imageUndo.background =
+                        ContextCompat.getDrawable(this, R.drawable.ic_temp_undo)
+                    imageUndo.isEnabled = true
+                    title.text = ""
+                    currentIndex = shareVM.caches.value!!.size - 1
                 }
             }
         }
         shareVM.textStickerInfo.observeSticky(this) {
-//            if (stickerView.currentSticker == null) {
-//                addTextSticker(it)
-//            } else {
-//                updateSticker(it)
-//            }
             if (shareVM.showTextEditView.value == true) {
                 addTextSticker(it)
             }
@@ -465,10 +498,10 @@ class PhotoEditActivity : BaseActivity() {
     private fun initIntent() {
         filePath = intent.getStringExtra("url").toString()
         rotate = intent.getBooleanExtra("rotate", false)
-        width = intent.getIntExtra("width", 0)
-        height = intent.getIntExtra("height", 0)
+        width = ConvertUtils.dp2px(intent.getIntExtra("width", 0).toFloat())
+        height = ConvertUtils.dp2px(intent.getIntExtra("height", 0).toFloat())
         typeName = intent.getStringExtra("typeName").toString()
-        shareVM.cacheImagePaths.postValue(mutableListOf(filePath))
+        shareVM.caches.postValue(mutableListOf(PhotoEditStep(0, url = filePath)))
     }
 
     /**
@@ -509,16 +542,27 @@ class PhotoEditActivity : BaseActivity() {
                             UriUtils.uri2File(uri.data).toString()
                         )
                     )
+                    val resultCode = activityResult.resultCode
+
                     filePath = UriUtils.uri2File(uri.data).absolutePath
-                    val values = shareVM.cacheImagePaths.value
-                    (values as MutableList<String>).add(filePath)
+                    val values = shareVM.caches.value
+                    (values as MutableList<PhotoEditStep>).add(
+                        PhotoEditStep(
+                            type = shareVM.editState.value!!,
+                            url = filePath
+                        )
+                    )
                     currentIndex = values.size - 1
                     imageUndo.visibility = View.VISIBLE
+                    imageUndo.isEnabled = true
+                    imageUndo.background =
+                        ContextCompat.getDrawable(this, R.drawable.ic_temp_undo)
                     imageRedo.visibility = View.VISIBLE
                     imageRedo.background =
                         ContextCompat.getDrawable(this, R.drawable.ic_temp_redo_enable)
                     imageRedo.isEnabled = false
                     title.text = ""
+                    shareVM.editState.postValue(Contant.DEFAULT)
                 }
             }
         adapter.setOnItemClickListener { _, item, position ->
@@ -537,7 +581,7 @@ class PhotoEditActivity : BaseActivity() {
                     return@setOnItemClickListener
                 }
                 Contant.FRAME -> {
-                    intent = Intent(this, FrameActivity::class.java)
+                    intent = Intent(this, FrameNewActivity::class.java)
                 }
                 Contant.STICKER -> {
                     viewModel.currentText.postValue(item.text)
@@ -561,8 +605,9 @@ class PhotoEditActivity : BaseActivity() {
      * 3.开启裁剪功能
      */
     private fun openCropActivity() {
-        var uri = Uri.fromFile(File(filePath))
-        var destinationUri = Uri.fromFile(File(cacheDir, "cropimage.png"))
+        val uri = Uri.fromFile(File(filePath))
+        val destinationUri =
+            Uri.fromFile(File(cacheDir, "cropimage${System.currentTimeMillis()}.png"))
         val uCrop = UCrop.of(uri, destinationUri)
         uCrop.withAspectRatio(width.toFloat(), height.toFloat())
         val options = UCrop.Options()
@@ -583,8 +628,13 @@ class PhotoEditActivity : BaseActivity() {
                     )
                 )
                 filePath = UriUtils.uri2File(uri).absolutePath
-                val values = shareVM.cacheImagePaths.value
-                (values as MutableList<String>).add(filePath)
+                val values = shareVM.caches.value
+                (values as MutableList<PhotoEditStep>).add(
+                    PhotoEditStep(
+                        type = Contant.CROP,
+                        url = filePath
+                    )
+                )
                 currentIndex = values.size - 1
                 imageUndo.visibility = View.VISIBLE
                 imageRedo.visibility = View.VISIBLE
@@ -593,7 +643,7 @@ class PhotoEditActivity : BaseActivity() {
                 imageRedo.isEnabled = false
                 title.text = ""
             } else if (resultCode == UCrop.RESULT_ERROR) {
-                var cropError = UCrop.getError(it)
+                UCrop.getError(it)
             }
         }
     }
@@ -609,7 +659,7 @@ class PhotoEditActivity : BaseActivity() {
             statusBarColor(com.yunianshu.sticker.R.color.white)
             statusBarDarkFont(true)
         }
-        var viewPager2 = findViewById<ViewPager2>(R.id.viewPager2)
+        val viewPager2 = findViewById<ViewPager2>(R.id.viewPager2)
         viewPager2.layoutParams.height = ConvertUtils.dp2px(80f)
     }
 
@@ -645,7 +695,7 @@ class PhotoEditActivity : BaseActivity() {
             statusBarColor(com.yunianshu.sticker.R.color.white)
             statusBarDarkFont(true)
         }
-        var viewPager2 = findViewById<ViewPager2>(R.id.viewPager2)
+        val viewPager2 = findViewById<ViewPager2>(R.id.viewPager2)
         viewPager2.layoutParams.height = ConvertUtils.dp2px(170f)
     }
 
@@ -719,6 +769,7 @@ class PhotoEditActivity : BaseActivity() {
                 statusBarColor(R.color.base_color)
                 statusBarDarkFont(false)
             }
+            shareVM.addStickerCache()
             shareVM.updateStickerIndex()
         }
 
@@ -738,7 +789,7 @@ class PhotoEditActivity : BaseActivity() {
             when (sticker) {
                 is TextSticker -> {
                     dialog.isShowing.let {
-                        if (it && lastSticker != null && lastSticker == sticker) {
+                        if (it && lastSticker == sticker) {
                             dialog.dismiss()
                             stickerView.hide()
                         } else {
@@ -765,8 +816,14 @@ class PhotoEditActivity : BaseActivity() {
 
         override fun onStickerDeleted(sticker: Sticker) {
             shareVM.removeSticker(sticker)
-            if(shareVM.showTextEditView.value == false){
+            if (shareVM.showTextEditView.value == false) {
                 shareVM.updateStickerIndex()
+            }
+            currentIndex--
+            if(currentIndex == 0) {
+                imageRedo.visibility = View.VISIBLE
+                imageUndo.background = ContextCompat.getDrawable(this@PhotoEditActivity, R.drawable.ic_temp_undo_enable)
+                imageUndo.isEnabled = false
             }
             dialog.isShowing.let {
                 if (it) {

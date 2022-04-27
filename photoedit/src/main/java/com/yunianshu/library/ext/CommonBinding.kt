@@ -45,7 +45,7 @@ fun setOnSeekChangeListener(seekBar: IndicatorSeekBar, listener: OnSeekChangeLis
 @BindingAdapter("load")
 fun ImageView.load(url: String?) {
     url?.let {
-        var file = Uri.fromFile(File(it))
+        val file = Uri.fromFile(File(it))
         this.load(file) {
             placeholder(R.drawable.ic_load_default)
         }
@@ -57,7 +57,7 @@ fun ImageView.loadFontImage(item: FontInfo?) {
     item?.let {
         val color = Color.parseColor("#82D0E7")
         if (item.type == 0) {
-            var drawable: Drawable =
+            val drawable: Drawable =
                 TextDrawable.builder().beginConfig().useFont(
                     null
                 ).align(Paint.Align.LEFT).height(50).fontSize(ConvertUtils.sp2px(16f)).width(100).textColor(

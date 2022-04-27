@@ -143,6 +143,11 @@ public class TextSticker extends Sticker {
     return this;
   }
 
+  public TextSticker setDrawableAlpha(@IntRange(from = 0, to = 255) int alpha) {
+    drawable.setAlpha(alpha);
+    return this;
+  }
+
   @NonNull @Override public Drawable getDrawable() {
     return drawable;
   }
